@@ -1,18 +1,44 @@
 Developer Documentation
 =======================
 
-Contents:
-
 .. toctree::
    :maxdepth: 1
 
    Arens' Atheros Code <../../arensatheros>
+   The Base Class <../../baseclass>   
 
+Connections:
 
-Indices and tables
-------------------
+.. toctree::
+   :maxdepth: 1
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   The Telnet Connection <../../connections/telnetconnection>
 
+Helper Commands:
+
+.. toctree::
+   :maxdepth: 1
+
+   Change Prompt <../../commands/changeprompt>   
+
+Common Modules:
+
+.. toctree::
+   :maxdepth: 1
+
+   Errors <../../commons/errors>
+   Read Output <../../commons/readoutput>
+
+Connections:
+
+.. toctree::
+   :maxdepth: 2
+
+   Enumerations <../../connections/enumerations>
+   Local Connection <../../connections/localconnection>
+   Non-Local Connection <../../connections/nonlocalconnection>
+   Line Producer <../../connections/producer>
+   Shared Counter <../../connections/sharedcounter>
+   SSH Connection <../../connections/sshconnection>
+   Telnect Connection <../../connections/telnetconnection>
+   

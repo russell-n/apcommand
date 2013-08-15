@@ -17,12 +17,12 @@ class Atheros(object):
     def __init__(self, IP, username, password, prompt = "~ #"):
         """
         **Constructor**
+        
         :param:
 
             - `IP`: string type the IP address of the AP
             - `username`: string type the username to login to the AP
             - `password`: string type the password to login to the AP
-
         """
         self.ip = IP
         self.user_name = username
@@ -30,6 +30,12 @@ class Atheros(object):
         self.prompt = "~ #"
 
     def establish_connection(self):
+        """
+        Create a serial connection
+
+        :postcondition: self.connection is a pyserial connection
+        :return: True
+        """
         self.connection = serial.SerialPort("/dev/ttyUSB1", 115200, 8, "N", 1, 
                                             timeout=10, uname=self.user_name, 
                                             passwd=self.pass_word, prompt=self.prompt)
@@ -38,6 +44,7 @@ class Atheros(object):
     def setAPWireless(self, SSID, Band, Channel, Mode, RTS=None, Fragmentation=None, WMM=True):
         """
         Setup the APs wireless broadcast
+        
         :param: 
             
             - `SSID`: string type the desired ssid for the AP
@@ -140,6 +147,7 @@ class Atheros(object):
     def setAPSecOpen(self):
         """
         Set the AP to open security
+        
         :rtype: string type
         :returns: None on success and error string on failure
         """
@@ -164,6 +172,7 @@ class Atheros(object):
     def setAPSecPSK(self, Management, Passphrase, Encryption):
         """
         Set the AP security to WPA version 1 or WPA version 2
+        
         :param:
 
             - `Management`: string type the key management, 'WPA' or 'WPA2'
@@ -229,6 +238,7 @@ class Atheros(object):
     def setAPSecWEP(self, Key):
         """
         Set the AP security to WEP
+        
         :param `Key`: string type the desired WEP key
         :rtype: string type
         :returns: None on success and error string on failure
@@ -269,6 +279,9 @@ class Atheros(object):
 
     def deauthSTA(self, MAC):
         """
+        Deauth the station?
+        **Not Implemented**
+        
         :param `MAC`: string type the MAC address of STA
         :rtype: string type
         :returns: None for success and error string on failure
@@ -279,6 +292,7 @@ class Atheros(object):
     def getMACAddress(self):
         """
         Return the MAC address of the AP
+        
         :rtype: string type
         :returns: the MAC address of the AP
         """
@@ -305,6 +319,7 @@ class Atheros(object):
     def commit(self):
         """
         Save changes ??
+        
         :rtype: string type
         :returns: None for success and error string on failure
         """
@@ -341,6 +356,7 @@ class Atheros(object):
     def setAPSecEnt(self, Type):
         """
         Set AP security to enterprise
+        
         :param `Type`: the type of security 'WPA' or 'WPA2'
         """
         if not self.establish_connection():
@@ -389,6 +405,9 @@ class Atheros(object):
     def setDHCP(self, Enable):
         """
         Set or unset DHCP on the AP
+
+        ** Not Implemented**
+        
         :param `Enable`: integer type, boolean on or off
         :rtype: string type
         :returns: None on success or error string on failure
@@ -399,6 +418,7 @@ class Atheros(object):
     def setRADIUS(self, IP, Port, Shared):
         """
         Set the AP to RADIUS settings
+        
         :param:
 
             - `IP`: string type the IP address of the RADIUS server

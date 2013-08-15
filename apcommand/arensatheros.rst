@@ -1,6 +1,8 @@
 Arens Atheros Code
 ==================
 
+.. currentmodule:: apcommand.arensatheros
+
 This is the code that aren wrote following the coding style of Lab126. It will be used as the reference for the AP Command.
 
 .. uml::
