@@ -23,7 +23,11 @@ import socket
 import os
 
 # third-party libraries
-import paramiko
+try:
+    import paramiko
+except ImportError as error:
+    print error
+    Warning("Paramiko not imported SSH not supported")    
 
 # arachne Libraries
 from apcommand.commons.readoutput import ValidatingOutput

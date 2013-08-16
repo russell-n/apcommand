@@ -26,6 +26,24 @@ Prints the output of the `ls -l` command line command.
 
 
 
+OutputFile
+----------
+
+This acts as a file-like object that traps socket timeouts so that users do not have to know that it contains a networked connection. To prevent blocking the socket-timeout causes it to return a SPACE. 
+
+.. note:: This is also defined in the sshconnection module, but since I wanted to allow for the case where SSH is not used it is re-defined here (otherwise you have to install paramiko)
+
+.. autosummary::
+   :toctree: api
+
+   OutputFile
+
+.. uml::
+
+   OutputFile -|> ValidatingOutput
+   OutputFile : readline(timeout)
+
+
 
 .. _telnet-adapter:
 

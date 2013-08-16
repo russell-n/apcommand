@@ -9,7 +9,8 @@ from apcommand.baseclass import BaseClass
 from apcommand.commands import changeprompt
 
 # connections
-from sshconnection import OutputFile
+#from sshconnection import OutputFile
+from apcommand.commons.readoutput import ValidatingOutput
 from nonlocalconnection import NonLocalConnection, NonLocalConnectionBuilder
 from localconnection import OutputError
 
@@ -19,6 +20,38 @@ SPACER = '{0} {1}'
 UNKNOWN = "Unknown command: "
 EMPTY_STRING = EOF = ''
 PLUGIN_NAME = 'telnet'
+
+
+class OutputFile(ValidatingOutput):
+    """
+    A class to handle the ssh output files
+
+    This traps socket timeouts.
+    """
+    def __init__(self, *args, **kwargs):
+        super(OutputFile, self).__init__(*args, **kwargs)
+        return
+
+    def readline(self, timeout=10):
+        """
+        :param:
+
+         - `timeout`: The length of time to wait for output
+
+        :return: line from readline, EOF or None (in event of timeout)
+        """
+        if not self.empty:
+            try:
+                line = self.lines.readline()
+                if line == EOF:
+                    self.end_of_file = True
+                self.validate(line)
+                return line
+            except socket.timeout:
+                self.logger.debug("socket.timeout")
+                return SPACE
+        return EOF
+# end class OutputFile
 
 
 class TelnetAdapter(BaseClass):
@@ -41,6 +74,7 @@ class TelnetAdapter(BaseClass):
         """
         super(TelnetAdapter, self).__init__()
         self.host = host
+        self.password = password
         self.prompt = prompt
         self.login = login
         self.port = port
@@ -64,6 +98,9 @@ class TelnetAdapter(BaseClass):
             output = self._client.expect(possibilities, timeout=self.timeout)
             if output[0] == 1:
                 self._client.write(self.login + NEWLINE)
+                if self.password is not None:
+                    output = self._client.read_until("Password: ", timeout=self.timeout)
+                    self._client.write(self.password + NEWLINE)
         return self._client
 
     def exec_command(self, command, timeout=10):
@@ -258,6 +295,7 @@ class TelnetConnection(NonLocalConnection):
                                          login=self.username, port=self.port,
                                          timeout=self.timeout,
                                          end_of_line=self.end_of_line,
+                                         password=self.password,
                                          prompt=self.prompt)
             if self.mangle_prompt:
                 changer = changeprompt.ChangePrompt(adapter=self._client)
@@ -443,15 +481,29 @@ class TestTelnetConnectionBuilder(unittest.TestCase):
     pass
 
 
-#if __name__ == "__main__":
+if __name__ == "__main__":
+    import time
+    import sys
 #    import curses.ascii
 #    arguments = "-l"
-#    sc = TelnetConnection("192.168.10.172")
+    sc = TelnetConnection(hostname="10.10.10.21",
+                          username='root',
+                          password='5up')
 #    sc.client.writeline(curses.ascii.crtl("c"))
-#    print "Testing 'ls -l'"
-#    output = sc.ls(arguments='-l')
+    output = sc.iwconfig('ath0')
+    time.sleep(1)
+    for x in output.output:
+        sys.stdout.write(x)
+
+    output, error = sc.ifconfig('ath0')
+    for line in output:
+        sys.stdout.write(line)
+
+#    output = sc.iwconfig('ath0')
+#
 #    for x in output.output:
 #        print x
+        
 #
 #    from time import sleep
 #    sleep(0.1)
