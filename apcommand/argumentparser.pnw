@@ -85,11 +85,24 @@ class Arguments(object):
         """
         Add the command-line arguments to the parser
         """
+        # debugging
         self.parser.add_argument("--pudb",
+                                 action='store_true',
                                  help="Run the `pudb` debugger (default=%(default)s).",
                                  default=False)
         self.parser.add_argument("--pdb",
+                                 action='store_true',
                                  help="Run the `pdb` debugger (default=%(default)s).",
+                                 default=False)
+        # logging
+        self.parser.add_argument('-s', '--silent',
+                                 action='store_true',
+                                 help="If True only emit error messages (default=%(default)s)",
+                                 default=False)
+        
+        self.parser.add_argument('-d', '--debug',
+                                 action='store_true',
+                                 help='If True emit debug messages (default=%(default)s)',
                                  default=False)
         return
 

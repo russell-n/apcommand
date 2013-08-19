@@ -1,0 +1,149 @@
+Log Setter
+==========
+
+This is a module to set the logging level. 
+
+
+ * Instead of building a class the whole module is used to access the variables and functions within it.
+
+ * By default this module uses the package name with `.log` appended to it as the name of the log-file name.
+
+.. note:: To make it portable this module uses introspection to get the name of the package. This means that it has to be at the top-level of the package so that modules in sub-folders can use it.
+
+.. uml::
+
+   log_setter o-- os
+   log_setter o-- logging
+   log_setter : set_logger(args)
+   log_setter : cleanup()
+
+API
+---
+
+.. currentmodule:: arachne.log_setter
+
+.. autosummary::
+   :toctree: api
+
+   set_logger
+   cleanup
+
+<<name="imports", echo=False>>=
+# Python Libraries
+import logging
+import logging.handlers
+import os
+@
+
+<<name="contstants", echo=False>>=
+logger = logging.getLogger(__package__)
+SMALL_TIMESTAMP = "%H:%M:%S"
+SCREEN_FORMAT = "%(levelname)s: %(name)s.%(funcName)s, Line: %(lineno)d [%(asctime)s] -- %(message)s"
+SCREEN_FORMAT_QUIET = "%(levelname)s: [%(asctime)s] -- %(message)s"
+DATA_FRIENDLY_FORMAT = "%(levelname)s,%(asctime)s,%(message)s"
+LOG_FORMAT = "%(levelname)s,%(module)s,%(threadName)s,%(funcName)s,Line: %(lineno)d,%(asctime)s,%(message)s" 
+LOG_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
+
+GIGABYTE = 1073741824
+BACKUP_LOGS = 5
+
+LOGNAME = "{0}.log".format(__package__)
+@
+
+Cleanup
+-------
+
+Since the log-filename is set in this module a `cleanup` function is put here to be accessible outside of the main flow of the system (to allow it to be called even in the event of a crash).
+
+ * A sub-directory is created (default is "last_log")
+ * The log is moved to the sub-directory
+
+This function was implemented so the log does not continue to grow even as the code is re-run, but there is at least one copy of the log backed-up.
+
+Example use::
+
+   log_setter.cleanup("output_directory_name")
+
+<<name="cleanup", echo=False>>=
+def cleanup(log_directory="last_log", log_name=LOGNAME):
+    """
+    Saves the last log to log-directory
+
+    :param:
+
+     - `log_directory`: sub-directory to save old file to
+     - `log_name`: the name of the log-file (default is log_setter.LOGNAME)
+
+    :postconditions:
+
+     - `log_directory` is a sub-directory of the current directory (if log exists)
+     - log-file is moved to the log-directory (if log existed)
+    """
+    if not os.path.isfile(log_name):
+        return
+    if not os.path.isdir(log_directory):
+        os.makedirs(log_directory)
+    os.rename(log_name, os.path.join(log_directory, log_name))
+    return
+@
+
+Setting the Logger
+------------------
+
+This is the main function to use. It is intended to be used by the ArgumentParser to create sub-commands so it expects a namespace with command-line arguments as attributes. The logging-level is set according to the following:
+
+
+.. csv-table:: Setting the Log-Level
+   :header: debug,silent,LogLevel
+
+   False,False,Info
+   False,True,Error
+   True,False,Debug
+   True,True,Debug
+
+
+Example Use::
+
+   log_setter(args)
+
+   
+<<name='set_logger', echo=False>>=
+def set_logger(args):
+    """
+    Creates a logger and sets the level based on args.
+
+    :param:
+
+     - `args`: args with debug and silent attributes
+    """
+    cleanup()
+    stderr = logging.StreamHandler()
+    if args.debug:
+        screen_format = SCREEN_FORMAT
+    else:
+        screen_format = SCREEN_FORMAT_QUIET
+        
+    screen_format = logging.Formatter(screen_format, datefmt=SMALL_TIMESTAMP)
+    stderr.setFormatter(screen_format)
+
+    log_file = logging.handlers.RotatingFileHandler(LOGNAME,
+                                           maxBytes=GIGABYTE, backupCount=BACKUP_LOGS)
+    file_format = logging.Formatter(LOG_FORMAT, datefmt=LOG_TIMESTAMP)
+    log_file.setFormatter(file_format)
+    
+    logger.setLevel(logging.DEBUG)
+    log_file.setLevel(logging.DEBUG)
+
+    if args.debug:
+        stderr.setLevel(logging.DEBUG)
+    elif args.silent:
+        stderr.setLevel(logging.ERROR)
+    else:
+        stderr.setLevel(logging.INFO)
+
+    logger.addHandler(stderr)
+    logger.addHandler(log_file)
+    
+
+    return 
+@

@@ -17,6 +17,7 @@ In the first case the user brings the Access Point up. For the default case (|at
 <<name='imports', echo=False>>=
 # this package
 from argumentparser import Arguments
+from log_setter import set_logger
 @
 <<name="main", echo=False>>=
 def main():
