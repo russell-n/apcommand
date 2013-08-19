@@ -65,6 +65,7 @@ class Arguments(object):
         """
         if self._arguments is None:
             self.add_arguments()
+            self.add_subparsers()
             self._arguments = self.parser.parse_args()
         return self._arguments
 
