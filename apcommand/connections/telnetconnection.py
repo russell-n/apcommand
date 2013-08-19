@@ -3,6 +3,7 @@
 from StringIO import StringIO
 import os.path
 import telnetlib
+import time
 
 # arachne libraries
 from apcommand.baseclass import BaseClass
@@ -238,7 +239,7 @@ class TelnetConnection(NonLocalConnection):
 
     """
     def __init__(self, port=None, prompt="#", end_of_line='\r\n',
-                 mangle_prompt=True,
+                 mangle_prompt=True, login_wait=1,
                  *args, **kwargs):
         """
         TelnetConnection constructor
@@ -252,6 +253,7 @@ class TelnetConnection(NonLocalConnection):
          - `timeout`: The readline timeout
          - `end_of_line`: The string indicating the end of a line.
          - `mangle_prompt`: If True, change the prompt
+         - `login_wait`: time to wait after logging in
         """
         super(TelnetConnection, self).__init__(*args, **kwargs)
         self._port = port
@@ -259,6 +261,7 @@ class TelnetConnection(NonLocalConnection):
         self.prompt = prompt
         self.end_of_line = end_of_line
         self.mangle_prompt = mangle_prompt
+        self.login_wait = login_wait
         return
 
     @property
@@ -300,6 +303,8 @@ class TelnetConnection(NonLocalConnection):
             if self.mangle_prompt:
                 changer = changeprompt.ChangePrompt(adapter=self._client)
                 self.logger.debug(changer.run())
+            self.logger.debug('Sleeping for {0} seconds to let the login complete'.format(self.login_wait))
+            time.sleep(self.login_wait)
         return self._client
     
     def _main(self, command, arguments="",

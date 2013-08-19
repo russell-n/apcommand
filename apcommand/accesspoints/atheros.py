@@ -46,8 +46,9 @@ class AtherosAR5KAP(BaseClass):
         """
         output, error = self.connection.apup()
         for line in output:
+            line = line.rstrip()
             if len(line):
-                self.logger.debug(line.rstrip())
+                self.logger.debug(line)
         return
 
     def down(self):
@@ -58,8 +59,9 @@ class AtherosAR5KAP(BaseClass):
         """
         output, error = self.connection.apdown()
         for line in output:
+            line = line.rstrip()
             if len(line):
-                self.logger.debug(line.rstrip())
+                self.logger.debug(line)
         return
 
 
