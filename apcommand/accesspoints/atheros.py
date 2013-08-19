@@ -1,6 +1,7 @@
 
 # this package
 from apcommand.baseclass import BaseClass
+from apcommand.connections.telnetconnection import TelnetConnection
 
 
 class AtherosAR5KAP(BaseClass):
@@ -42,7 +43,7 @@ class AtherosAR5KAP(BaseClass):
         output, error = self.connection.apup()
         for line in output:
             if len(line):
-                self.logger.error(line)
+                self.logger.debug(line.rstrip())
         return
 
 
@@ -78,3 +79,4 @@ class TestAR5KAP(unittest.TestCase):
         self.ap.up()
         self.connection.apup.assert_called_with()
         return
+

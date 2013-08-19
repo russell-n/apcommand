@@ -77,7 +77,7 @@ class Arguments(object):
         :return: ArgumentParser subparsers
         """
         if self._subparsers is None:
-            self._subparsers = self.parser.add_supparsers(title="APCommand subcommands",
+            self._subparsers = self.parser.add_subparsers(title="APCommand subcommands",
                                                           description="Available Sub-Commands",
                                                           help="APCommand sub-commands")
         return self._subparsers
@@ -105,6 +105,17 @@ class Arguments(object):
                                  action='store_true',
                                  help='If True emit debug messages (default=%(default)s)',
                                  default=False)
+
+        # connection
+        self.parser.add_argument('--hostname',
+                                 help="The hostname for the AP (leave unset for default).",
+                                 default=None)
+        self.parser.add_argument('--username',
+                                 help='The user-login for the AP (leave unset for default)',
+                                 default=None)
+        self.parser.add_argument('--password',
+                                help='The login password for the AP (Leave unset for default)',
+                                default=None)
         return
 
     def add_subparsers(self):

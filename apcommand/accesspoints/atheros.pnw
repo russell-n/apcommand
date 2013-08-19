@@ -16,6 +16,7 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
 <<name='imports', echo=False>>=
 # this package
 from apcommand.baseclass import BaseClass
+from apcommand.connections.telnetconnection import TelnetConnection
 @
 <<name='AtherosAR5KAP', echo=False>>=
 class AtherosAR5KAP(BaseClass):
@@ -57,7 +58,7 @@ class AtherosAR5KAP(BaseClass):
         output, error = self.connection.apup()
         for line in output:
             if len(line):
-                self.logger.error(line)
+                self.logger.debug(line.rstrip())
         return
 @
 
@@ -100,6 +101,7 @@ class TestAR5KAP(unittest.TestCase):
         self.ap.up()
         self.connection.apup.assert_called_with()
         return
+
 @
 <%
 for case in (TestAR5KAP,):
