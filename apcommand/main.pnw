@@ -14,12 +14,21 @@ In the first case the user brings the Access Point up. For the default case (|at
 
    apcontrol up
 
+<<name='imports', echo=False>>=
+# this package
+from argumentparser import Arguments
+@
 <<name="main", echo=False>>=
 def main():
     """
     Runs the command-line interface
-    """
-    arguments = parse_args()
+    """    
+    command_line = Arguments()
+    args = command_line.args
+    set_logger(args)
+    if any((arg.pudb, args.pdb)):
+        enable_debugger(args)
+    args.function(args)
     return
 @
 <<name='__main__', echo=False>>=
