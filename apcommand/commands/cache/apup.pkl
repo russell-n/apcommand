@@ -1,0 +1,8 @@
+€]q}q(UcontentqUtAP Up
+=====
+
+This is a helper command to bring an AP up. At this point it is only implemented for the |atheros|.
+
+
+
+qUtypeqUdocqua.

@@ -34,6 +34,7 @@ class Atheros(object):
         Create a serial connection
 
         :postcondition: self.connection is a pyserial connection
+
         :return: True
         """
         self.connection = serial.SerialPort("/dev/ttyUSB1", 115200, 8, "N", 1, 

@@ -34,6 +34,11 @@ extensions = ['sphinx.ext.autosummary',
               'sphinxcontrib.plantuml',
               'sphinx.ext.graphviz']
 
+# add substitutions shared by all documents
+rst_prolog = """
+.. |atheros| replace:: Atheros AR5KAP-0096WPS
+"""
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

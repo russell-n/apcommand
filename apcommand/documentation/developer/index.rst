@@ -7,12 +7,13 @@ Developer Documentation
    Arens' Atheros Code <../../arensatheros>
    The Base Class <../../baseclass>   
 
-Connections:
+Command-Line Interface:
 
 .. toctree::
    :maxdepth: 1
 
-   The Telnet Connection <../../connections/telnetconnection>
+   The arguments <../../argumentparser>
+   The sub-commands <../../subcommands>
 
 Helper Commands:
 
