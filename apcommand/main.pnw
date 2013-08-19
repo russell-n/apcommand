@@ -25,7 +25,7 @@ def main():
     Runs the command-line interface
     """    
     command_line = Arguments()
-    args = command_line.args
+    args = command_line.arguments
     set_logger(args)
     if any((arg.pudb, args.pdb)):
         enable_debugger(args)
