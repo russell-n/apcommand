@@ -29,6 +29,8 @@ class AtherosAR5KAP(BaseClass):
     def connection(self):
         """
         The telnet connection to the AP
+
+        :return: TelnetConnection
         """
         if self._connection is None:
             self._connection = TelnetConnection(hostname=self.hostname,
@@ -39,8 +41,22 @@ class AtherosAR5KAP(BaseClass):
     def up(self):
         """
         Brings the AP up
+
+        :postcondition: `apup` called on the connection
         """
         output, error = self.connection.apup()
+        for line in output:
+            if len(line):
+                self.logger.debug(line.rstrip())
+        return
+
+    def down(self):
+        """
+        Takes the AP down
+
+        :postcondition: `apdown` called on the connection
+        """
+        output, error = self.connection.apdown()
         for line in output:
             if len(line):
                 self.logger.debug(line.rstrip())
@@ -78,5 +94,14 @@ class TestAR5KAP(unittest.TestCase):
         self.connection.apup.return_value = ('', '')
         self.ap.up()
         self.connection.apup.assert_called_with()
+        return
+
+    def test_down(self):
+        """
+        Does the AP controller bring the AP down?
+        """
+        self.connection.apdown.return_value = ('', '')
+        self.ap.down()
+        self.connection.apdown.assert_called_with()
         return
 

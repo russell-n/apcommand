@@ -31,6 +31,8 @@ class SubCommand(BaseClass):
     def up(self, args):
         """
         The AP up sub-command
+
+        :postcondition: ap.up() called
         """
         ap = self.access_point(args)
         try:
@@ -38,6 +40,19 @@ class SubCommand(BaseClass):
         except Exception as error:
             self.logger.error(error)
         return
+
+    def down(self, args):
+        """
+        The AP Down sub-command
+
+        :postcondition: ap.down() called on ap from access_point(args)
+        """
+        ap = self.access_point(args)
+        try:
+            ap.down()
+        except Exception as error:
+            self.logger.error(error)
+        return        
 
 
 # python standard library
@@ -110,3 +125,21 @@ class TestSubCommand(unittest.TestCase):
             ap_instance.up.assert_called_with()
             self.logger.error.assert_called_with(ap_instance.up.side_effect)
         return
+
+    def test_down(self):
+        """
+        Does it have the down-method and will it catch exception?
+        """
+        args = MagicMock()
+        self.assertTrue(hasattr(self.sub_command, 'down'))
+        ap_down = MagicMock()
+        ap_instance = MagicMock()
+        ap_down.AtherosAR5KAP.return_value = ap_instance
+        error_message = "this is an error"
+        ap_instance.down.side_effect = Exception(error_message)
+        with patch('apcommand.accesspoints.atheros', ap_down):
+            self.sub_command.down(args)
+            ap_instance.down.assert_called_with()
+            self.logger.error.assert_called_with(ap_instance.down.side_effect)
+        return
+

@@ -106,7 +106,12 @@ class Arguments(object):
         """
         Add the subparsers to the parser
         """
+        # ap up
         up = self.subparsers.add_parser('up', help="Bring the AP up")
         up.set_defaults(function=self.subcommands.up)
+
+        # ap down
+        down = self.subparsers.add_parser('down', help="Take the AP down")
+        down.set_defaults(function=self.subcommands.down)
         return
 # end class Arguments
