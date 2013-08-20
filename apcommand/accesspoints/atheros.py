@@ -157,6 +157,33 @@ class Atheros24(AtherosAR5KAP):
     
 
 
+class Atheros5GHz(AtherosAR5KAP):
+    """
+    A channel-changer for 5 GHz
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Atheros5GHz constructor
+        """
+        super(Atheros5GHz, self).__init__(*args, **kwargs)
+        return
+
+    def set_channel(self, channel):
+        """
+        method to set the channel on the AP
+
+        :param:
+
+         - `channel`: string or integer in {36,40,...,64}, {100,104,...,140}, {149,153,...,165}
+        """
+        with Configure(connection=self.connection, interface='ath1'):
+            output, error = self.connection.cfg('-a AP_CHMODE_2={0}HT20'.format(channel))
+            self.log_lines(output)
+            output, error = self.connection.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))
+            self.log_lines(output)
+        return   
+
+
 # python standard library
 import unittest
 import random
@@ -460,5 +487,35 @@ class TestAtheros24(unittest.TestCase):
         self.ap.set_channel(channel)
         calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11HT20'),
                                     call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + self.exit_calls
+        self.assertEqual(calls, self.connection.method_calls)
+        return
+
+
+class TestAtheros5GHz(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        self.ap = Atheros5GHz()
+        self.ap._connection = self.connection
+        self.ap._logger = MagicMock()
+        self.enter_calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=1')]
+        self.exit_calls = [call.cfg('-c'), call.apup(),
+                           call.wlanconfig("ath0 destroy")]   
+        return
+    
+    def set_context_connection(self):
+        self.connection.apdown.return_value = EMPTY_TUPLE
+        self.connection.cfg.return_value = EMPTY_TUPLE
+        self.connection.apup.return_value = EMPTY_TUPLE
+        return
+
+    def test_set_channel(self):
+        """
+        Does the ap configure set the channel correctly?
+        """
+        channel = random.randint(36, 64)
+        self.set_context_connection()
+        self.ap.set_channel(channel)
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2={0}HT20'.format(channel)),
+                                    call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return

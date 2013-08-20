@@ -32,6 +32,25 @@ The channel setting commands are slightly different for the 2.4 GHz and 5GHz rad
 
 
 
+Atheros5
+--------
+
+This is the countepart to the `Atheros24` for 5 Ghz.
+
+.. uml::
+
+   Atheros5GHz -|> AtherosAR5KAP
+   Atheros5GHz : set_channel(channel)
+
+.. autosummary::
+   :toctree: api
+
+   Atheros5GHz
+
+
+
+
+
 .. autosummary::
    :toctree: api
 
@@ -69,6 +88,7 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    TestConfigure.test_enter
    TestConfigure.test_exit
    TestConfigure.test_other_interface
+   TestConfigure.test_radio_id
 
 
 
@@ -77,6 +97,7 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
 
    TestAtheros24.test_set_channel
    
+
 
 
 
