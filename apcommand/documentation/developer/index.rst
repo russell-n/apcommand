@@ -1,11 +1,21 @@
 Developer Documentation
 =======================
 
+Access Points:
+
+.. toctree::
+   :maxdepth: 1
+
+   Atheros <../../accesspoints/atheros>
+
+Miscellany:
+
 .. toctree::
    :maxdepth: 1
 
    Arens' Atheros Code <../../arensatheros>
-   The Base Class <../../baseclass>   
+   The Base Class <../../baseclass>
+   The Log Setter <../../log_setter>
 
 Command-Line Interface:
 
@@ -14,6 +24,7 @@ Command-Line Interface:
 
    The arguments <../../argumentparser>
    The sub-commands <../../subcommands>
+   The Main Module <../../main>
 
 Helper Commands:
 
