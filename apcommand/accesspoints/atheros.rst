@@ -15,6 +15,23 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
 
 
 
+Atheros24
+---------
+
+The channel setting commands are slightly different for the 2.4 GHz and 5GHz radios so to make it a little simpler they are separated out.
+
+.. uml::
+
+   Atheros24 -|> AtherosAR5KAP
+   Atheros24 : set_channel(channel)
+
+.. autosummary::
+   :toctree: api
+
+   Atheros24
+
+
+
 .. autosummary::
    :toctree: api
 
@@ -53,6 +70,13 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    TestConfigure.test_exit
    TestConfigure.test_other_interface
 
+
+
+.. autosummary::
+   :toctree: api
+
+   TestAtheros24.test_set_channel
+   
 
 
 

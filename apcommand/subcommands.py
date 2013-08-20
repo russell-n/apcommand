@@ -44,7 +44,14 @@ class SubCommand(BaseClass):
         apvalues = (getattr(args, arg) for arg in apargs if getattr(args, arg) is not None)
         apkeys = (arg for arg in apargs if getattr(args, arg) is not None)
         apkwargs = dict(zip(apkeys, apvalues))
-        ap = apcommand.accesspoints.atheros.AtherosAR5KAP(**apkwargs)
+
+        if hasattr(args, 'channel'):
+            if args.channel in (str(i) for i in range(1,12)):
+                ap = apcommand.accesspoints.atheros.Atheros24(**apkwargs)
+            else:
+                raise ArgumentError("unknown channel: {0}".format(args.channel))
+        else:
+            ap = apcommand.accesspoints.atheros.AtherosAR5KAP(**apkwargs)
         return ap
 
     @try_except
@@ -142,6 +149,7 @@ class TestSubCommand(unittest.TestCase):
         Does the correct set of arguments get passed to the ap
         """
         args = MagicMock()
+        del args.channel
         args.hostname = 'mike'
         args.username = 'bob'
         args.password = 'me'
@@ -183,6 +191,7 @@ class TestSubCommand(unittest.TestCase):
         Does it have the up-method and will it catch exception?
         """
         args = MagicMock()
+        del args.channel
         self.assertTrue(hasattr(self.sub_command, 'up'))
         ap_up = MagicMock()
         ap_instance = MagicMock()
@@ -200,6 +209,7 @@ class TestSubCommand(unittest.TestCase):
         Does it have the down-method and will it catch exception?
         """
         args = MagicMock()
+        del args.channel
         self.assertTrue(hasattr(self.sub_command, 'down'))
         ap_down = MagicMock()
         ap_instance = MagicMock()
@@ -217,6 +227,8 @@ class TestSubCommand(unittest.TestCase):
         """
         self.assertTrue(hasattr(self.sub_command, 'destroy'))
         args = MagicMock()
+        # args.channel has to be deleted or hasattr will return True
+        del args.channel
         args.interface = 'ath0'
         ap_destroy = MagicMock()
         ap_instance = MagicMock()
@@ -234,6 +246,7 @@ class TestSubCommand(unittest.TestCase):
         """
         self.assertTrue(hasattr(self.sub_command, 'status'))
         args = MagicMock()
+        del args.channel
         args.interface = 'ath0'
         ap_status = MagicMock()
         ap_instance = MagicMock()
@@ -243,4 +256,20 @@ class TestSubCommand(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros', ap_status):
             self.sub_command.status(args)
             ap_instance.status.assert_called_with('ath0')
+        return
+
+    def test_channel(self):
+        """
+        Does the set_channel method get called correctly?
+        """
+        args = MagicMock()
+        args.channel = '1'
+        ap_channel = MagicMock()
+        ap_instance = MagicMock()
+        ap_channel.Atheros24.return_value = ap_instance
+        error_message = 'channel setting error'
+        ap_instance.set_channel.side_effect = Exception(error_message)
+        with patch('apcommand.accesspoints.atheros', ap_channel):
+            self.sub_command.channel(args)
+            ap_instance.set_channel.assert_called_with(channel=args.channel)
         return

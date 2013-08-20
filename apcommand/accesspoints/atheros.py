@@ -20,6 +20,7 @@ class AtherosAR5KAP(BaseClass):
          - `password`: the password for the AP command-line interface
         """
         super(AtherosAR5KAP, self).__init__()
+        self._logger = None
         self.hostname = hostname
         self.username = username
         self.password = password
@@ -117,6 +118,8 @@ class AtherosAR5KAP(BaseClass):
         """
         Clears the AP configuration back to the factory defaults
 
+        *the interface just tears down the other interface - both will still be reset*
+
         :param:
 
          - `interface`: the name of the VAP (etc. ath0)
@@ -124,6 +127,36 @@ class AtherosAR5KAP(BaseClass):
         with Configure(connection=self.connection, interface=interface):
             output, error = self.connection.cfg('-x')
         return
+
+
+class Atheros24(AtherosAR5KAP):
+    """
+    A channel-changer for 2.4 GHz
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Atheros24 constructor
+        """
+        super(Atheros24, self).__init__(*args, **kwargs)
+        return
+
+    def set_channel(self, channel):
+        """
+        method to set the channel on the AP
+
+        :param:
+
+         - `channel`: string or integer in {1,..., 11}
+        """
+        with Configure(connection=self.connection, interface='ath0'):
+            output, error = self.connection.cfg('-a AP_CHMODE={0}HT20'.format(channel))
+            self.log_lines(output)
+            output, error = self.connection.cfg('-a AP_PRIMARY_CH={0}'.format(channel))
+            self.log_lines(output)
+            output, error = self.connection.cfg('-a AP_RADIO_ID=0')
+            self.log_lines(output)
+        return
+    
 
 
 # python standard library
@@ -394,4 +427,35 @@ class TestConfigure(unittest.TestCase):
         self.set_context_connection()
         with Configure(self.connection, 'eth0'):
             pass
+        return
+
+
+class TestAtheros24(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        self.ap = Atheros24()
+        self.ap._connection = self.connection
+        self.ap._logger = MagicMock()
+        self.enter_calls = [call.apdown()]
+        self.exit_calls = [call.cfg('-c'), call.apup(),
+                           call.wlanconfig("ath1 destroy")]   
+        return
+    
+    def set_context_connection(self):
+        self.connection.apdown.return_value = EMPTY_TUPLE
+        self.connection.cfg.return_value = EMPTY_TUPLE
+        self.connection.apup.return_value = EMPTY_TUPLE
+        return
+
+    def test_set_channel(self):
+        """
+        Does the ap configure set the channel correctly?
+        """
+        channel = 11
+        self.set_context_connection()
+        self.ap.set_channel(channel)
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11HT20'),
+                                    call.cfg('-a AP_PRIMARY_CH={0}'.format(channel)),
+                                    call.cfg('-a AP_RADIO_ID=0')] + self.exit_calls
+        self.assertEqual(calls, self.connection.method_calls)
         return
