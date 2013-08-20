@@ -153,14 +153,13 @@ class Atheros24(AtherosAR5KAP):
             self.log_lines(output)
             output, error = self.connection.cfg('-a AP_PRIMARY_CH={0}'.format(channel))
             self.log_lines(output)
-            output, error = self.connection.cfg('-a AP_RADIO_ID=0')
-            self.log_lines(output)
         return
     
 
 
 # python standard library
 import unittest
+import random
 # third party
 from mock import MagicMock, call
 from nose.tools import raises
@@ -175,7 +174,7 @@ class TestAR5KAP(unittest.TestCase):
         self.ap = AtherosAR5KAP()
         self.ap._connection = self.connection
         self.ap._logger = self.logger
-        self.enter_calls = [call.apdown()]
+        self.enter_calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=0')]
         self.exit_calls = [call.cfg('-c'), call.apup(),
                            call.wlanconfig("ath1 destroy")]
 
@@ -281,10 +280,20 @@ class Configure(BaseClass):
         super(Configure, self).__init__()
         self.connection = connection
         self.interface = interface
+        self._radio_id = None
         self._other_interface = None
         self.logger.debug(str(connection))
         self.logger.debug("interface: {0}".format(interface))
         return
+
+    @property
+    def radio_id(self):
+        """
+        the enumeration of the interface
+        """
+        if self._radio_id is None:
+            self._radio_id = self.interface.strip().strip('ath')
+        return self._radio_id
 
     @property
     def other_interface(self):
@@ -307,6 +316,7 @@ class Configure(BaseClass):
         """
         output, error = self.connection.apdown()
         self.log_lines(output)
+        output, error = self.connection.cfg('-a AP_RADIO_ID={0}'.format(self.radio_id))
         return self.connection
 
     def __exit__(self, type, value, traceback):
@@ -383,7 +393,7 @@ class TestConfigure(unittest.TestCase):
         """
         Does the context manager take down the ap?
         """
-        self.connection.apdown.return_value = ('', '')
+        self.set_context_connection()
         with Configure(self.connection, 'ath0') as c:
             pass
         self.connection.apdown.assert_called_with()
@@ -393,13 +403,11 @@ class TestConfigure(unittest.TestCase):
         """
         Does the context manager commit the configuration and bring the AP up?
         """
-        self.connection.apdown.return_value = ('', '')
-        self.connection.cfg.return_value = ('','')
-        self.connection.apup.return_value = ('','')
+        self.set_context_connection()
         
         with Configure(self.connection, 'ath0') as c:
             self.assertEqual(self.connection, c)
-        calls = [call.apdown(), call.cfg('-c'), call.apup(),
+        calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=0'), call.cfg('-c'), call.apup(),
                  call.wlanconfig("ath1 destroy")]
         self.assertEqual(calls, self.connection.method_calls)
         return
@@ -408,11 +416,7 @@ class TestConfigure(unittest.TestCase):
         """
         Does the correct interface get called
         """
-        empty_tuple = ('', '')
-        self.connection.apdown.return_value = empty_tuple
-        self.connection.cfg.return_value = empty_tuple
-        self.connection.apup.return_value = empty_tuple
-
+        self.set_context_connection()
         with Configure(self.connection, 'ath1'):
             pass
 
@@ -436,7 +440,7 @@ class TestAtheros24(unittest.TestCase):
         self.ap = Atheros24()
         self.ap._connection = self.connection
         self.ap._logger = MagicMock()
-        self.enter_calls = [call.apdown()]
+        self.enter_calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=0')]
         self.exit_calls = [call.cfg('-c'), call.apup(),
                            call.wlanconfig("ath1 destroy")]   
         return
@@ -455,7 +459,6 @@ class TestAtheros24(unittest.TestCase):
         self.set_context_connection()
         self.ap.set_channel(channel)
         calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11HT20'),
-                                    call.cfg('-a AP_PRIMARY_CH={0}'.format(channel)),
-                                    call.cfg('-a AP_RADIO_ID=0')] + self.exit_calls
+                                    call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return
