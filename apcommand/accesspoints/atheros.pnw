@@ -539,7 +539,7 @@ class TestAtheros24(unittest.TestCase):
         return
 @
 <%
-for case in (TestAR5KAP, TestConfigure, TestAtheros24):
+for case in (TestAR5KAP, TestConfigure, TestAtheros24, TestAtheros5):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
 %>
