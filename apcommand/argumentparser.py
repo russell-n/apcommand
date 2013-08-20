@@ -127,5 +127,12 @@ class Arguments(object):
         status.add_argument('interface',
                             help="the name of the interface to query (e.g. ath0)")
         status.set_defaults(function=self.subcommands.status)
+
+        # reset the AP
+        reset = self.subparsers.add_parser('reset',
+                                           help='Reset to factory defaults')
+        reset.add_argument('interface',
+                           help='name of the interface to leave up')
+        reset.set_defaults(function=self.subcommands.reset)
         return
 # end class Arguments

@@ -83,9 +83,23 @@ class SubCommand(BaseClass):
         try:
             ap.status(args.interface)
         except Exception as error:
-            self.logger.error(error)
+            self.logger.error(error)            
         return
-            
+
+    def reset(self, args):
+        """
+        Calls the access point's reset method
+
+        :param:
+
+         - `args`: namespace with `interface` attribute
+        """
+        ap = self.access_point(args)
+        try:
+            ap.reset(args.interface)
+        except Exception as error:
+            self.logger.error(error)
+        return            
 
 
 # python standard library
