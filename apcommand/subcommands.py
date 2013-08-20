@@ -14,7 +14,7 @@ def try_except(func):
             import traceback
             log = BaseClass()
             log.logger.error(error)
-            log.logger.error(traceback.format_exc())
+            log.logger.debug(traceback.format_exc())
     return wrapped
 
 
