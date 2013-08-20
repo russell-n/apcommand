@@ -113,5 +113,13 @@ class Arguments(object):
         # ap down
         down = self.subparsers.add_parser('down', help="Take the AP down")
         down.set_defaults(function=self.subcommands.down)
+
+        # vap destroy
+        destroy = self.subparsers.add_parser('destroy',
+                                             help="Destroy a specific virtual AP")
+        destroy.add_argument('interface',
+                             help='The VAP name (e.g. ath0)',
+                             nargs=1)
+        destroy.set_defaults(function=self.subcommands.destroy)
         return
 # end class Arguments
