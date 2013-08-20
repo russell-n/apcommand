@@ -71,6 +71,22 @@ class SubCommand(BaseClass):
             self.logger.error(error)
         return
 
+    def status(self, args):
+        """
+        Calls the access-point control's status method
+
+        :param:
+
+         - `args`: namespace with 'interface' attribute
+        """
+        ap = self.access_point(args)
+        try:
+            ap.status(args.interface)
+        except Exception as error:
+            self.logger.error(error)
+        return
+            
+
 
 # python standard library
 import unittest
@@ -176,6 +192,22 @@ class TestSubCommand(unittest.TestCase):
             self.sub_command.destroy(args)
             ap_instance.destroy.assert_called_with('ath0')
             self.logger.error.assert_called_with(ap_instance.destroy.side_effect)
-
         return
 
+    def test_status(self):
+        """
+        Does the sub-command call the ap's status method?
+        """
+        self.assertTrue(hasattr(self.sub_command, 'status'))
+        args = MagicMock()
+        args.interface = 'ath0'
+        ap_status = MagicMock()
+        ap_instance = MagicMock()
+        ap_status.AtherosAR5KAP.return_value = ap_instance
+        error_message = "this is an error"
+        ap_instance.status.side_effect = Exception(error_message)
+        with patch('apcommand.accesspoints.atheros', ap_status):
+            self.sub_command.status(args)
+            ap_instance.status.assert_called_with('ath0')
+            self.logger.error.assert_called_with(ap_instance.status.side_effect)
+        return

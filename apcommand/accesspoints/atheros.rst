@@ -22,6 +22,7 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    TestAR5KAP.test_up
    TestAR5KAP.test_down
    TestAR5KAP.test_destroy
+   TestAR5KAP.test_status
    
 
 

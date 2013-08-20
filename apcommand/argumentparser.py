@@ -120,5 +120,12 @@ class Arguments(object):
         destroy.add_argument('interface',
                              help='The VAP name (e.g. ath0)')
         destroy.set_defaults(function=self.subcommands.destroy)
+
+        # query the interface status
+        status = self.subparsers.add_parser('status',
+                                            help='Get some information for an interface')
+        status.add_argument('interface',
+                            help="the name of the interface to query (e.g. ath0)")
+        status.set_defaults(function=self.subcommands.status)
         return
 # end class Arguments

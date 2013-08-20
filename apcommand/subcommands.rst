@@ -39,6 +39,7 @@ The sub-command is largely ignorant of what the objects it holds does so this is
    TestSubCommand.test_destroy
    TestSubCommand.test_constructor
    TestSubCommand.test_args
+   TestSubCommand.test_status
 
 
 

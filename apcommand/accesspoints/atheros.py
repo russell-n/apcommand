@@ -39,7 +39,7 @@ class AtherosAR5KAP(BaseClass):
                                                 password=self.password)
         return self._connection
 
-    def log_lines(self, output, error_substring=None):
+    def log_lines(self, output, error_substring=None, level='debug'):
         """
         Send lines from output to debug log
 
@@ -51,12 +51,16 @@ class AtherosAR5KAP(BaseClass):
         :postcondition: lines from output sent to debug logger
         :raises: CommandError if error_substring found in output
         """
+        if level == 'info':
+            logger = self.logger.info
+        else:
+            logger =  self.logger.debug
         for line in output:
             line = line.rstrip()
             if len(line):
                 if error_substring is not None and error_substring in line:
                     raise CommandError(line)
-                self.logger.debug(line)
+                logger(line)
         return
         
     def up(self):
@@ -92,6 +96,20 @@ class AtherosAR5KAP(BaseClass):
         output, error = self.connection.wlanconfig("{0} destroy".format(interface))
         self.log_lines(output, error_substring='No such device')
         return
+
+    def status(self, interface):
+        """
+        Check iwconfig and ifconfig for the interface
+
+        :param:
+
+         - `interface`: name of network interface (e.g. ath0)
+        """
+        output, error = self.connection.iwconfig(interface)
+        self.log_lines(output, level='info', error_substring='No such device')
+        output, error = self.connection.ifconfig("{0} | grep 'inet addr'".format(interface))
+        self.log_lines(output, level='info', error_substring='Device not found')
+        return   
 
 
 # python standard library
@@ -147,6 +165,29 @@ class TestAR5KAP(unittest.TestCase):
         # vap not up
         self.connection.wlanconfig.return_value = (['wlanconfig: ioctl: No such device\n'], '')
         self.assertRaises(CommandError, self.ap.destroy, ['ath0'])
+        return
+
+    def test_status(self):
+        """
+        Does the controller query iwconfig and ifconfig?
+        """
+        self.connection.iwconfig.return_value = ('', '')
+        self.connection.ifconfig.return_value = ('', '')
+        self.ap.status('ath0')
+        self.connection.iwconfig.assert_called_with("ath0")
+        self.connection.ifconfig.assert_called_with("ath0 | grep 'inet addr'")
+
+        self.connection.iwconfig.return_value = (['ath0: No such device\n'], '')
+        self.assertRaises(CommandError, self.ap.status, ['ath0'])
+        return
+
+    def test_ifconfig_fail(self):
+        """
+        Does a missing interface raise a Command Error?
+        """
+        self.connection.iwconfig.return_value = ('','')
+        self.connection.ifconfig.return_value = (['ifconfig: ath0: error fetching interface information: Device not found\n'], '')
+        self.assertRaises(CommandError, self.ap.status, ['ath0'])
         return
         
 
