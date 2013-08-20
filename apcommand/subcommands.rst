@@ -3,6 +3,18 @@ The Sub-Commands
 .. currentmodule:: apcommand.subcommands
 This module holds the sub-commands for the Arguments (methods that it will call).
 
+The try-except Decorator
+------------------------
+
+Since this is a user-level class (it is part of the command-line interface), exceptions are caught and logged, rather than allowing the interpreter to dump the stack-trace (it still logs and displays the stack-trace). To make this simpler a decorator is used to catch `Exception`.
+
+.. autosummary::
+   :toctree: api
+
+   try_except
+   
+
+
 Class SubCommand
 ----------------
 
@@ -22,7 +34,8 @@ Collaborators:
    SubCommand -|> BaseClass
    SubCommand.up
    SubCommand.down
-   SubCommand.destroy
+   SubCommand.destroy   
+
 
 
 

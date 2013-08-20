@@ -150,6 +150,12 @@ class Arguments(object):
         reset.add_argument('interface',
                            help='name of the interface to leave up')
         reset.set_defaults(function=self.subcommands.reset)
+
+        # change the channel
+        channel = self.subparsers.add_parser('channel',
+                                             help='Change the AP channel')
+        channel.add_argument('channel', help='Channel to set')
+        channel.set_defaults(function=self.subcommands.channel)
         return
 # end class Arguments
 @

@@ -1,4 +1,23 @@
 
+def try_except(func):
+    """
+    A decorator method to catch Exceptions
+
+    :param:
+
+     - `func`: A function to call
+    """
+    def wrapped(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as error:
+            import traceback
+            log = BaseClass()
+            log.logger.error(error)
+            log.logger.error(traceback.format_exc)
+    return wrapped
+
+
 # this package
 from apcommand.baseclass import BaseClass
 import apcommand.accesspoints.atheros 
@@ -28,6 +47,7 @@ class SubCommand(BaseClass):
         ap = apcommand.accesspoints.atheros.AtherosAR5KAP(**apkwargs)
         return ap
 
+    @try_except
     def up(self, args):
         """
         The AP up sub-command
@@ -35,12 +55,10 @@ class SubCommand(BaseClass):
         :postcondition: ap.up() called
         """
         ap = self.access_point(args)
-        try:
-            ap.up()
-        except Exception as error:
-            self.logger.error(error)
+        ap.up()
         return
 
+    @try_except
     def down(self, args):
         """
         The AP Down sub-command
@@ -48,12 +66,10 @@ class SubCommand(BaseClass):
         :postcondition: ap.down() called on ap from access_point(args)
         """
         ap = self.access_point(args)
-        try:
-            ap.down()
-        except Exception as error:
-            self.logger.error(error)
+        ap.down()
         return
-
+    
+    @try_except
     def destroy(self, args):
         """
         Destroys an interface
@@ -65,12 +81,10 @@ class SubCommand(BaseClass):
         :postcondition: ap.destroy(interface) is called
         """
         ap = self.access_point(args)
-        try:
-            ap.destroy(args.interface)
-        except Exception as error:
-            self.logger.error(error)
+        ap.destroy(args.interface)
         return
 
+    @try_except
     def status(self, args):
         """
         Calls the access-point control's status method
@@ -80,12 +94,10 @@ class SubCommand(BaseClass):
          - `args`: namespace with 'interface' attribute
         """
         ap = self.access_point(args)
-        try:
-            ap.status(args.interface)
-        except Exception as error:
-            self.logger.error(error)            
+        ap.status(args.interface)
         return
 
+    @try_except
     def reset(self, args):
         """
         Calls the access point's reset method
@@ -95,11 +107,21 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` attribute
         """
         ap = self.access_point(args)
-        try:
-            ap.reset(args.interface)
-        except Exception as error:
-            self.logger.error(error)
-        return            
+        ap.reset(args.interface)
+        return
+
+    @try_except
+    def channel(self, args):
+        """
+        Calls the access point's set_channel method
+
+        :param:
+
+         - `args`: namespace with `channel` attribute
+        """
+        ap = self.access_point(args)
+        ap.set_channel(channel=args.channel)
+        return
 
 
 # python standard library
@@ -167,10 +189,10 @@ class TestSubCommand(unittest.TestCase):
         ap_up.AtherosAR5KAP.return_value = ap_instance
         error_message = "this is an error"
         ap_instance.up.side_effect = Exception(error_message)
+        base = MagicMock()
         with patch('apcommand.accesspoints.atheros', ap_up):
             self.sub_command.up(args)
             ap_instance.up.assert_called_with()
-            self.logger.error.assert_called_with(ap_instance.up.side_effect)
         return
 
     def test_down(self):
@@ -187,7 +209,6 @@ class TestSubCommand(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros', ap_down):
             self.sub_command.down(args)
             ap_instance.down.assert_called_with()
-            self.logger.error.assert_called_with(ap_instance.down.side_effect)
         return
 
     def test_destroy(self):
@@ -205,7 +226,6 @@ class TestSubCommand(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros', ap_destroy):
             self.sub_command.destroy(args)
             ap_instance.destroy.assert_called_with('ath0')
-            self.logger.error.assert_called_with(ap_instance.destroy.side_effect)
         return
 
     def test_status(self):
@@ -223,5 +243,4 @@ class TestSubCommand(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros', ap_status):
             self.sub_command.status(args)
             ap_instance.status.assert_called_with('ath0')
-            self.logger.error.assert_called_with(ap_instance.status.side_effect)
         return
