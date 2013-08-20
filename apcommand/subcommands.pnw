@@ -21,6 +21,8 @@ Collaborators:
 
    SubCommand -|> BaseClass
    SubCommand.up
+   SubCommand.down
+   SubCommand.destroy
 
 <<name='imports', echo=False>>=
 # this package
@@ -76,7 +78,24 @@ class SubCommand(BaseClass):
             ap.down()
         except Exception as error:
             self.logger.error(error)
-        return        
+        return
+
+    def destroy(self, args):
+        """
+        Destroys an interface
+
+        :param:
+
+         - `args`: namespace with `interface` attribute
+        
+        :postcondition: ap.destroy(interface) is called
+        """
+        ap = self.access_point(args)
+        try:
+            ap.destroy(args.interface)
+        except Exception as error:
+            self.logger.error(error)
+        return
 @
 
 Testing The SubCommand
@@ -89,6 +108,7 @@ The sub-command is largely ignorant of what the objects it holds does so this is
 
    TestSubCommand.test_up
    TestSubCommand.test_down
+   TestSubCommand.test_destroy
    TestSubCommand.test_constructor
    TestSubCommand.test_args
 
@@ -179,6 +199,25 @@ class TestSubCommand(unittest.TestCase):
             self.sub_command.down(args)
             ap_instance.down.assert_called_with()
             self.logger.error.assert_called_with(ap_instance.down.side_effect)
+        return
+
+    def test_destroy(self):
+        """
+        Does it have a method to destroy a (virtual) interface?
+        """
+        self.assertTrue(hasattr(self.sub_command, 'destroy'))
+        args = MagicMock()
+        args.interface = 'ath0'
+        ap_destroy = MagicMock()
+        ap_instance = MagicMock()
+        ap_destroy.AtherosAR5KAP.return_value = ap_instance
+        error_message = "this is an error"
+        ap_instance.destroy.side_effect = Exception(error_message)
+        with patch('apcommand.accesspoints.atheros', ap_destroy):
+            self.sub_command.destroy(args)
+            ap_instance.destroy.assert_called_with('ath0')
+            self.logger.error.assert_called_with(ap_instance.destroy.side_effect)
+
         return
 
 @

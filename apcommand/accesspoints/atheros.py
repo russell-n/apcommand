@@ -2,6 +2,7 @@
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
+from apcommand.commons.errors import CommandError
 
 
 class AtherosAR5KAP(BaseClass):
@@ -38,6 +39,26 @@ class AtherosAR5KAP(BaseClass):
                                                 password=self.password)
         return self._connection
 
+    def log_lines(self, output, error_substring=None):
+        """
+        Send lines from output to debug log
+
+        :param:
+
+         - `output`: iterable collection of strings
+         - `error_substring`: string that raises CommandError if matches
+
+        :postcondition: lines from output sent to debug logger
+        :raises: CommandError if error_substring found in output
+        """
+        for line in output:
+            line = line.rstrip()
+            if len(line):
+                if error_substring is not None and error_substring in line:
+                    raise CommandError(line)
+                self.logger.debug(line)
+        return
+        
     def up(self):
         """
         Brings the AP up
@@ -45,10 +66,7 @@ class AtherosAR5KAP(BaseClass):
         :postcondition: `apup` called on the connection
         """
         output, error = self.connection.apup()
-        for line in output:
-            line = line.rstrip()
-            if len(line):
-                self.logger.debug(line)
+        self.log_lines(output)
         return
 
     def down(self):
@@ -58,10 +76,21 @@ class AtherosAR5KAP(BaseClass):
         :postcondition: `apdown` called on the connection
         """
         output, error = self.connection.apdown()
-        for line in output:
-            line = line.rstrip()
-            if len(line):
-                self.logger.debug(line)
+        self.log_lines(output)
+        return
+
+    def destroy(self, interface):
+        """
+        Takes down a VAP
+
+        :param:
+
+         - `interface`: name of VAP
+
+        :postcondition: wlanconfig destroy called on connection
+        """
+        output, error = self.connection.wlanconfig("{0} destroy".format(interface))
+        self.log_lines(output, error_substring='No such device')
         return
 
 
@@ -106,4 +135,18 @@ class TestAR5KAP(unittest.TestCase):
         self.ap.down()
         self.connection.apdown.assert_called_with()
         return
+
+    def test_destroy(self):
+        """
+        Does the controller bring the VAP down?
+        """
+        self.connection.wlanconfig.return_value = ('', '')
+        self.ap.destroy('ath0')
+        self.connection.wlanconfig.assert_called_with("ath0 destroy")
+
+        # vap not up
+        self.connection.wlanconfig.return_value = (['wlanconfig: ioctl: No such device\n'], '')
+        self.assertRaises(CommandError, self.ap.destroy, ['ath0'])
+        return
+        
 

@@ -21,6 +21,8 @@ Collaborators:
 
    SubCommand -|> BaseClass
    SubCommand.up
+   SubCommand.down
+   SubCommand.destroy
 
 
 
@@ -34,6 +36,7 @@ The sub-command is largely ignorant of what the objects it holds does so this is
 
    TestSubCommand.test_up
    TestSubCommand.test_down
+   TestSubCommand.test_destroy
    TestSubCommand.test_constructor
    TestSubCommand.test_args
 
