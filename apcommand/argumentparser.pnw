@@ -18,7 +18,7 @@ A map from command-line-arguments to a namespace.
 #python standard library
 import argparse
 
-# this packag
+# this package
 import subcommands
 @
 <<name='Arguments', echo=False>>=

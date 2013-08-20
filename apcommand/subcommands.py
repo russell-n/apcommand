@@ -20,7 +20,8 @@ def try_except(func):
 
 # this package
 from apcommand.baseclass import BaseClass
-import apcommand.accesspoints.atheros 
+import apcommand.accesspoints.atheros
+from apcommand.commons.errors import ArgumentError
 
 
 class SubCommand(BaseClass):
@@ -37,6 +38,7 @@ class SubCommand(BaseClass):
     def access_point(self, args):
         '''
         The Access point controller
+
         '''
         # assume that the accesspoint class has valuable defaults
         # only pass in parameters that have been set by the arguments
@@ -49,7 +51,7 @@ class SubCommand(BaseClass):
             if args.channel in (str(i) for i in range(1,12)):
                 ap = apcommand.accesspoints.atheros.Atheros24(**apkwargs)
             else:
-                raise ArgumentError("unknown channel: {0}".format(args.channel))
+                ap = apcommand.accesspoints.atheros.Atheros5GHz(*apkwargs)
         else:
             ap = apcommand.accesspoints.atheros.AtherosAR5KAP(**apkwargs)
         return ap

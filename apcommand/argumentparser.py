@@ -2,7 +2,7 @@
 #python standard library
 import argparse
 
-# this packag
+# this package
 import subcommands
 
 
