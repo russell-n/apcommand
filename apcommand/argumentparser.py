@@ -124,17 +124,19 @@ class Arguments(object):
         # query the interface status
         status = self.subparsers.add_parser('status',
                                             help='Get some information for an interface')
-        status.add_argument('--interface',
+        status.add_argument('interface',
                             help="the name of the interface to query (default=%(default)s) (use 'all' for all)",
-                            default='ath0')
+                            default='ath0',
+                            nargs="?")
         status.set_defaults(function=self.subcommands.status)
 
         # reset the AP
         reset = self.subparsers.add_parser('reset',
                                            help='Reset to factory defaults')
-        reset.add_argument('--interface',
+        reset.add_argument('interface',
                            help='Interface to bring up after reset (default=%(default)s)',
-                           default='ath0')
+                           default='ath0',
+                           nargs='?')
         reset.set_defaults(function=self.subcommands.reset)
 
         # change the channel
