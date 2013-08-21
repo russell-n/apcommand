@@ -49,7 +49,7 @@ class SubCommand(BaseClass):
 
         if hasattr(args, 'channel'):
             if args.channel in (str(i) for i in range(1,12)):
-                ap = apcommand.accesspoints.atheros.Atheros24(**apkwargs)
+                ap = apcommand.accesspoints.atheros.Atheros24Ghz(**apkwargs)
             else:
                 ap = apcommand.accesspoints.atheros.Atheros5GHz(*apkwargs)
         else:
@@ -282,7 +282,7 @@ class TestSubCommand(unittest.TestCase):
         args.channel = '1'
         ap_channel = MagicMock()
         ap_instance = MagicMock()
-        ap_channel.Atheros24.return_value = ap_instance
+        ap_channel.Atheros24Ghz.return_value = ap_instance
         error_message = 'channel setting error'
         ap_instance.set_channel.side_effect = Exception(error_message)
         with patch('apcommand.accesspoints.atheros', ap_channel):
