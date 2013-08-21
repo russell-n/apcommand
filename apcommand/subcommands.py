@@ -116,7 +116,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` attribute
         """
         ap = self.access_point(args)
-        ap.reset(args.interface)
+        ap.reset(arg.interface)
         return
 
     @try_except
