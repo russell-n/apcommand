@@ -158,6 +158,14 @@ class AtherosChannelChanger(AtherosAR5KAP):
         self._channels = None
         self._interface = None
         self._parameter_suffix = None
+        self._mode = None
+        return
+
+    @abstractproperty
+    def mode(self):
+        """
+        The mode appropriate for the band (e.g. 11n)
+        """
         return
 
     @property
@@ -194,18 +202,21 @@ class AtherosChannelChanger(AtherosAR5KAP):
                 self._channels = set_1 + set_2 + set_3
         return self._channels
 
-    def set_channel(self, channel):
+    def set_channel(self, channel, mode=None):
         """
         method to set the channel on the AP
 
         :param:
 
          - `channel`: string or integer in valid_channels
+         - `mode`: 11na, 11ng, 11a or 11g
         """
+        if mode is None:
+            mode = self.mode
         channel = str(channel)
         self.validate_channel(channel)
         with Configure(connection=self.connection, interface=self.interface):
-            output, error = self.connection.cfg('-a AP_CHMODE{1}={0}HT20'.format(channel,
+            output, error = self.connection.cfg('-a AP_CHMODE{1}={0}HT20'.format(mode,
                                                                                  self.parameter_suffix))
             self.log_lines(output)
             output, error = self.connection.cfg('-a AP_PRIMARY_CH{1}={0}'.format(channel,
@@ -236,6 +247,15 @@ class Atheros24Ghz(AtherosChannelChanger):
         return
 
     @property
+    def mode(self):
+        """
+        Default mode (11ng) 
+        """
+        if self._mode is None:
+            self._mode = '11ng'
+        return self._mode
+
+    @property
     def interface(self):
         """
         The name of the VAP (ath0)
@@ -256,6 +276,15 @@ class Atheros5GHz(AtherosChannelChanger):
         """
         super(Atheros5GHz, self).__init__(*args, **kwargs)
         return
+
+    @property
+    def mode(self):
+        """
+        default mode (11na)
+        """
+        if self._mode is None:
+            self._mode = '11na'
+        return self._mode
 
     @property
     def interface(self):
@@ -580,7 +609,7 @@ class TestAtheros24(unittest.TestCase):
         channel = 11
         self.set_context_connection()
         self.ap.set_channel(channel)
-        calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11HT20'),
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11ngHT20'),
                                     call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return
@@ -610,7 +639,7 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = random.randrange(36, 65, 4)
         self.set_context_connection()
         self.ap.set_channel(channel)
-        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2={0}HT20'.format(channel)),
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2=11naHT20'),
                                     call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return

@@ -284,7 +284,7 @@ class Atheros24Ghz(AtherosChannelChanger):
         return
 
     @property
-    def mode(self)
+    def mode(self):
         """
         Default mode (11ng) 
         """
@@ -708,7 +708,7 @@ class TestAtheros24(unittest.TestCase):
         channel = 11
         self.set_context_connection()
         self.ap.set_channel(channel)
-        calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11HT20'),
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE=11ngHT20'),
                                     call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return
@@ -738,7 +738,7 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = random.randrange(36, 65, 4)
         self.set_context_connection()
         self.ap.set_channel(channel)
-        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2={0}HT20'.format(channel)),
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2=11naHT20'),
                                     call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return
