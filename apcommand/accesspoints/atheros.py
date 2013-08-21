@@ -102,7 +102,7 @@ class AtherosAR5KAP(BaseClass):
         self.log_lines(output, error_substring='No such device')
         return
 
-    def status(self, interface):
+    def status(self, interface=None):
         """
         Check iwconfig and ifconfig for the interface
 
@@ -110,12 +110,20 @@ class AtherosAR5KAP(BaseClass):
 
          - `interface`: name of network interface (e.g. ath0)
         """
-        output, error = self.connection.iwconfig(interface)
-        self.log_lines(output, level='info', error_substring='No such device')
-        output, error = self.connection.ifconfig("{0} | grep 'inet addr'".format(interface))
-        self.log_lines(output, level='info', error_substring='Device not found')
-        output, error = self.connection.iwlist("{0} channel | grep Current".format(interface))
-        self.log_lines(output, level='info')
+        if interface is None:
+            interfaces = 'ath0 ath1'.split()
+        else:
+            interfaces = [interface]
+        for iface in interfaces:
+            try:
+                output, error = self.connection.iwconfig(iface)
+                self.log_lines(output, level='info', error_substring='No such device')
+                output, error = self.connection.ifconfig("{0} | grep 'inet addr'".format(iface))
+                self.log_lines(output, level='info', error_substring='Device not found')
+                output, error = self.connection.iwlist("{0} channel | grep Current".format(iface))
+                self.log_lines(output, level='info')
+            except CommandError:
+                self.logger.info("interface {0} seems to be down")
         return
 
     def reset(self, interface):
