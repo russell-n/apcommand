@@ -178,20 +178,21 @@ class AtherosAR5KAP(BaseClass):
             output, error = self.connection.cfg('-a AP_SSID={0}'.format(ssid))
         return
 
-    def set_channel(self, channel):
+    def set_channel(self, channel, mode=None):
         """
         Sets the channel on the AP
 
         :param:
 
          - `channel`: A valid 802.11 channel
+         - `mode`: optional mode (e.g. 11ng)
         """
         if str(channel) in [str(ch) for ch in range(1,12)]:
             changer_class = Atheros24Ghz
         else:
             changer_class = Atheros5GHz
         changer = changer_class(connection=self.connection)
-        changer(channel)
+        changer(channel, mode)
         return
 
 
