@@ -15,6 +15,13 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
 
 
 
+AtherosChannelChanger
+---------------------
+
+This is a base-class for the Atheros 2.4 GHz and Atheros 5 Ghz channel changers to inherit from.
+
+
+
 Atheros24
 ---------
 
@@ -22,13 +29,13 @@ The channel setting commands are slightly different for the 2.4 GHz and 5GHz rad
 
 .. uml::
 
-   Atheros24 -|> AtherosAR5KAP
+   Atheros24 -|> AtherosChannelChanger
    Atheros24 : set_channel(channel)
 
 .. autosummary::
    :toctree: api
 
-   Atheros24
+   Atheros24Ghz
 
 
 
@@ -39,7 +46,7 @@ This is the countepart to the `Atheros24` for 5 Ghz.
 
 .. uml::
 
-   Atheros5GHz -|> AtherosAR5KAP
+   Atheros5GHz -|> AtherosChannelChanger
    Atheros5GHz : set_channel(channel)
 
 .. autosummary::

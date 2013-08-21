@@ -1,8 +1,11 @@
 
+# python standard library
+from abc import ABCMeta, abstractproperty
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
 from apcommand.commons.errors import CommandError
+from apcommand.commons.errors import ArgumentError
 
 
 class AtherosAR5KAP(BaseClass):
@@ -129,16 +132,52 @@ class AtherosAR5KAP(BaseClass):
         return
 
 
-class Atheros24(AtherosAR5KAP):
+class AtherosChannelChanger(AtherosAR5KAP):
     """
-    A channel-changer for 2.4 GHz
+    A base channel changer
     """
+    __metaclass__ = ABCMeta
     def __init__(self, *args, **kwargs):
-        """
-        Atheros24 constructor
-        """
-        super(Atheros24, self).__init__(*args, **kwargs)
+        super(AtherosChannelChanger, self).__init__(*args, **kwargs)
+        self._logger = None
+        self._channels = None
+        self._interface = None
+        self._parameter_suffix = None
         return
+
+    @property
+    def parameter_suffix(self):
+        """
+        empty string for 2.4 GHZ, _2 for 5GHz        
+        """
+        if self._parameter_suffix is None:
+            if self.interface == 'ath1':
+                self._parameter_suffix = "_2"
+            else:
+                self._parameter_suffix = ''
+        return self._parameter_suffix
+
+    @abstractproperty
+    def interface(self):
+        """
+        The VAP interface name (e.g. ath0)        
+        """
+        return
+
+    @property
+    def channels(self):
+        """
+        a list of valid channels
+        """
+        if self._channels is None:
+            if self.interface == 'ath0':
+                self._channels = [str(channel) for channel in range(1,12)]
+            else:
+                set_1 = [str(i) for i in range(36,65,4)]
+                set_2 = [str(j) for j in range(100,141,4)]
+                set_3 = [str(k) for k in range(149,166,4)]
+                self._channels = set_1 + set_2 + set_3
+        return self._channels
 
     def set_channel(self, channel):
         """
@@ -146,18 +185,53 @@ class Atheros24(AtherosAR5KAP):
 
         :param:
 
-         - `channel`: string or integer in {1,..., 11}
+         - `channel`: string or integer in valid_channels
         """
-        with Configure(connection=self.connection, interface='ath0'):
-            output, error = self.connection.cfg('-a AP_CHMODE={0}HT20'.format(channel))
+        channel = str(channel)
+        self.validate_channel(channel)
+        with Configure(connection=self.connection, interface=self.interface):
+            output, error = self.connection.cfg('-a AP_CHMODE{1}={0}HT20'.format(channel,
+                                                                                 self.parameter_suffix))
             self.log_lines(output)
-            output, error = self.connection.cfg('-a AP_PRIMARY_CH={0}'.format(channel))
+            output, error = self.connection.cfg('-a AP_PRIMARY_CH{1}={0}'.format(channel,
+                                                                                 self.parameter_suffix))
             self.log_lines(output)
         return
-    
+
+    def validate_channel(self, channel):
+        """
+        Check to see if the channel is acceptible
+
+        :raises: ArgumentError if not a valid 2.4 GHz channel
+        """
+        if channel not in self.channels:
+            raise ArgumentError("Invalid Channel: {0}".format(channel))
+        return
 
 
-class Atheros5GHz(AtherosAR5KAP):
+class Atheros24Ghz(AtherosChannelChanger):
+    """
+    A channel-changer for 2.4 GHz
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Atheros24GHz constructor
+        """
+        super(Atheros24Ghz, self).__init__(*args, **kwargs)
+        return
+
+    @property
+    def interface(self):
+        """
+        The name of the VAP (ath0)
+        """
+        if self._interface is None:
+            self._interface = 'ath0'
+        return self._interface
+
+
+
+class Atheros5GHz(AtherosChannelChanger):
     """
     A channel-changer for 5 GHz
     """
@@ -168,20 +242,14 @@ class Atheros5GHz(AtherosAR5KAP):
         super(Atheros5GHz, self).__init__(*args, **kwargs)
         return
 
-    def set_channel(self, channel):
-        """
-        method to set the channel on the AP
-
-        :param:
-
-         - `channel`: string or integer in {36,40,...,64}, {100,104,...,140}, {149,153,...,165}
-        """
-        with Configure(connection=self.connection, interface='ath1'):
-            output, error = self.connection.cfg('-a AP_CHMODE_2={0}HT20'.format(channel))
-            self.log_lines(output)
-            output, error = self.connection.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))
-            self.log_lines(output)
-        return   
+    @property
+    def interface(self):
+        '''
+        The name of the VAP interface (ath1)
+        '''
+        if self._interface is None:
+            self._interface = "ath1"
+        return self._interface        
 
 
 # python standard library
@@ -464,7 +532,7 @@ class TestConfigure(unittest.TestCase):
 class TestAtheros24(unittest.TestCase):
     def setUp(self):
         self.connection = MagicMock()
-        self.ap = Atheros24()
+        self.ap = Atheros24Ghz()
         self.ap._connection = self.connection
         self.ap._logger = MagicMock()
         self.enter_calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=0')]
@@ -512,10 +580,16 @@ class TestAtheros5GHz(unittest.TestCase):
         """
         Does the ap configure set the channel correctly?
         """
-        channel = random.randint(36, 64)
+        channel = random.randrange(36, 65, 4)
         self.set_context_connection()
         self.ap.set_channel(channel)
         calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2={0}HT20'.format(channel)),
                                     call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
+        return
+
+    def test_validate_channel(self):
+        channel = str(random.randint(166,200))
+        self.assertRaises(ArgumentError, self.ap.validate_channel, [channel])
+        self.ap.validate_channel(str(random.randrange(36,65,4)))
         return
