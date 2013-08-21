@@ -151,7 +151,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `type` attribute
         """
         ap = self.access_point(args)
-        ap.set_security(type=args.type)
+        ap.set_security(security_type=args.type)
         return
 
 
@@ -312,5 +312,5 @@ class TestSubCommand(unittest.TestCase):
         ap_instance.set_security.side_effect = Exception(error_message)
         with patch('apcommand.accesspoints.atheros', ap_module):
             self.sub_command.security(args)
-            ap_instance.set_security.assert_called_with(type=args.type)
+            ap_instance.set_security.assert_called_with(security_type=args.type)
         return
