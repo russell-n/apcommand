@@ -1,6 +1,7 @@
 
 # python standard library
 from abc import ABCMeta, abstractproperty
+import string
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
@@ -129,6 +130,20 @@ class AtherosAR5KAP(BaseClass):
         """
         with Configure(connection=self.connection, interface=interface):
             output, error = self.connection.cfg('-x')
+            self.log_lines(output)
+        return
+
+    def set_ssid(self, interface, ssid):
+        """
+        Sets the SSID
+
+        :param:
+
+         - `interface`: the VAP interface
+         - `ssid`: string name to set the ssid to 
+        """
+        with Configure(self.connection, interface):
+            output, error = self.connection.cfg('-a AP_SSID={0}'.format(ssid))
         return
 
 
@@ -357,6 +372,18 @@ class TestAR5KAP(unittest.TestCase):
         calls = self.enter_calls + [call.cfg('-x')] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
         return
+
+    def test_set_ssid(self):
+        """
+        Does the control set the ssid correctly?
+        """
+        self.set_context_connection()        
+        ssid = ''.join((random.choice(string.printable) for choice in range(random.randrange(100))))
+        self.ap.set_ssid('ath0', ssid)
+        calls = self.enter_calls + [call.cfg('-a AP_SSID={0}'.format(ssid))] + self.exit_calls
+        self.assertEqual(calls, self.connection.method_calls)
+        return
+        
 
 
 class Configure(BaseClass):

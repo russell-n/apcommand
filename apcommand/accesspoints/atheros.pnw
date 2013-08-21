@@ -16,6 +16,7 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
 <<name='imports', echo=False>>=
 # python standard library
 from abc import ABCMeta, abstractproperty
+import string
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
@@ -443,7 +444,7 @@ class TestAR5KAP(unittest.TestCase):
         Does the control set the ssid correctly?
         """
         self.set_context_connection()        
-        ssid = ''.join((random.choice(string.printable) for choice in range(random.randint(100))))
+        ssid = ''.join((random.choice(string.printable) for choice in range(random.randrange(100))))
         self.ap.set_ssid('ath0', ssid)
         calls = self.enter_calls + [call.cfg('-a AP_SSID={0}'.format(ssid))] + self.exit_calls
         self.assertEqual(calls, self.connection.method_calls)
