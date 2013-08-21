@@ -3,20 +3,50 @@ Atheros
 .. currentmodule:: apcommand.accesspoints.atheros
 This is a module to hold controllers for Access Points with Atheros-based chipsets.
 
+
+The Line Logger
+---------------
+
+Several of the classes have ended up using this same method so I broke it out so they could share one source instead of duplicating the code.
+
+.. uml
+
+   LineLogger -|> BaseClass
+
+.. autosummary::
+   :toctree: api
+
+   LineLogger
+
+
+
 AtherosAR5KAP
 -------------
 
 This is an access-point used for WiFi Alliance testing. It is not a commercial access-point. The commands to control it are taken from the code that Aren :ref:`wrote <arens-atheros>`. The primary request was that I create a command-line command to change the AP-channel. As such it does not change settings en-masse the way that Arens code does, as it assumes that only incremental changes are being made.
 
+.. uml::
+
+   AtherosAR5KAP o- LineLogger
+   AtherosAR5KAP o- Atheros24Ghz
+   AtherosAR5KAP o- Atheros5GHz
+   AtherosAR5KAP -|> BaseClass
+
 .. autosummary::
    :toctree: api
 
    AtherosAR5KAP
-
+   
 
 
 AtherosChannelChanger
 ---------------------
+
+.. uml::
+
+   AtherosChannelChanger -|> BaseClass
+   AtherosChannelChanger : __call__(channel, mode)
+   AtherosChannelChanger : validate_channel(channel)
 
 This is a base-class for the Atheros 2.4 GHz and Atheros 5 Ghz channel changers to inherit from.
 
@@ -67,6 +97,7 @@ This is the countepart to the `Atheros24` for 5 Ghz.
    TestAR5KAP.test_destroy
    TestAR5KAP.test_status
    TestAR5KAP.test_reset
+   TestAR5KAP.test_set_channel
    
 
 
@@ -106,6 +137,8 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    
 
 
+[]
+[]
 
 
 
