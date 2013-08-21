@@ -39,6 +39,39 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    
 
 
+Atheros Security Setter
+-----------------------
+
+This is a base-class for the security setters.
+
+.. uml::
+
+   AtherosSecuritySetter -|> BaseClass
+   AtherosSecuritySetter : __call__(type)
+
+.. autosummary::
+   :toctree: api
+
+   AtherosSecuritySetter
+
+
+
+AtherosOpen Security
+--------------------
+
+This sets the security to open-none.
+
+.. uml::
+
+   AtherosOpen -|> AtherosSecuritySetter
+
+.. autosummary::
+   :toctree: api
+
+   AtherosOpen
+
+
+
 AtherosChannelChanger
 ---------------------
 
@@ -47,6 +80,11 @@ AtherosChannelChanger
    AtherosChannelChanger -|> BaseClass
    AtherosChannelChanger : __call__(channel, mode)
    AtherosChannelChanger : validate_channel(channel)
+
+.. autosummary::
+   :toctree: api
+
+   AtherosChannelChanger
 
 This is a base-class for the Atheros 2.4 GHz and Atheros 5 Ghz channel changers to inherit from.
 
@@ -98,6 +136,7 @@ This is the countepart to the `Atheros24` for 5 Ghz.
    TestAR5KAP.test_status
    TestAR5KAP.test_reset
    TestAR5KAP.test_set_channel
+   TestAR5KAP.test_set_security
    
 
 
@@ -136,9 +175,15 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    TestAtheros24.test_set_channel
    
 
+.. autosummary::
+   :toctree: api
 
+   TestAtherosOpen.test_call
+   
+
+in the call
 []
-[]
+in the call
 
 
 

@@ -155,5 +155,13 @@ class Arguments(object):
         ssid.add_argument('ssid',
                           help='The SSID to use')
         ssid.set_defaults(function=self.subcommands.ssid)
+
+        # change the security
+        security = self.subparsers.add_parser('security',
+                                              help='Change the security')
+        security.add_argument('-t', '--type',
+                              help='Security type {open, WEP, WPA, WPA2} (default=%(default)s)',
+                              default='open')
+        security.set_defaults(function=self.subcommands.security)
         return
 # end class Arguments

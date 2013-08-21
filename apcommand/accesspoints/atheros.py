@@ -1,6 +1,6 @@
 
 # python standard library
-from abc import ABCMeta, abstractproperty
+from abc import ABCMeta, abstractproperty, abstractmethod
 import string
 # this package
 from apcommand.baseclass import BaseClass
@@ -185,6 +185,78 @@ class AtherosAR5KAP(BaseClass):
             changer_class = Atheros5GHz
         changer = changer_class(connection=self.connection)
         changer(channel, mode)
+        return
+
+    def set_security(self, security_type='open'):
+        """
+        Set the security on the access point
+
+        :param:
+
+         - `security_type`: one of {open, WEP, WPA, WPA2}
+        """
+        if security_type == 'open':
+            setter_class = AtherosOpen
+        setter = setter_class(connection=self.connection)
+        setter()
+        return
+
+
+class AtherosSecuritySetter(BaseClass):
+    """
+    A base-class to change the AP's security
+    """
+    __metaclass__ = ABCMeta
+    def __init__(self, connection):
+        """
+        AtherosSecuritySetter Constructor
+
+        :param:
+
+         - `connection`: connection to the AP
+        """
+        super(AtherosSecuritySetter, self).__init__()
+        self._logger = None
+        self.connection = connection
+        self._log_lines = None
+        return
+
+    @property
+    def log_lines(self):
+        """
+        A logger to get lines from output and log them
+        """
+        if self._log_lines is None:
+            self._log_lines = LineLogger()
+        return self._log_lines
+
+    @abstractmethod
+    def __call__(self):
+        """
+        The main interface to the changers
+        """
+        return
+
+
+class AtherosOpen(AtherosSecuritySetter):
+    """
+    Setter for open-security
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        AtherosOpen constructor
+        """
+        super(AtherosOpen, self).__init__(*args, **kwargs)
+        return
+
+    def __call__(self):
+        """
+        sets the security mode to open
+        """
+        print 'in the call'
+        with Configure(connection=self.connection):
+            out, err = self.connection.cfg('-a AP_SECMODE=None')
+            self.log_lines(out)
         return
 
 
@@ -505,24 +577,35 @@ class TestAR5KAP(unittest.TestCase):
         changer = MagicMock()
         with patch('apcommand.accesspoints.atheros.Atheros5GHz', changer):
             self.ap.set_channel(channel)
-        print changer.mock_calls
         changer.assert_called_with(connection=self.connection)
-        return 
-        
+        return
+
+    def test_set_security(self):
+        """
+        Does the controller get the right setter and call it?
+        """
+        self.set_context_connection()
+        security_type = 'open'
+        setter = MagicMock()
+        with patch('apcommand.accesspoints.atheros.AtherosOpen', setter):
+            self.ap.set_security(security_type=security_type)
+        setter.assert_called_with(connection=self.connection)
+        calls = ENTER_CALLS + [call.cfg('-a AP_SECMODE=None')] + EXIT_CALLS
+        return
 
 
 class Configure(BaseClass):
     """
     A context manager for configure commands on the Atheros
     """
-    def __init__(self, connection, interface):
+    def __init__(self, connection, interface='ath0'):
         """
         The Configure constructor -- this will destroy the other interface on exit
 
         :param:
 
          - `connection`: connection to AP's command-line interface
-         - `interface`: the interface (ath0 or ath1)
+         - `interface`: the interface (e.g. ath0)
         """
         super(Configure, self).__init__()
         self.connection = connection
@@ -734,4 +817,25 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = str(random.randint(166,200))
         self.assertRaises(ArgumentError, self.ap.validate_channel, [channel])
         self.ap.validate_channel(str(random.randrange(36,65,4)))
+        return
+
+
+class TestAtherosOpen(unittest.TestCase):
+    def set_context_connection(self):
+        self.connection.apdown.return_value = EMPTY_TUPLE
+        self.connection.cfg.return_value = EMPTY_TUPLE
+        self.connection.apup.return_value = EMPTY_TUPLE
+        return
+
+    def setUp(self):
+        self.connection = MagicMock()
+        self.setter = AtherosOpen(connection=self.connection)
+        return
+
+    def test_call(self):
+        """
+        Does the __call__ issue the correct commands?
+        """
+        self.set_context_connection()
+        self.setter()
         return

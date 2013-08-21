@@ -47,12 +47,6 @@ class SubCommand(BaseClass):
         apkeys = (arg for arg in apargs if getattr(args, arg) is not None)
         apkwargs = dict(zip(apkeys, apvalues))
 
-        #if hasattr(args, 'channel'):
-        #    if args.channel in (str(i) for i in range(1,12)):
-        #        ap = apcommand.accesspoints.atheros.Atheros24Ghz(**apkwargs)
-        #    else:
-        #        ap = apcommand.accesspoints.atheros.Atheros5GHz(*apkwargs)
-        #else:
         ap = apcommand.accesspoints.atheros.AtherosAR5KAP(**apkwargs)
         return ap
 
@@ -145,6 +139,19 @@ class SubCommand(BaseClass):
         ap = self.access_point(args)
         ap.set_ssid(interface=args.interface,
                     ssid=args.ssid)
+        return
+
+    @try_except
+    def security(self, args):
+        """
+        calls the AP's set_security method
+
+        :param:
+
+         - `args`: namespace with `type` attribute
+        """
+        ap = self.access_point(args)
+        ap.set_security(type=args.type)
         return
 
 
@@ -290,4 +297,20 @@ class TestSubCommand(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros', ap_channel):
             self.sub_command.channel(args)
             ap_instance.set_channel.assert_called_with(channel=args.channel, mode=args.mode)
+        return
+
+    def test_security(self):
+        """
+        Does the set_security method get called correctly?
+        """
+        args = MagicMock()
+        args.type = 'open'
+        ap_module = MagicMock()
+        ap_instance = MagicMock(spec=apcommand.accesspoints.atheros.AtherosAR5KAP)
+        ap_module.AtherosAR5KAP.return_value = ap_instance
+        error_message = 'security setting error'
+        ap_instance.set_security.side_effect = Exception(error_message)
+        with patch('apcommand.accesspoints.atheros', ap_module):
+            self.sub_command.security(args)
+            ap_instance.set_security.assert_called_with(type=args.type)
         return
