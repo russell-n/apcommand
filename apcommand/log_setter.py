@@ -10,7 +10,7 @@ SMALL_TIMESTAMP = "%H:%M:%S"
 SCREEN_FORMAT = "%(levelname)s: %(name)s.%(funcName)s, Line: %(lineno)d [%(asctime)s] -- %(message)s"
 SCREEN_FORMAT_QUIET = "%(levelname)s: [%(asctime)s] -- %(message)s"
 DATA_FRIENDLY_FORMAT = "%(levelname)s,%(asctime)s,%(message)s"
-LOG_FORMAT = "%(levelname)s,%(module)s,%(threadName)s,%(funcName)s,Line: %(lineno)d,%(asctime)s,%(message)s" 
+LOG_FORMAT = "%(levelname)s,%(threadName)s,%(funcName)s,Line: %(lineno)d,%(asctime)s,%(message)s" 
 LOG_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
 
 GIGABYTE = 1073741824
