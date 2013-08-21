@@ -156,7 +156,7 @@ class Arguments(object):
                                              help='Change the AP channel')
         channel.add_argument('channel', help='Channel to set')
         channel.add_argument('mode', help='Mode (e.g. 11n) *this does not seem to work*',
-                             default=None)
+                             default=None, nargs='?')
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
