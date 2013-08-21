@@ -126,10 +126,11 @@ class SubCommand(BaseClass):
 
         :param:
 
-         - `args`: namespace with `channel` attribute
+         - `args`: namespace with `channel` and `mode` attribute
         """
         ap = self.access_point(args)
-        ap.set_channel(channel=args.channel)
+        ap.set_channel(channel=args.channel,
+                       mode=args.mode)
         return
 
     @try_except
@@ -280,6 +281,7 @@ class TestSubCommand(unittest.TestCase):
         """
         args = MagicMock()
         args.channel = '1'
+        args.mode='11n'
         ap_channel = MagicMock()
         ap_instance = MagicMock()
         ap_channel.Atheros24Ghz.return_value = ap_instance
@@ -287,5 +289,5 @@ class TestSubCommand(unittest.TestCase):
         ap_instance.set_channel.side_effect = Exception(error_message)
         with patch('apcommand.accesspoints.atheros', ap_channel):
             self.sub_command.channel(args)
-            ap_instance.set_channel.assert_called_with(channel=args.channel)
+            ap_instance.set_channel.assert_called_with(channel=args.channel, mode=args.mode)
         return
