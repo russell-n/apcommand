@@ -140,5 +140,14 @@ class Arguments(object):
                                              help='Change the AP channel')
         channel.add_argument('channel', help='Channel to set')
         channel.set_defaults(function=self.subcommands.channel)
+
+        # change the ssid
+        ssid = self.subparsers.add_parser('ssid',
+                                          help='Change the SSID')
+        ssid.add_argument('interface',
+                             help='The (VAP) interface name')
+        ssid.add_argument('ssid',
+                          help='The SSID to use')
+        ssid.set_defaults(function=self.subcommands.ssid)
         return
 # end class Arguments

@@ -132,6 +132,20 @@ class SubCommand(BaseClass):
         ap.set_channel(channel=args.channel)
         return
 
+    @try_except
+    def ssid(self, args):
+        """
+        Calls the access point's set_ssid method
+
+        :param:
+
+         - `args`: namespace with `interface` and `ssid` attributes
+        """
+        ap = self.access_point(args)
+        ap.set_ssid(interface=args.interface,
+                    ssid=args.ssid)
+        return
+
 
 # python standard library
 import unittest
