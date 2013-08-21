@@ -138,7 +138,7 @@ class AtherosAR5KAP(BaseClass):
                 output, error = self.connection.iwlist("{0} channel | grep Current".format(iface))
                 self.log_lines(output, level='info')
             except CommandError:
-                self.logger.info("interface {0} seems to be down")
+                self.logger.info("interface {0} seems to be down".format(iface))
         return
 
     def reset(self, interface):
