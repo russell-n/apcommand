@@ -3,7 +3,6 @@ Atheros
 .. currentmodule:: apcommand.accesspoints.atheros
 This is a module to hold controllers for Access Points with Atheros-based chipsets.
 
-
 The Line Logger
 ---------------
 
@@ -80,14 +79,13 @@ AtherosChannelChanger
 
    AtherosChannelChanger -|> BaseClass
    AtherosChannelChanger : __call__(channel, mode)
-   AtherosChannelChanger : validate_channel(channel)
 
 .. autosummary::
    :toctree: api
 
    AtherosChannelChanger
 
-This is a base-class for the Atheros 2.4 GHz and Atheros 5 Ghz channel changers to inherit from.
+This was a base class for 2.4 and 5 ghz channel changers but I realized that the settings should be discovered through the channel that is being passed in so it does not make sense to maintain separate classes.
 
 
 

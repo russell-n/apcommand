@@ -392,8 +392,9 @@ class AtherosChannelChanger(BaseClass):
 
         parameter_suffix = self.parameter_suffix(channel)
         with Configure(connection=self.connection):
-            output, error = self.connection.cfg('-a AP_CHMODE{1}={0}HT20'.format(mode,
-                                                                                 parameter_suffix))
+            output, error = self.connection.cfg('-a AP_CHMODE{1}={0}{2}'.format(mode,
+                                                                                 parameter_suffix,
+                                                                                 bandwidth))
             self.log_lines(output)
             output, error = self.connection.cfg('-a AP_PRIMARY_CH{1}={0}'.format(channel,
                                                                                  parameter_suffix))
