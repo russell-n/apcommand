@@ -152,9 +152,6 @@ class Arguments(object):
         # change the ssid
         ssid = self.subparsers.add_parser('ssid',
                                           help='Change the SSID')
-        ssid.add_argument('band',
-                             help='2.4 or 5 (default=%(default)s)',
-                             default='2.4')        
         ssid.add_argument('ssid',
                           help='The SSID to use')
         ssid.set_defaults(function=self.subcommands.ssid)

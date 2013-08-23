@@ -175,8 +175,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` and `ssid` attributes
         """
         ap = self.access_point(args)
-        ap.set_ssid(band=args.band,
-                    ssid=args.ssid)
+        ap.set_ssid(ssid=args.ssid)
         return
 
     @try_except
