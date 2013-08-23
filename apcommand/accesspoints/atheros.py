@@ -11,7 +11,10 @@ from apcommand.commons.errors import ArgumentError
 
 EMPTY_STRING = ''
 FIVE_GHZ_SUFFIX = '_2'
-BAND_ID = {'2.4':0, '5':1}
+
+TWO_POINT_FOUR = '2.4'
+FIVE = '5'
+BAND_ID = {TWO_POINT_FOUR:0, FIVE:1}
 
 
 class LineLogger(BaseClass):
@@ -373,6 +376,25 @@ class AtherosChannelChanger(BaseClass):
             self._channels = set_1 + set_3
         return self._channels
 
+    def band(self, channel):
+        """
+        Gets the band for the channel
+
+        :param:
+
+         - `channel`: non-DFS 802.11 channel
+        
+        :return: (2.4|5)
+        :raises: ArgumentError if the channel is invalid
+        """
+        channel = str(channel)
+        if channel in self.g_channels:
+            return TWO_POINT_FOUR
+        if channel in self.a_channels:
+            return FIVE
+        raise ArgumentError("Invalid Channel: {0}".format(channel))
+        return
+    
     def __call__(self, channel, mode=None, bandwidth=None):
         """
         method to set the channel on the AP
@@ -391,7 +413,9 @@ class AtherosChannelChanger(BaseClass):
             bandwidth = self.bandwidth(channel)
 
         parameter_suffix = self.parameter_suffix(channel)
-        with Configure(connection=self.connection):
+
+        band = self.band(channel)
+        with Configure(connection=self.connection, radio_id=BAND_ID[band]):
             output, error = self.connection.cfg('-a AP_CHMODE{1}={0}{2}'.format(mode,
                                                                                  parameter_suffix,
                                                                                  bandwidth))
@@ -794,6 +818,17 @@ class TestAtheros24(unittest.TestCase):
                           self.changer.mode,
                           self.bad_channel())
         return
+
+    def test_band(self):
+        """
+        Does the changer get the 2.4 band?
+        """
+        channel = self.g_channel()
+        band = self.changer.band(channel)
+        self.assertEqual(band, '2.4')
+        channel = self.bad_channel()
+        self.assertRaises(ArgumentError, self.changer.band, channel)
+        return
     
     def test_set_channel(self):
         """
@@ -832,6 +867,15 @@ class TestAtheros5GHz(unittest.TestCase):
         return random.choice([str(i) for i in range(36,49,4)] +
                             [str(k) for k in range(149,166,4)])
 
+    def test_band(self):
+        """
+        Does the changer get the 5 ghz band?
+        """
+        channel = self.a_channel()
+        band = self.changer.band(channel)
+        self.assertEqual(FIVE, band)
+        return
+    
     def test_bandwidth(self):
         """
         Does the changer select the correct 5ghz bandwidth?
