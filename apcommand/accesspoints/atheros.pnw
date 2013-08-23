@@ -119,7 +119,7 @@ class AtherosAR5KAP(BaseClass):
         return
 
     @property
-    def command(self):
+    def command_executor(self):
         """
         An executor of arbitrary commands (just dumps output to screen)
         """
