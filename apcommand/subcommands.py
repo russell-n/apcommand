@@ -110,7 +110,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` attribute
         """
         ap = self.access_point(args)
-        ap.reset(args.interface)
+        ap.reset(args.band)
         return
 
     @try_except
@@ -120,11 +120,12 @@ class SubCommand(BaseClass):
 
         :param:
 
-         - `args`: namespace with `channel` and `mode` attribute
+         - `args`: namespace with `channel`, `mode`, and `bandwidth` attributes
         """
         ap = self.access_point(args)
         ap.set_channel(channel=args.channel,
-                       mode=args.mode)
+                       mode=args.mode,
+                       bandwidth=args.bandwidth)
         return
 
     @try_except
@@ -137,7 +138,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` and `ssid` attributes
         """
         ap = self.access_point(args)
-        ap.set_ssid(interface=args.interface,
+        ap.set_ssid(band=args.band,
                     ssid=args.ssid)
         return
 
@@ -288,7 +289,8 @@ class TestSubCommand(unittest.TestCase):
         """
         args = MagicMock()
         args.channel = '1'
-        args.mode='11n'
+        args.mode = '11NG'
+        args.bandwidth='HT20'
         ap_channel = MagicMock()
         ap_instance = MagicMock()
         ap_channel.AtherosAR5KAP.return_value = ap_instance
@@ -296,7 +298,8 @@ class TestSubCommand(unittest.TestCase):
         ap_instance.set_channel.side_effect = Exception(error_message)
         with patch('apcommand.accesspoints.atheros', ap_channel):
             self.sub_command.channel(args)
-            ap_instance.set_channel.assert_called_with(channel=args.channel, mode=args.mode)
+            ap_instance.set_channel.assert_called_with(channel=args.channel, mode=args.mode,
+                                                       bandwidth=args.bandwidth)
         return
 
     def test_security(self):

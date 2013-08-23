@@ -47,6 +47,7 @@ This is a base-class for the security setters.
 .. uml::
 
    AtherosSecuritySetter -|> BaseClass
+   AtherosSecuritySetter o- LineLogger
    AtherosSecuritySetter : __call__(type)
 
 .. autosummary::
@@ -181,9 +182,6 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    TestAtherosOpen.test_call
    
 
-in the call
-[]
-in the call
 
 
 

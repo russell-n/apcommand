@@ -149,9 +149,9 @@ class Arguments(object):
         # reset the AP
         reset = self.subparsers.add_parser('reset',
                                            help='Reset to factory defaults')
-        reset.add_argument('interface',
-                           help='Interface to bring up after reset (default=%(default)s)',
-                           default='ath0',
+        reset.add_argument('band',
+                           help='2.4 or 5 (default=%(default)s)',
+                           default='2.4',
                            nargs='?')
         reset.set_defaults(function=self.subcommands.reset)
 
@@ -159,15 +159,18 @@ class Arguments(object):
         channel = self.subparsers.add_parser('channel',
                                              help='Change the AP channel')
         channel.add_argument('channel', help='Channel to set')
-        channel.add_argument('--mode', help='Mode (e.g. 11n) *this does not seem to work*',
+        channel.add_argument('--mode', help='Mode (e.g. 11NG)',
+                             default=None)
+        channel.add_argument('--bandwidth', help='Bandwidth (e.g. HT40PLUS)',
                              default=None)
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
         ssid = self.subparsers.add_parser('ssid',
                                           help='Change the SSID')
-        ssid.add_argument('interface',
-                             help='The (VAP) interface name')
+        ssid.add_argument('band',
+                             help='2.4 or 5 (default=%(default)s)',
+                             default='2.4')        
         ssid.add_argument('ssid',
                           help='The SSID to use')
         ssid.set_defaults(function=self.subcommands.ssid)
@@ -178,6 +181,7 @@ class Arguments(object):
         security.add_argument('-t', '--type',
                               help='Security type {open, WEP, WPA, WPA2} (default=%(default)s)',
                               default='open')
+        security.add_argument('-c', '--cipher')
         security.set_defaults(function=self.subcommands.security)
         return
 # end class Arguments
