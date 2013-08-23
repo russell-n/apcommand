@@ -32,6 +32,8 @@ Helper Commands:
    :maxdepth: 1
 
    Change Prompt <../../commands/changeprompt>   
+   Iwconfig <../../commands/iwconfig>
+   Settings Validator <../../accesspoints/settingsvalidator>
 
 Common Modules:
 

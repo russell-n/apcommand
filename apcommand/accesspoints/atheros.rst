@@ -27,8 +27,8 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
 .. uml::
 
    AtherosAR5KAP o- LineLogger
-   AtherosAR5KAP o- Atheros24Ghz
-   AtherosAR5KAP o- Atheros5GHz
+   AtherosAR5KAP o- AtherosChannelChanger
+   AtherosAR5KAP o- ArbitraryCommand   
    AtherosAR5KAP -|> BaseClass
 
 .. autosummary::

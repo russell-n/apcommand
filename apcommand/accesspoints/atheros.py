@@ -7,6 +7,7 @@ from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
 from apcommand.commons.errors import CommandError
 from apcommand.commons.errors import ArgumentError
+from arbitrarycommand import ArbitraryCommand
 
 
 EMPTY_STRING = ''
@@ -77,7 +78,17 @@ class AtherosAR5KAP(BaseClass):
         self.password = password
         self._connection = None
         self._log_lines = None
+        self._command_executor = None
         return
+
+    @property
+    def command(self):
+        """
+        An executor of arbitrary commands (just dumps output to screen)
+        """
+        if self._command_executor is None:
+            self._command_executor = ArbitraryCommand(self.connection)
+        return self._command_executor
 
     @property
     def log_lines(self):
@@ -212,6 +223,13 @@ class AtherosAR5KAP(BaseClass):
         setter = setter_class(connection=self.connection)
         setter()
         return
+
+    def exec_command(self, command):
+        """
+        Send command to the connection and dump output to the screen
+        """
+        self.command_executor(command)
+        return        
 
 
 class AtherosSecuritySetter(BaseClass):

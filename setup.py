@@ -23,7 +23,7 @@ setup(name='apcommand',
       package_data = {"":["*.txt", "*.rst", "*.ini"]},
       entry_points = """
 	  [console_scripts]
-          apcontrol=apcommand.main:main
+          atheros=apcommand.main:main
 	  """
       )
 

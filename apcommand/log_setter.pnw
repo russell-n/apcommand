@@ -116,7 +116,8 @@ def set_logger(args):
 
      - `args`: args with debug and silent attributes
     """
-    cleanup()
+    # Since this is meant to be run as a one-time command, saving the logs seems unnecessary
+    #cleanup()
     stderr = logging.StreamHandler()
     if args.debug:
         screen_format = SCREEN_FORMAT

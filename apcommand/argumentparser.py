@@ -167,5 +167,11 @@ class Arguments(object):
                               default='open')
         security.add_argument('-c', '--cipher')
         security.set_defaults(function=self.subcommands.security)
+
+        # send an arbitrary command
+        command = self.subparsers.add_parser('command',
+                                             help='Execute an arbitrary command.')
+        command.add_argument('command')
+        command.set_defaults(function=self.subcommands.command)
         return
 # end class Arguments

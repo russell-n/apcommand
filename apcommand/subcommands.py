@@ -154,6 +154,19 @@ class SubCommand(BaseClass):
         ap.set_security(security_type=args.type)
         return
 
+    @try_except
+    def command(self, args):
+        """
+        Calls the AP's exec_command method
+
+        :param:
+
+         - `args`: namespace with `command` attribute
+        """
+        ap = self.access_point(args)
+        ap.exec_command(args.command)
+        return
+
 
 # python standard library
 import unittest
