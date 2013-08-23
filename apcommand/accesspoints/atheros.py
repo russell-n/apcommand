@@ -15,6 +15,9 @@ FIVE_GHZ_SUFFIX = '_2'
 TWO_POINT_FOUR = '2.4'
 FIVE = '5'
 BAND_ID = {TWO_POINT_FOUR:0, FIVE:1}
+G_BANDWIDTH = 'HT20'
+A_LOWER_BANDWIDTH = 'HT40PLUS'
+A_UPPER_BANDWIDTH = 'HT40MINUS'
 
 
 class LineLogger(BaseClass):
@@ -284,10 +287,78 @@ class AtherosChannelChanger(BaseClass):
         super(AtherosChannelChanger, self).__init__()
         self.connection = connection
         self._logger = None
+        self._channel_to_bandwidth = None
         self._g_channels = None
+        self._a_lower_channels = None
+        self._a_upper_channels = None
         self._a_channels = None
-        self._log_lines = None
+        self._channels = None
+        self._channel_mode_map = None
+        self._log_lines = None        
         return
+
+    @property
+    def channels(self):
+        """
+        A list of the acceptable 2.4 and 5 GHz channels
+        """
+        if self._channels is None:
+            self._channels = self.g_channels + self.a_channels
+        return self._channels
+    
+    @property
+    def g_channelS(self):
+        """
+        A list of 2.4 GHz channels (as strings)
+        """
+        if self._g_channels is None:
+            self._g_channels = [str(ch) for ch in range(1,12)]
+        return self._g_channels
+    
+    @property
+    def a_channels(self):
+        """
+        A list of the 5 GHz channels (without DFS channels)
+        """
+        if self._a_channels is None:
+            self._a_channels = self.a_lower_channels + self.a_upper_channels
+        return self._a_channels
+
+    @property
+    def a_lower_channels(self):
+        """
+        A list of the 5 GHz channels that form a lower-bound
+        """
+        if self._a_lower_channels is None:
+            self._a_lower_channels = '36 44 149 157'.split()
+        return self._a_lower_channels
+
+    @property
+    def a_upper_channels(self):
+        """
+        A list of the 5 GHz channels that form an upper-bound
+        """
+        if self._a_upper_channels is None:
+            self._a_upper_channels = "40 48 153 161".split()
+        return self._a_upper_channels
+    
+    @property
+    def channel_to_bandwidth(self):
+        """
+        A map from a channel to the default bandwidth
+
+        :rtype: DictType
+        :return: channel:bandwidth string
+        """
+        if self._channel_to_bandwidth is None:
+            
+            g_bandwidths = [G_BANDWIDTH for g in range(len(self.g_channels))]
+            a_lower_bandwidths = [A_LOWER_BANDWIDTH for a in range(len(self.a_lower_channels))]
+            a_upper_bandwidths = [A_UPPER_BANDWIDTH for a in range(len(self.a_upper_channels))]
+
+            bandwidths = g_bandwidths + a_lower_bandwidths + a_upper_bandwidths
+            self._channel_to_bandwidth = dict(zip(self.channels, bandwidths))
+        return self._channel_to_bandwidth
 
     @property
     def log_lines(self):
@@ -310,16 +381,10 @@ class AtherosChannelChanger(BaseClass):
         :raise: ArgumentError if invalid (DFS channels not allowed)
         """
         channel = str(channel)
-        if channel in self.g_channels:
-            # assume 11NGHT20 only allowed setting
-            return "HT20"
-        edges = "48 61".split()
-        if channel in edges:
-            # upper limits of bands
-            return "HT40MINUS"
-        elif channel in self.a_channels:
-            return "HT40PLUS"
-        else:
+        try:
+            return self.channel_to_bandwidth[channel]
+        except KeyError as error:
+            self.logger.debug(error)
             raise ArgumentError("Invalid Channel: {0}".format(channel))
         return
 
@@ -367,8 +432,11 @@ class AtherosChannelChanger(BaseClass):
         return self._g_channels
 
     @property
-    def a_channels(self):
-        if self._a_channels is None:
+    def a_channels_mode_map(self):
+        """
+        A map from a
+        """
+        if self._a_channels_mode_map is None:
             set_1 = [str(i) for i in range(36,49,4)]
                 # Henry W says to ignore DFS Channels
                 #set_2 = [str(j) for j in range(100,141,4)]
@@ -600,7 +668,6 @@ class TestAR5KAP(unittest.TestCase):
         changer.__call__ = changer_call
         with patch('apcommand.accesspoints.atheros.AtherosChannelChanger', changer):
             self.ap.set_channel(channel)
-
         changer.assert_called_with(connection=self.connection)
         return 
 
@@ -792,57 +859,57 @@ class TestAtheros24(unittest.TestCase):
         """
         channel = self.g_channel()
         bandwidth = self.changer.bandwidth(channel)
-        self.assertEqual('HT20', bandwidth)
+        self.assertEqual(G_BANDWIDTH, bandwidth)
         self.assertRaises(ArgumentError, self.changer.bandwidth, self.bad_channel())
         return
 
-    def test_parameter_suffix(self):
-        """
-        Does the changer get the appropriate parameter suffix for the channel?
-        """
-        channel = self.g_channel()
-        suffix = self.changer.parameter_suffix(channel)
-        self.assertEqual(EMPTY_STRING, suffix)
-        self.assertRaises(ArgumentError, self.changer.parameter_suffix,
-                          self.bad_channel())
-        return
-
-    def test_mode(self):
-        """
-        Does the mode method get the right mode based on the channel?
-        """
-        channel = self.g_channel()
-        mode = self.changer.mode(str(channel))
-        self.assertEqual(mode, '11NG')
-        self.assertRaises(ArgumentError,
-                          self.changer.mode,
-                          self.bad_channel())
-        return
-
-    def test_band(self):
-        """
-        Does the changer get the 2.4 band?
-        """
-        channel = self.g_channel()
-        band = self.changer.band(channel)
-        self.assertEqual(band, '2.4')
-        channel = self.bad_channel()
-        self.assertRaises(ArgumentError, self.changer.band, channel)
-        return
-    
-    def test_set_channel(self):
-        """
-        Does the ap configure set the channel correctly?
-        """
-        channel = self.g_channel()
-        self.set_context_connection()
-        self.changer(channel)
-        calls = ENTER_CALLS + [call.cfg('-a AP_CHMODE=11NGHT20'),
-                                    call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + EXIT_CALLS
-    
-    #    print self.logger.method_calls
-        self.assertEqual(calls, self.connection.method_calls)
-        return
+    #def test_parameter_suffix(self):
+    #    """
+    #    Does the changer get the appropriate parameter suffix for the channel?
+    #    """
+    #    channel = self.g_channel()
+    #    suffix = self.changer.parameter_suffix(channel)
+    #    self.assertEqual(EMPTY_STRING, suffix)
+    #    self.assertRaises(ArgumentError, self.changer.parameter_suffix,
+    #                      self.bad_channel())
+    #    return
+    #
+    #def test_mode(self):
+    #    """
+    #    Does the mode method get the right mode based on the channel?
+    #    """
+    #    channel = self.g_channel()
+    #    mode = self.changer.mode(str(channel))
+    #    self.assertEqual(mode, '11NG')
+    #    self.assertRaises(ArgumentError,
+    #                      self.changer.mode,
+    #                      self.bad_channel())
+    #    return
+    #
+    #def test_band(self):
+    #    """
+    #    Does the changer get the 2.4 band?
+    #    """
+    #    channel = self.g_channel()
+    #    band = self.changer.band(channel)
+    #    self.assertEqual(band, '2.4')
+    #    channel = self.bad_channel()
+    #    self.assertRaises(ArgumentError, self.changer.band, channel)
+    #    return
+    #
+    #def test_set_channel(self):
+    #    """
+    #    Does the ap configure set the channel correctly?
+    #    """
+    #    channel = self.g_channel()
+    #    self.set_context_connection()
+    #    self.changer(channel)
+    #    calls = ENTER_CALLS + [call.cfg('-a AP_CHMODE=11NGHT20'),
+    #                                call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + EXIT_CALLS
+    #
+    ##    print self.logger.method_calls
+    #    self.assertEqual(calls, self.connection.method_calls)
+    #    return
 
 
 class TestAtheros5GHz(unittest.TestCase):
@@ -861,11 +928,11 @@ class TestAtheros5GHz(unittest.TestCase):
         return
 
     def dfs_channel(self):
-        return random.choice([str(j) for j in range(100,141,4)])
+        return random.choice([str(j) for j in range(52,141,4)])
 
     def a_channel(self):
         return random.choice([str(i) for i in range(36,49,4)] +
-                            [str(k) for k in range(149,166,4)])
+                            [str(k) for k in range(149,165,4)])
 
     def test_band(self):
         """
@@ -882,14 +949,14 @@ class TestAtheros5GHz(unittest.TestCase):
         """
         channel = self.a_channel()
         bandwidth = self.changer.bandwidth(channel)
-        if channel in '48 61'.split():
-            self.assertEqual("HT40MINUS", bandwidth)
+        if channel in '40 48 153 161'.split():
+            self.assertEqual(A_UPPER_BANDWIDTH, bandwidth)
         else:
-            self.assertEqual("HT40PLUS", bandwidth)
+            self.assertEqual(A_LOWER_BANDWIDTH, bandwidth)
         channel = self.dfs_channel()
         self.assertRaises(ArgumentError, self.changer.bandwidth, channel)
         return
-
+    
     def test_parameter_suffix(self):
         """
         Does the changer return the cfg -a parameter suffix for 5GHZ?
@@ -900,7 +967,7 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = self.dfs_channel()
         self.assertRaises(ArgumentError, self.changer.parameter_suffix, channel)
         return
-
+    
     def test_mode(self):
         """
         Does the changer return the default 5GHz mode?
@@ -911,28 +978,32 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = self.dfs_channel()
         self.assertRaises(ArgumentError, self.changer.mode, str(channel))
         return
-
+    
         
     def test_set_channel(self):
         """
         Does the ap configure set the channel correctly?
         """
         channel = self.a_channel()
-    #    self.set_context_connection()
-    #    self.ap(channel)
-    #    calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2=11naHT20'),
-    #                                call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + EXIT_CALLS
-    #    self.assertEqual(calls, self.connection.method_calls)
-    #    return
+        self.set_context_connection()
+        self.changer(channel)
+        if channel in '40 48 153 161'.split():
+            bandwidth = A_UPPER_BANDWIDTH
+        else:
+            bandwidth = A_LOWER_BANDWIDTH
 
-    #def test_validate_channel(self):
-    #    """
-    #    Does the changer raise an ArgumentError for an invalid channel?"
-    #    """
-    #    channel = str(random.randint(166,200))
-    #    self.assertRaises(ArgumentError, self.ap.validate_channel, [channel])
-    #    self.ap.validate_channel(str(random.randrange(36,65,4)))
-    #    return
+        calls = self.enter_calls + [call.cfg('-a AP_CHMODE_2=11NA{0}'.format(bandwidth)),
+                                    call.cfg('-a AP_PRIMARY_CH_2={0}'.format(channel))] + EXIT_CALLS
+        self.assertEqual(calls, self.connection.method_calls)
+        return
+
+    def test_validate_channel(self):
+        """
+        Does the changer raise an ArgumentError for an invalid channel?"
+        """
+        channel = self.dfs_channel()
+        self.assertRaises(ArgumentError, self.changer.validate_channel, [channel])
+        return
 
 
 class TestAtherosOpen(unittest.TestCase):

@@ -1,7 +1,7 @@
 Atheros
 =======
 .. currentmodule:: apcommand.accesspoints.atheros
-This is a module to hold controllers for Access Points with Atheros-based chipsets.
+This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on :ref:`Aren's Code <arens-atheros>` and partially on the Atheros' shell scripts found in ``/etc/ath`` on the device.
 
 The Line Logger
 ---------------
