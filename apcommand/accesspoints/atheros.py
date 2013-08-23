@@ -7,7 +7,7 @@ from apcommand.baseclass import BaseClass
 from apcommand.connections.telnetconnection import TelnetConnection
 from apcommand.commons.errors import CommandError
 from apcommand.commons.errors import ArgumentError
-from arbitrarycommand import ArbitraryCommand
+from apcommand.accesspoints.arbitrarycommand import ArbitraryCommand
 
 
 EMPTY_STRING = ''
