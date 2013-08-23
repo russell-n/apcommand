@@ -206,15 +206,16 @@ class AtherosAR5KAP(BaseClass):
             self.log_lines(output)
         return
 
-    def set_ssid(self, ssid):
+    def set_ssid(self, ssid, band):
         """
         Sets the SSID
 
         :param:
 
+         - `band`: 2.4 or 5 (they share the SSID, but this will decide which comes up)
          - `ssid`: string name to set the ssid to 
         """
-        with Configure(self.connection):
+        with Configure(self.connection, radio_id=BAND_ID[band]):
             output, error = self.connection.cfg('-a AP_SSID={0}'.format(ssid))
         return
 

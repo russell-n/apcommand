@@ -135,10 +135,10 @@ class SubCommand(BaseClass):
 
         :param:
 
-         - `args`: namespace with `interface` and `ssid` attributes
+         - `args`: namespace with `band` and `ssid` attributes
         """
         ap = self.access_point(args)
-        ap.set_ssid(ssid=args.ssid)
+        ap.set_ssid(ssid=args.ssid, band=args.band)
         return
 
     @try_except

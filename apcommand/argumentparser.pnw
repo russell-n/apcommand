@@ -170,6 +170,9 @@ class Arguments(object):
                                           help='Change the SSID')
         ssid.add_argument('ssid',
                           help='The SSID to use')
+        ssid.add_argument('band', help='2.4 or 5 (default=%(default)s)',
+                          default='2.4',
+                          nargs='?')
         ssid.set_defaults(function=self.subcommands.ssid)
 
         # change the security
