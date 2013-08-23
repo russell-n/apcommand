@@ -14,6 +14,8 @@ This takes an arbitrary command and sends it to the connection.
    ArbitraryCommand
 
 <<name='imports', echo=False>>=
+# python standard library
+import sys
 # this package
 from apcommand.baseclass import BaseClass
 @
@@ -38,10 +40,10 @@ class ArbitraryCommand(BaseClass):
         """
         The main interface - sends the command to the connection and outputs output
         """
-        output, error = self.connection._main(command)
+        output, error = self.connection.exec_command(command)
         
         for line in output:
-            print line            
+            sys.stdout.write(line)
             self.logger.debug(line)
         for line in error:
             if len(line):
@@ -63,6 +65,9 @@ import string
 
 # third-party
 from mock import MagicMock, patch, call
+
+# this package
+from apcommand.connections.telnetconnection import TelnetConnection
 @
 <<name='test_constants', echo=False>>=
 NEWLINE = '\n'
@@ -73,7 +78,7 @@ class TestArbitraryCommand(unittest.TestCase):
     Test The ArbitraryCommand
     """
     def setUp(self):
-        self.connection = MagicMock()
+        self.connection = MagicMock(spec=TelnetConnection)
         self.logger = MagicMock()
         self.command = ArbitraryCommand(connection=self.connection)
         self.command._logger = self.logger
@@ -95,15 +100,13 @@ class TestArbitraryCommand(unittest.TestCase):
         output = [''.join([random.choice(string.printable) for i in range(random.randrange(100))])]
         error = [''.join([random.choice(string.printable) for i in range(random.randrange(100))])]
 
-        self.connection._main.return_value = (output, error)
+        self.connection.exec_command.return_value = (output, error)
         stdout = MagicMock()
         with patch('sys.stdout', stdout):
             self.command(command)
-        self.connection._main.assert_called_with(command)
+        self.connection.exec_command.assert_called_with(command)
 
-        calls =  stdout.mock_calls
-        expected = [call.write(output[0]), call.write(NEWLINE)]
-        self.assertEqual(expected, calls)
+        stdout.write.assert_called_with(output[0])
         self.logger.debug.assert_called_with(output[0])
         self.logger.error.assert_called_with(error[0])
         return

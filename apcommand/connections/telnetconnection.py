@@ -332,6 +332,8 @@ class TelnetConnection(NonLocalConnection):
 
         return OutputError(OutputFile(stdout, self.validate), stderr)
 
+    exec_command = _main
+
     def validate(self, line):
         return
 # end TelnetConnection
