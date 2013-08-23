@@ -38,7 +38,7 @@ class ArbitraryCommand(BaseClass):
         """
         The main interface - sends the command to the connection and outputs output
         """
-        output, error = self.connection.exec_command(command)
+        output, error = self.connection._main(command)
         
         for line in output:
             print line            
@@ -95,11 +95,11 @@ class TestArbitraryCommand(unittest.TestCase):
         output = [''.join([random.choice(string.printable) for i in range(random.randrange(100))])]
         error = [''.join([random.choice(string.printable) for i in range(random.randrange(100))])]
 
-        self.connection.exec_command.return_value = (output, error)
+        self.connection._main.return_value = (output, error)
         stdout = MagicMock()
         with patch('sys.stdout', stdout):
             self.command(command)
-        self.connection.exec_command.assert_called_with(command)
+        self.connection._main.assert_called_with(command)
 
         calls =  stdout.mock_calls
         expected = [call.write(output[0]), call.write(NEWLINE)]
