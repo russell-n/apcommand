@@ -607,20 +607,6 @@ class AtherosChannelChanger(BaseClass):
         return
 @
 
-Atheros24
----------
-
-The channel setting commands are slightly different for the 2.4 GHz and 5GHz radios so to make it a little simpler they are separated out.
-
-.. uml::
-
-   Atheros24 -|> AtherosChannelChanger
-   Atheros24 : set_channel(channel)
-
-.. autosummary::
-   :toctree: api
-
-   Atheros24Ghz
 
 <<name='Atheros24Ghz', echo=False>>=
 class Atheros24Ghz(AtherosChannelChanger):
@@ -645,49 +631,6 @@ class Atheros24Ghz(AtherosChannelChanger):
 
 @
 
-Atheros5
---------
-
-This is the countepart to the `Atheros24` for 5 Ghz.
-
-.. uml::
-
-   Atheros5GHz -|> AtherosChannelChanger
-   Atheros5GHz : set_channel(channel)
-
-.. autosummary::
-   :toctree: api
-
-   Atheros5GHz
-
-<<name='Atheros5GHz', echo=False>>=
-class Atheros5GHz(AtherosChannelChanger):
-    """
-    A channel-changer for 5 GHz
-    """
-    def __init__(self, *args, **kwargs):
-        """
-        Atheros5GHz constructor
-        """
-        super(Atheros5GHz, self).__init__(*args, **kwargs)
-        return
-
-@
-
-
-
-.. autosummary::
-   :toctree: api
-
-   TestAR5KAP.test_constructor
-   TestAR5KAP.test_up
-   TestAR5KAP.test_down
-   TestAR5KAP.test_destroy
-   TestAR5KAP.test_status
-   TestAR5KAP.test_reset
-   TestAR5KAP.test_set_channel
-   TestAR5KAP.test_set_security
-   
 <<name='test_imports', echo=False>>=
 # python standard library
 import unittest
@@ -1219,7 +1162,3 @@ for case in (TestAR5KAP, TestConfigure, TestAtheros24, TestAtheros5GHz, TestAthe
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
 %>
-
-
-
-

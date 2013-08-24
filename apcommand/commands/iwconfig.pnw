@@ -1,4 +1,10 @@
+The Iwconfig Lexer
+==================
+.. currentmodule:: apcommand.commands.iwconfig
+A module to extract information from `iwconfig <http://en.wikipedia.org/wiki/Wireless_tools_for_Linux#iwconfig>`_.
 
+.. _iwconfig-lexel:
+<<name='imports', echo=False>>=
 #python standard library
 import re
 import os
@@ -6,8 +12,8 @@ import os
 #this package
 import apcommand.commons.oatbran as oatbran
 from apcommand.commons.errors import CommandError
-
-
+@
+<<name='IwconfigEnums', echo=False>>=
 class IwconfigEnums(object):
     __slots__ = ()
     ssid = "ssid"
@@ -19,8 +25,9 @@ class IwconfigEnums(object):
     protocol = 'protocol'
     interface = 'interface'
 # end class IwconfigEnums
+@
 
-
+<<name='IwconfigLexer', echo=False>>=
 class IwconfigLexer(object):
     """
     A class to extract `iwconfig` information
@@ -248,8 +255,13 @@ class IwconfigLexer(object):
                    i=self.found_interface)
         
 # end class Iwconfig
+@
+.. autosummary::
+   :toctree: api
 
+   TestIwconfig.test_constructor
 
+<<name='test_imports', echo=False>>=
 # python standard library
 import unittest
 
@@ -259,8 +271,8 @@ from mock import MagicMock
 # this package
 from apcommand.commons.randomizer import Randomizer
 from apcommand.connections.nonlocalconnection import OutputError
-
-
+@
+<<name='test_constants', echo=False>>=
 EMPTY_TUPLE = ('','')
 sample_output="""
 iwconfig ath0
@@ -282,8 +294,8 @@ SAMPLE_MAC = '00:03:7F:12:3A:0F'
 SAMPLE_FREQUENCY = '2.462'
 SAMPLE_PROTOCOL = 'ng'
 SAMPLE_INTERFACE = 'ath0'
-
-
+@
+<<name='TestIwconfig', echo=False>>=
 class TestIwconfig(unittest.TestCase):
     def setUp(self):
         self.connection = MagicMock()
@@ -407,8 +419,14 @@ class TestIwconfig(unittest.TestCase):
         self.assertEqual(SAMPLE_INTERFACE, interface)
         return
 
+@
+<%
+for case in (TestIwconfig,):
+    suite = unittest.TestLoader().loadTestsFromTestCase(case)    
+    unittest.TextTestRunner(verbosity=2).run(suite)
+%>
 
-
+<<name='debug', echo=False>>=
 if __name__ == '__main__':
     connection = MagicMock()
     iwconfig = IwconfigLexer(connection=connection)
@@ -416,3 +434,10 @@ if __name__ == '__main__':
     o_e = OutputError(output, error)
     connection.iwconfig.return_value = o_e
     print str(iwconfig)
+@
+
+
+
+
+
+
