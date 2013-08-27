@@ -1,6 +1,12 @@
 Atheros Command Line
 ====================
 
+Code references:
+
+.. toctree::
+   
+   apup and apdown <atheros_files/apup_apdown>
+
 The Telnet Connection
 ---------------------
 
