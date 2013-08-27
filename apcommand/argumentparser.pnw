@@ -192,3 +192,10 @@ class Arguments(object):
         return
 # end class Arguments
 @
+<<name='help', echo=False>>=
+if __name__ == "__main__":
+    arguments = Arguments()
+    arguments.add_arguments()
+    arguments.add_subparsers()
+    arguments.parser.print_help()
+@

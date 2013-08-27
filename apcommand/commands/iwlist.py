@@ -13,6 +13,50 @@ class IwlistEnum(object):
 # end class IwlistEnum    
 
 
+class IwlistCommand(BaseClass):
+    """
+    A bundler of connection and IwlistLexer
+    """
+    def __init__(self, connection, interface):
+       super(IwlistCommand, self).__init__()
+       self.connection = connection
+       self.interface = interface
+       self._lexer = None
+       self._channel = None
+       return
+
+    def output(self, command):
+        """
+        Calls the `iwlist <interface> <command>` command on the self.connection
+
+        :param:
+
+         - `command`: sub-command for iwlist
+
+        :rtype: namedtuple
+        :return: output of the connection
+        """
+        return self.connection.iwlist("{0} {1}".format(self.interface, command))
+
+    @property
+    def lexer(self):
+        """
+        Iwlist Lexer
+        """
+        if self._lexer is None:
+            self._lexer = IwlistLexer(interface=self.interface)
+        return self._lexer
+
+    @property
+    def channel(self):
+        """
+        gets the channel from the iwlist lexer
+
+        :return: channel for the interface        
+        """
+        return self.lexer.channel(lines=self.output('channel').output)
+
+
 class IwlistLexer(BaseClass):
     def __init__(self, interface='wlan0', not_available='NA'):
         """

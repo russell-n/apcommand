@@ -33,7 +33,8 @@ Helper Commands:
 
    Change Prompt <../../commands/changeprompt>   
    Iwconfig <../../commands/iwconfig>
-   Settings Validator <../../accesspoints/settingsvalidator>
+   Iwlist <../../commands/iwlist>
+   Settings Validator <../../commands/settingsvalidator>
 
 Common Modules:
 

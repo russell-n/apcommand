@@ -38,6 +38,22 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    
 
 
+.. autosummary::
+   :toctree: api
+
+   TestAR5KAP.test_constructor
+   TestAR5KAP.test_up
+   TestAR5KAP.test_down
+   TestAR5KAP.test_destroy
+   TestAR5KAP.test_status
+   TestAR5KAP.test_ifconfig_fail
+   TestAR5KAP.test_reset
+   TestAR5KAP.test_set_ssid
+   TestAR5KAP.test_set_channel_24
+   TestAR5KAP.test_set_channel_5
+   TestAR5KAP.test_set_security
+
+
 Atheros Security Setter
 -----------------------
 
@@ -72,13 +88,20 @@ This sets the security to open-none.
 
 
 
+.. autosummary::
+   :toctree: api
+
+   TestAtherosOpen.test_call
+
+
 AtherosChannelChanger
 ---------------------
 
 .. uml::
 
    AtherosChannelChanger -|> BaseClass
-   AtherosChannelChanger : __call__(channel, mode)
+   AtherosChannelChanger o- SettingsValidator
+   AtherosChannelChanger : __call__(channel, mode)   
 
 .. autosummary::
    :toctree: api
@@ -89,55 +112,25 @@ This was a base class for 2.4 and 5 ghz channel changers but I realized that the
 
 
 
-Atheros24
----------
-
-The channel setting commands are slightly different for the 2.4 GHz and 5GHz radios so to make it a little simpler they are separated out.
-
-.. uml::
-
-   Atheros24 -|> AtherosChannelChanger
-   Atheros24 : set_channel(channel)
-
 .. autosummary::
    :toctree: api
 
-   Atheros24Ghz
-
-
-
-Atheros5
---------
-
-This is the countepart to the `Atheros24` for 5 Ghz.
-
-.. uml::
-
-   Atheros5GHz -|> AtherosChannelChanger
-   Atheros5GHz : set_channel(channel)
-
-.. autosummary::
-   :toctree: api
-
-   Atheros5GHz
-
-
-
-
-
-.. autosummary::
-   :toctree: api
-
-   TestAR5KAP.test_constructor
-   TestAR5KAP.test_up
-   TestAR5KAP.test_down
-   TestAR5KAP.test_destroy
-   TestAR5KAP.test_status
-   TestAR5KAP.test_reset
-   TestAR5KAP.test_set_channel
-   TestAR5KAP.test_set_security
+   TestAtheros24.test_set_channel
+   TestAtheros24.test_bandwidth
+   TestAtheros24.test_parameter_suffix
+   TestAtheros24.test_mode
+   TestAtheros24.test_band   
    
+.. autosummary::
+   :toctree: api
 
+   TestAtheros5GHz.test_band
+   TestAtheros5GHz.test_bandwidth
+   TestAtheros5GHz.test_parameter_suffix
+   TestAtheros5GHz.test_mode
+   TestAtheros5GHz.test_set_channel
+   TestAtheros5GHz.test_validate_channel
+   
 
 The Configure
 -------------
@@ -163,25 +156,7 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    TestConfigure.test_constructor
    TestConfigure.test_enter
    TestConfigure.test_exit
-   TestConfigure.test_other_interface
-   TestConfigure.test_radio_id
 
-
-
-.. autosummary::
-   :toctree: api
-
-   TestAtheros24.test_set_channel
    
-
-.. autosummary::
-   :toctree: api
-
-   TestAtherosOpen.test_call
-   
-
-
-
-
 
 

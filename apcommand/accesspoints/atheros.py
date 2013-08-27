@@ -8,6 +8,7 @@ from apcommand.connections.telnetconnection import TelnetConnection
 from apcommand.commons.errors import CommandError
 from apcommand.commons.errors import ArgumentError
 from apcommand.accesspoints.arbitrarycommand import ArbitraryCommand
+from apcommand.commands.settingsvalidator import SettingsValidator
 
 
 EMPTY_STRING = ''
@@ -61,7 +62,8 @@ class AtherosAR5KAP(BaseClass):
     """
     A controller for the Atheros AR5KAP
     """
-    def __init__(self, hostname='10.10.10.21', username='root', password='5up'):
+    def __init__(self, hostname='10.10.10.21', username='root', password='5up',
+                 interface='ath0'):
         """
         The AtherosAR5KAP constructor
 
@@ -76,10 +78,22 @@ class AtherosAR5KAP(BaseClass):
         self.hostname = hostname
         self.username = username
         self.password = password
+        self.interface = interface
         self._connection = None
         self._log_lines = None
         self._command_executor = None
+        self._validate = None
         return
+
+    @property
+    def validate(self):
+        """
+        A settings validator
+        """
+        if self._validate is None:
+            self._validate = SettingsValidator(connection=self.connection,
+                                                interface=self.interface)            
+        return self._validate
 
     @property
     def command_executor(self):
@@ -208,6 +222,7 @@ class AtherosAR5KAP(BaseClass):
         """
         changer = AtherosChannelChanger(connection=self.connection)
         changer(channel, mode, bandwidth)
+        self.validate.channel(channel)
         return
 
     def set_security(self, security_type='open'):
@@ -294,16 +309,18 @@ class AtherosChannelChanger(BaseClass):
     """
     A channel changer
     """
-    def __init__(self, connection):
+    def __init__(self, connection, interface='ath0'):
         """
         AtherosChannelChanger constructor
 
         :param:
 
          - `connection`: the connection to the AP
+         - `interface`: name of the network interface
         """
         super(AtherosChannelChanger, self).__init__()
         self.connection = connection
+        self.interface = interface
         self._logger = None
         self._channel_to_bandwidth = None
         self._g_channels = None
@@ -312,7 +329,7 @@ class AtherosChannelChanger(BaseClass):
         self._a_channels = None
         self._channels = None
         self._channel_mode_map = None
-        self._log_lines = None        
+        self._log_lines = None
         return
 
     @property
@@ -522,39 +539,62 @@ class AtherosChannelChanger(BaseClass):
         return
 
 
-class Atheros24Ghz(AtherosChannelChanger):
+class Configure(BaseClass):
     """
-    A channel-changer for 2.4 GHz
+    A context manager for configure commands on the Atheros
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, connection, radio_id=0):
         """
-        Atheros24GHz constructor
+        The Configure constructor 
+
+        :param:
+
+         - `connection`: connection to AP's command-line interface
+         - `radio_id`: the id (0 for 2.4ghz 1 for 5GHz)
         """
-        super(Atheros24Ghz, self).__init__(*args, **kwargs)
+        super(Configure, self).__init__()
+        self.connection = connection
+        self.radio_id = radio_id
+        self._log_lines = None
+        self.logger.debug(str(connection))
+        self.logger.debug("radio id: {0}".format(radio_id))
         return
 
     @property
-    def interface(self):
+    def log_lines(self):
         """
-        The name of the VAP (ath0)
+        A logger of output lines
         """
-        if self._interface is None:
-            self._interface = 'ath0'
-        return self._interface
+        if self._log_lines is None:
+            self._log_lines = LineLogger()
+        return self._log_lines
 
-
-
-class Atheros5GHz(AtherosChannelChanger):
-    """
-    A channel-changer for 5 GHz
-    """
-    def __init__(self, *args, **kwargs):
+    def __enter__(self):
         """
-        Atheros5GHz constructor
+        Takes down the AP
         """
-        super(Atheros5GHz, self).__init__(*args, **kwargs)
-        return
+        # turn off the wifi interface
+        output, error = self.connection.apdown()
+        self.log_lines(output)
+        # tell it which radio to set up (0=2.4GHz, 1=5GHz)
+        output, error = self.connection.cfg('-a AP_RADIO_ID={0}'.format(self.radio_id))
+        self.log_lines(output)
+        # tell it to only start up the current radio, not both ath0 and ath1
+        output, error = self.connection.cfg('-a AP_STARTMODE=standard')
+        self.log_lines(output)
+        return self.connection
 
+    def __exit__(self, type, value, traceback):
+        """
+        Commits the configuration and brings up the AP, destroying the other VAP
+        """
+        # commit the configuration changes        
+        output, error = self.connection.cfg('-c')
+        self.log_lines(output)
+        # bring up the AP
+        output, error = self.connection.apup()
+        self.log_lines(output)
+        return    
 
 
 # python standard library
@@ -577,7 +617,9 @@ class TestAR5KAP(unittest.TestCase):
     def setUp(self):
         self.logger = MagicMock()
         self.connection = MagicMock()
+        self.validator = MagicMock()
         self.ap = AtherosAR5KAP()
+        self.ap._validate = self.validator
         self.ap._connection = self.connection
         self.ap._logger = self.logger
         return
@@ -687,6 +729,7 @@ class TestAR5KAP(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros.AtherosChannelChanger', changer):
             self.ap.set_channel(channel)
         changer.assert_called_with(connection=self.connection)
+        self.validator.channel.assert_called_with(channel)
         return 
 
     def test_set_channel_5(self):
@@ -703,6 +746,7 @@ class TestAR5KAP(unittest.TestCase):
         with patch('apcommand.accesspoints.atheros.AtherosChannelChanger', changer):
             self.ap.set_channel(channel)
         changer.assert_called_with(connection=self.connection)
+        self.validator.channel.assert_called_with(channel)
         return
 
     def test_set_security(self):
@@ -717,64 +761,6 @@ class TestAR5KAP(unittest.TestCase):
         setter.assert_called_with(connection=self.connection)
         calls = ENTER_CALLS + [call.cfg('-a AP_SECMODE=None')] + EXIT_CALLS
         return
-
-
-class Configure(BaseClass):
-    """
-    A context manager for configure commands on the Atheros
-    """
-    def __init__(self, connection, radio_id=0):
-        """
-        The Configure constructor 
-
-        :param:
-
-         - `connection`: connection to AP's command-line interface
-         - `radio_id`: the id (0 for 2.4ghz 1 for 5GHz)
-        """
-        super(Configure, self).__init__()
-        self.connection = connection
-        self.radio_id = radio_id
-        self._log_lines = None
-        self.logger.debug(str(connection))
-        self.logger.debug("radio id: {0}".format(radio_id))
-        return
-
-    @property
-    def log_lines(self):
-        """
-        A logger of output lines
-        """
-        if self._log_lines is None:
-            self._log_lines = LineLogger()
-        return self._log_lines
-
-    def __enter__(self):
-        """
-        Takes down the AP
-        """
-        # turn off the wifi interface
-        output, error = self.connection.apdown()
-        self.log_lines(output)
-        # tell it which radio to set up (0=2.4GHz, 1=5GHz)
-        output, error = self.connection.cfg('-a AP_RADIO_ID={0}'.format(self.radio_id))
-        self.log_lines(output)
-        # tell it to only start up the current radio, not both ath0 and ath1
-        output, error = self.connection.cfg('-a AP_STARTMODE=standard')
-        self.log_lines(output)
-        return self.connection
-
-    def __exit__(self, type, value, traceback):
-        """
-        Commits the configuration and brings up the AP, destroying the other VAP
-        """
-        # commit the configuration changes        
-        output, error = self.connection.cfg('-c')
-        self.log_lines(output)
-        # bring up the AP
-        output, error = self.connection.apup()
-        self.log_lines(output)
-        return    
 
 
 class TestConfigure(unittest.TestCase):
@@ -829,32 +815,11 @@ class TestConfigure(unittest.TestCase):
         self.assertEqual(calls, self.connection.method_calls)
         return
 
-    #def test_other_interface(self):
-    #    """
-    #    Does the correct interface get called
-    #    """
-    #    self.set_context_connection()
-    #    with Configure(self.connection, 'ath1'):
-    #        pass
-    #
-    #    self.connection.wlanconfig.assert_called_with('ath0 destroy')        
-    #    return
-
-    #@raises(CommandError)
-    #def test_bad_interface(self):
-    #    """
-    #    Does the context manager raise a CommandError if it doesn't recognize the interface? 
-    #    """
-    #    self.set_context_connection()
-    #    with Configure(self.connection, 'eth0'):
-    #        pass
-    #    return
-
 
 class TestAtheros24(unittest.TestCase):
     def setUp(self):
         self.connection = MagicMock()
-        self.changer = Atheros24Ghz(self.connection)
+        self.changer = AtherosChannelChanger(self.connection)
         self.logger = MagicMock()
         self.changer._logger = self.logger
         return
@@ -881,59 +846,58 @@ class TestAtheros24(unittest.TestCase):
         self.assertRaises(ArgumentError, self.changer.bandwidth, self.bad_channel())
         return
 
-    #def test_parameter_suffix(self):
-    #    """
-    #    Does the changer get the appropriate parameter suffix for the channel?
-    #    """
-    #    channel = self.g_channel()
-    #    suffix = self.changer.parameter_suffix(channel)
-    #    self.assertEqual(EMPTY_STRING, suffix)
-    #    self.assertRaises(ArgumentError, self.changer.parameter_suffix,
-    #                      self.bad_channel())
-    #    return
-    #
-    #def test_mode(self):
-    #    """
-    #    Does the mode method get the right mode based on the channel?
-    #    """
-    #    channel = self.g_channel()
-    #    mode = self.changer.mode(str(channel))
-    #    self.assertEqual(mode, '11NG')
-    #    self.assertRaises(ArgumentError,
-    #                      self.changer.mode,
-    #                      self.bad_channel())
-    #    return
-    #
-    #def test_band(self):
-    #    """
-    #    Does the changer get the 2.4 band?
-    #    """
-    #    channel = self.g_channel()
-    #    band = self.changer.band(channel)
-    #    self.assertEqual(band, '2.4')
-    #    channel = self.bad_channel()
-    #    self.assertRaises(ArgumentError, self.changer.band, channel)
-    #    return
-    #
-    #def test_set_channel(self):
-    #    """
-    #    Does the ap configure set the channel correctly?
-    #    """
-    #    channel = self.g_channel()
-    #    self.set_context_connection()
-    #    self.changer(channel)
-    #    calls = ENTER_CALLS + [call.cfg('-a AP_CHMODE=11NGHT20'),
-    #                                call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + EXIT_CALLS
-    #
-    ##    print self.logger.method_calls
-    #    self.assertEqual(calls, self.connection.method_calls)
-    #    return
+    def test_parameter_suffix(self):
+        """
+        Does the changer get the appropriate parameter suffix for the channel?
+        """
+        channel = self.g_channel()
+        suffix = self.changer.parameter_suffix(channel)
+        self.assertEqual(EMPTY_STRING, suffix)
+        self.assertRaises(ArgumentError, self.changer.parameter_suffix,
+                          self.bad_channel())
+        return
+    
+    def test_mode(self):
+        """
+        Does the mode method get the right mode based on the channel?
+        """
+        channel = self.g_channel()
+        mode = self.changer.mode(str(channel))
+        self.assertEqual(mode, '11NG')
+        self.assertRaises(ArgumentError,
+                          self.changer.mode,
+                          self.bad_channel())
+        return
+    
+    def test_band(self):
+        """
+        Does the changer get the 2.4 band?
+        """
+        channel = self.g_channel()
+        band = self.changer.band(channel)
+        self.assertEqual(band, '2.4')
+        channel = self.bad_channel()
+        self.assertRaises(ArgumentError, self.changer.band, channel)
+        return
+    
+    def test_set_channel(self):
+        """
+        Does the ap configure set the channel correctly?
+        """
+        channel = self.g_channel()
+        self.set_context_connection()
+        self.changer(channel)
+        calls = ENTER_CALLS + [call.cfg('-a AP_CHMODE=11NGHT20'),
+                                    call.cfg('-a AP_PRIMARY_CH={0}'.format(channel))] + EXIT_CALLS
+    
+        self.assertEqual(calls, self.connection.method_calls)
+        return
 
 
 class TestAtheros5GHz(unittest.TestCase):
     def setUp(self):
         self.connection = MagicMock()
-        self.changer = Atheros5GHz(self.connection)
+        self.changer = AtherosChannelChanger(self.connection)
         self.changer._logger = MagicMock()
         self.enter_calls = [call.apdown(), call.cfg('-a AP_RADIO_ID=1'),
                call.cfg('-a AP_STARTMODE=standard')]

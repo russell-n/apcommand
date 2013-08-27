@@ -1,6 +1,15 @@
 The Settings Validator
 ======================
 
+The Settings Validator checks the AP for settings to see if they are correct.
+
+.. uml::
+
+   SettingsValidator -|> BaseClass
+   SettingsValidator o- IwconfigLexer
+
+
+
 The Channel
 -----------
 
