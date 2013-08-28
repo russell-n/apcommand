@@ -35,6 +35,8 @@ Helper Commands:
    Iwconfig <../../commands/iwconfig>
    Iwlist <../../commands/iwlist>
    Settings Validator <../../commands/settingsvalidator>
+   Randomizer <../../commons/randomizer>
+   Oatbran <../../commons/oatbran>
 
 Common Modules:
 

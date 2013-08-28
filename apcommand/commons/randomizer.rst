@@ -5,10 +5,15 @@ This is primarily intended to be used to create random numbers and strings for t
 
 .. uml::
 
-   Randomizer.random_string()
+   Randomizer : random_string
 
 .. autosummary::
    :toctree: api
 
-   Randomizer : random_string()
+   Randomizer.random_string
+   Randomizer.random_letters
+   Randomizer.random_integer
+
+
+
 

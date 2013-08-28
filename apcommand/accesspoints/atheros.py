@@ -58,12 +58,70 @@ class LineLogger(BaseClass):
         return
 
 
+class Configure(BaseClass):
+    """
+    A context manager for configure commands on the Atheros
+    """
+    def __init__(self, connection, radio_id=0):
+        """
+        The Configure constructor 
+
+        :param:
+
+         - `connection`: connection to AP's command-line interface
+         - `radio_id`: the id (0 for 2.4ghz 1 for 5GHz)
+        """
+        super(Configure, self).__init__()
+        self.connection = connection
+        self.radio_id = radio_id
+        self._log_lines = None
+        self.logger.debug(str(connection))
+        self.logger.debug("radio id: {0}".format(radio_id))
+        return
+
+    @property
+    def log_lines(self):
+        """
+        A logger of output lines
+        """
+        if self._log_lines is None:
+            self._log_lines = LineLogger()
+        return self._log_lines
+
+    def __enter__(self):
+        """
+        Takes down the AP
+        """
+        # turn off the wifi interface
+        output, error = self.connection.apdown()
+        self.log_lines(output)
+        # tell it which radio to set up (0=2.4GHz, 1=5GHz)
+        output, error = self.connection.cfg('-a AP_RADIO_ID={0}'.format(self.radio_id))
+        self.log_lines(output)
+        # tell it to only start up the current radio, not both ath0 and ath1
+        output, error = self.connection.cfg('-a AP_STARTMODE=standard')
+        self.log_lines(output)
+        return self.connection
+
+    def __exit__(self, type, value, traceback):
+        """
+        Commits the configuration and brings up the AP
+        """
+        # commit the configuration changes        
+        output, error = self.connection.cfg('-c')
+        self.log_lines(output)
+        # bring up the AP
+        output, error = self.connection.apup()
+        self.log_lines(output)
+        return    
+
+
 class AtherosAR5KAP(BaseClass):
     """
     A controller for the Atheros AR5KAP
     """
     def __init__(self, hostname='10.10.10.21', username='root', password='5up',
-                 interface='ath0'):
+                 interface='ath0', connection=None):
         """
         The AtherosAR5KAP constructor
 
@@ -72,6 +130,8 @@ class AtherosAR5KAP(BaseClass):
          - `hostname`: the hostname (IP address) of the AP's telnet interface
          - `username`: the user-login to the AP command-line interface
          - `password`: the password for the AP command-line interface
+         - `interface`: the settings validator needs the VAP name
+         - `connection`: overrides the TelnetConnection creation
         """
         super(AtherosAR5KAP, self).__init__()
         self._logger = None
@@ -79,7 +139,7 @@ class AtherosAR5KAP(BaseClass):
         self.username = username
         self.password = password
         self.interface = interface
-        self._connection = None
+        self._connection = connection
         self._log_lines = None
         self._command_executor = None
         self._validate = None
@@ -164,11 +224,12 @@ class AtherosAR5KAP(BaseClass):
 
     def status(self, interface='ath0'):
         """
-        Check iwconfig and ifconfig for the interface (set to 'all' to get all interfaces)
+        iwconfig, ifconfig, iwlist for interface (use 'all' for all interfaces)
 
         :param:
 
          - `interface`: name of network interface (e.g. ath0)
+        
         """
         if interface == 'all':
             interface = ''
@@ -208,6 +269,21 @@ class AtherosAR5KAP(BaseClass):
         """
         with Configure(self.connection, radio_id=BAND_ID[band]):
             output, error = self.connection.cfg('-a AP_SSID={0}'.format(ssid))
+        return
+
+    def set_ip(self, address='10.10.10.21', mask='255.255.255.0', band='2.4'):
+        """
+        Sets the AP's IP address
+
+        :param:
+
+         - `address`: the IP address to use
+         - `mask`: the subnet mask
+        """
+        with Configure(connection=self.connection, radio_id=BAND_ID[band]):
+            output, error = self.connection.cfg('-a AP_IPADDR={0}'.format(address))
+            self.log_lines(output)
+            output, error = self.connection.cfg('-a AP_NETMASK={0}'.format(mask))
         return
 
     def set_channel(self, channel, mode=None, bandwidth=None):
@@ -539,64 +615,6 @@ class AtherosChannelChanger(BaseClass):
         return
 
 
-class Configure(BaseClass):
-    """
-    A context manager for configure commands on the Atheros
-    """
-    def __init__(self, connection, radio_id=0):
-        """
-        The Configure constructor 
-
-        :param:
-
-         - `connection`: connection to AP's command-line interface
-         - `radio_id`: the id (0 for 2.4ghz 1 for 5GHz)
-        """
-        super(Configure, self).__init__()
-        self.connection = connection
-        self.radio_id = radio_id
-        self._log_lines = None
-        self.logger.debug(str(connection))
-        self.logger.debug("radio id: {0}".format(radio_id))
-        return
-
-    @property
-    def log_lines(self):
-        """
-        A logger of output lines
-        """
-        if self._log_lines is None:
-            self._log_lines = LineLogger()
-        return self._log_lines
-
-    def __enter__(self):
-        """
-        Takes down the AP
-        """
-        # turn off the wifi interface
-        output, error = self.connection.apdown()
-        self.log_lines(output)
-        # tell it which radio to set up (0=2.4GHz, 1=5GHz)
-        output, error = self.connection.cfg('-a AP_RADIO_ID={0}'.format(self.radio_id))
-        self.log_lines(output)
-        # tell it to only start up the current radio, not both ath0 and ath1
-        output, error = self.connection.cfg('-a AP_STARTMODE=standard')
-        self.log_lines(output)
-        return self.connection
-
-    def __exit__(self, type, value, traceback):
-        """
-        Commits the configuration and brings up the AP, destroying the other VAP
-        """
-        # commit the configuration changes        
-        output, error = self.connection.cfg('-c')
-        self.log_lines(output)
-        # bring up the AP
-        output, error = self.connection.apup()
-        self.log_lines(output)
-        return    
-
-
 # python standard library
 import unittest
 import random
@@ -760,6 +778,20 @@ class TestAR5KAP(unittest.TestCase):
             self.ap.set_security(security_type=security_type)
         setter.assert_called_with(connection=self.connection)
         calls = ENTER_CALLS + [call.cfg('-a AP_SECMODE=None')] + EXIT_CALLS
+        return
+
+    def test_set_ip(self):
+        """
+        Does it call the connection correctly?
+        """
+        self.set_context_connection()
+        expected_ip = '.'.join([str(random.randrange(1,254)) for octet in range(4)])
+        mask = '255.' + '.'.join([random.choice(('255', '0')) for octet in range(3)])
+        print expected_ip
+        self.ap.set_ip(address=expected_ip, mask=mask)
+        calls = ENTER_CALLS + [call.cfg('-a AP_IPADDR={0}'.format(expected_ip)),
+                               call.cfg('-a AP_NETMASK={0}'.format(mask))] + EXIT_CALLS
+        self.assertEqual(calls, self.connection.method_calls)
         return
 
 

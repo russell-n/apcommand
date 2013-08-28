@@ -10,25 +10,25 @@ Once you install the code::
 
    python setup.py install
 
-You will end up with a command line command called `apcommand` (you can rename it to whatever you find easier to remember). To see the options::
+You will end up with a command line command called `atheros` (you can rename it to whatever you find easier to remember). To see the options::
 
-   apcommand -h
+   atheros -h
 
-The `apcommand` interface is built around sub-commands (which are listed by the `-h` option). Each sub-command has its own set of options separate from the `apcommand`. To see them pass the `-h` option to the sub-command. e.g. to see the `channel` sub-command options::
+The `atheros` interface is built around sub-commands (which are listed by the `-h` option). Each sub-command has its own set of options separate from the `atheros`. To see them pass the `-h` option to the sub-command. e.g. to see the `channel` sub-command options::
 
-   apcommand channel -h
+   atheros channel -h
 
 To actually change the channel to, say 36:
 
-   apcommand channel 36
+   atheros channel 36
 
-If you aren't familiar with python's sub-command interface note that the options have to go with their sub-command. The `apcommand` has a `-d` flag that will output the access points output to the screen (`d` is for `debug`), but the `channel` subcommand doesn't. This is valid::
+If you aren't familiar with python's sub-command interface note that the options have to go with their sub-command. The `atheros` has a `-d` flag that will output the access points output to the screen (`d` is for `debug`), but the `channel` subcommand doesn't. This is valid::
 
-   apcommand -d channel 36
+   atheros -d channel 36
 
 This is not::
 
-   apcommand channel 36 -d
+   atheros channel 36 -d
 
 
 The Repository

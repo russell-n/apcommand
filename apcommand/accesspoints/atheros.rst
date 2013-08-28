@@ -1,7 +1,20 @@
 Atheros
 =======
 .. currentmodule:: apcommand.accesspoints.atheros
-This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on :ref:`Aren's Code <arens-atheros>` and partially on the Atheros' shell scripts found in ``/etc/ath`` on the device.
+This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on :ref:`Aren's Code <arens-atheros>` and partially on the Atheross' shell scripts found in ``/etc/ath`` on the device.
+
+Contents:
+
+   * :ref:`Line Logger <line-logger>`
+   * :ref:`TheConfigure <the-configure>`
+   * :ref:`AtherosAR5KAP <atheros-ar5kap>`
+   * :ref:`AtherosSecuritySetter <atheros-security-setter>`
+   * :ref:`AtherosOpen Security <atheros-open-security>`
+   * :ref:`AtherosChannelChanger <atheros-channel-changer>`
+   
+
+
+.. _line-logger:
 
 The Line Logger
 ---------------
@@ -16,8 +29,33 @@ Several of the classes have ended up using this same method so I broke it out so
    :toctree: api
 
    LineLogger
+   LineLogger.__call__
 
 
+
+.. _the-configure:   
+
+The Configure
+-------------
+
+The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsnew/pep-343.html>`_ for commands. It does not actually make use of all the exception handling that is a feature of context managers. Maybe next time.
+
+.. uml::
+
+   Configure -|> BaseClass
+   Configure : __init__(connection)
+
+.. autosummary::
+   :toctree: api
+
+   Configure
+   Configure.__enter__
+   Configure.__exit__
+
+
+
+
+.. _atheros-ar5kap:
 
 AtherosAR5KAP
 -------------
@@ -35,8 +73,21 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    :toctree: api
 
    AtherosAR5KAP
+   AtherosAR5KAP.up
+   AtherosAR5KAP.down
+   AtherosAR5KAP.destroy
+   AtherosAR5KAP.status
+   AtherosAR5KAP.reset
+   AtherosAR5KAP.set_ssid
+   AtherosAR5KAP.set_ip
+   AtherosAR5KAP.set_channel
+   AtherosAR5KAP.set_security
+   AtherosAR5KAP.exec_command
    
 
+
+Testing the AtherosAR5KAP
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api
@@ -53,7 +104,8 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    TestAR5KAP.test_set_channel_5
    TestAR5KAP.test_set_security
 
-
+.. _atheros-security-setter:
+   
 Atheros Security Setter
 -----------------------
 
@@ -71,6 +123,8 @@ This is a base-class for the security setters.
    AtherosSecuritySetter
 
 
+
+.. _atheros-open-security:
 
 AtherosOpen Security
 --------------------
@@ -93,7 +147,8 @@ This sets the security to open-none.
 
    TestAtherosOpen.test_call
 
-
+.. _atheros-channel-changer:
+   
 AtherosChannelChanger
 ---------------------
 
@@ -130,24 +185,6 @@ This was a base class for 2.4 and 5 ghz channel changers but I realized that the
    TestAtheros5GHz.test_mode
    TestAtheros5GHz.test_set_channel
    TestAtheros5GHz.test_validate_channel
-   
-
-The Configure
--------------
-
-The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsnew/pep-343.html>`_ for commands. It does not actually make use of all the exception handling that is a feature of context managers, mostly because this is a rush job and I do not have time to try and make this robust. Maybe next time.
-
-.. uml::
-
-   Configure -|> BaseClass
-   Configure : __init__(connection)
-
-.. autosummary::
-   :toctree: api
-
-   Configure.__enter__
-   Configure.__exit__
-
 
 
 .. autosummary::

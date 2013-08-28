@@ -46,6 +46,7 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 	@echo "Synching with the repository_documentation"
+	rsync -ravz build/html/ apcontrol@elin:public_html
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

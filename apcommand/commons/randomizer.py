@@ -93,7 +93,7 @@ class TestRandomizer(unittest.TestCase):
         minimum, maximum = self.bounds()
         
         actual = Randomizer.random_string(randint(minimum, maximum))
-        self.assertGreaterEqual(len(actual), minimum)
+        self.assertGreaterEqual(len(actual), 1)
         self.assertLessEqual(len(actual), max(1, maximum))
         for character in actual:
             self.assertIn(character, printable)

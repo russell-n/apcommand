@@ -1,11 +1,15 @@
 Atheros Command Line
 ====================
 
+.. note:: These are observations I made while trying to figure out how to set up the AP. Not everything here is necessarily correct but maybe you won't have to crawl around like a naked mole-rat if you at least start with someone else's notes.
+
 Code references:
 
 .. toctree::
+   :maxdepth: 1
    
    apup and apdown <atheros_files/apup_apdown>
+   apcfg <atheros_files/apcfg>
 
 The Telnet Connection
 ---------------------
@@ -36,7 +40,7 @@ The `/etc/ath/` shell scripts:
     * :download:`killVAP <atheros_files/etc_ath_killVAP.sh>`
     * :download:`makeVAP <atheros_files/etc_ath_makeVAP.sh>`
 
-The `/etc/ath` folder also has what appear to be sample configuration files for the access point:
+The `/etc/ath` folder also has what appear to be template configuration files for the access point:
 
     * :download:`eap.app_bss <atheros_files/etc_ath_eap_ap_bss.txt>`
     * :download:`psk.app_bss <atheros_files/etc_ath_psk_ap_bss.txt>`
@@ -61,7 +65,7 @@ The `cfg` command is a symlink to `/usr/www/cgi-bin/cgiMain` and is the main way
    ``-t ${APINDEX} /etc/ath/${APNAME}.<suffix> > /tmp/<prefix>${APNAME}``, Translate settings to a config file
    ``-x``, Reset the settings to the defaults
 
-As an example, to clear any changes you've made and set the SSID to AAAARGH (on the 2.4GHz radio)::
+As an example, to clear any changes you've made and set the SSID to AAAARGH::
 
     apdown
     cfg -x
@@ -74,7 +78,7 @@ The Settings
 
 .. include:: atheros_files/cfg_s.txt
 
-You won't see this exactly, there are 16 VAPs setup on the AP and the `-s` option will show all their settings, even if only one is enabled. 
+You won't see this exactly, there are 16 VAPs setup on the AP and the `-s` option will show all their settings, even if only one is enabled (so I filtered out the other VAP parameters). 
 
 .. include:: atheros_files/tmp_secath0.txt
 
@@ -108,19 +112,19 @@ I don't know that anything other than the AP_IPADDR might need to be set::
 AP Start Mode
 +++++++++++++
 
-This can be overridded by environmental variables. For testing you will probably want *standard* -- the default is *dual* which will leave two VAPs up (one 2.4 GHz and one 5 GHz).
+This can be overridden by environmental variables. For testing you will probably want *standard* -- the default is *dual* which will leave two VAPs up (one 2.4 GHz and one 5 GHz).
 
 .. csv-table::
    :header: Value, Meaning
 
    standard , standard single AP start mode
-      rootap , WDS root AP for WDS modes
-    repeater , WDS repeater station
-repeater-ind , WDS repeater station independent mode
-      client , WDS "virtual wire" client
-       multi , Multiple BSSID with all encryption types
-        dual , Dual concurrent automatically configure interface
-      stafwd , Station mode with address forwarding enabled
+   rootap , WDS root AP for WDS modes
+   repeater , WDS repeater station
+   repeater-ind , WDS repeater station independent mode
+   client , WDS "virtual wire" client
+   multi , Multiple BSSID with all encryption types
+   dual , Dual concurrent automatically configure interface
+   stafwd , Station mode with address forwarding enabled
 
 Channel and Mode
 ++++++++++++++++

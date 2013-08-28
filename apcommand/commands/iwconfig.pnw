@@ -35,7 +35,7 @@ class IwconfigEnums(object):
 .. _iwconfig-command:
 
 .. autosummary::
-   :toctree:
+   :toctree: api
 
    IwconfigCommand
    IwconfigEnums
@@ -561,10 +561,3 @@ for case in (TestIwconfig, TestIwconfigLexer):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
 %>
-
-
-
-
-
-
-
