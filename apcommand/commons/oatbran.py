@@ -60,7 +60,6 @@ class OatBranGroup(object):
         return "(?<!{e})".format(e=expression)
 
 
-
 class OatBranClass(object):
     """
     A class to help with character classes
@@ -74,8 +73,23 @@ class OatBranClass(object):
         :param:
 
          - `expression`: string to convert
+
+        :return: expression to match any character in expression
         """
         return "[{e}]".format(e=expression)
+
+    @staticmethod
+    def not_in(expression):
+        """
+        Creates a complement character class
+
+        :param:
+
+         - `expression`: string to convert
+
+        :return: expression to match any character not in expression
+        """
+        return "[^{e}]".format(e=expression)
 
 
 # python standard library
@@ -140,10 +154,16 @@ class TestOatBranClass(unittest.TestCase):
         sample = Randomizer.random_letters()
         expression = OatBranClass.character_class(sample)
         self.assertEqual(LEFT_BRACKET + sample + RIGHT_BRACKET, expression)
+        return
 
-
-def NOT(e):
-    return "[^{e}]+".format(e=e)
+    def test_not(self):
+        '''
+        Does it convert the string to a non-matching class?
+        '''
+        sample = Randomizer.random_letters()
+        expression = OatBranClass.not_in(sample)
+        self.assertEqual(LEFT_BRACKET + '^' + sample + RIGHT_BRACKET,
+                         expression)
 
 
 # cardinality
