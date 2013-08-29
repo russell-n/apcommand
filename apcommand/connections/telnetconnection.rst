@@ -147,8 +147,7 @@ Testing the TelnetConnectionBuilder
 .. autosummary::
    :toctree: api
 
-   TestTelnetConnectionBuilder.test_plugin
-   TestTelnetConnectionBuilder.test_product
+   TestTelnetConnectionBuilder
 
 
 

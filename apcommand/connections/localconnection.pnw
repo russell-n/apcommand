@@ -1,6 +1,6 @@
 The Local Connection
 ====================
-
+.. currentmodule:: apcommand.connections.localconnection
 .. note:: In practice I have found that there is almost no case where you cannot use telnet or ssh to connect to a device, and both have more robust interfaces (as well as allowing remote access), so this is pretty much never used or maintained anymore.
 
 e.g.::

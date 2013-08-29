@@ -5,12 +5,11 @@ import os.path
 import telnetlib
 import time
 
-# arachne libraries
+# this package
 from apcommand.baseclass import BaseClass
 from apcommand.commands import changeprompt
 
 # connections
-#from sshconnection import OutputFile
 from apcommand.commons.readoutput import ValidatingOutput
 from nonlocalconnection import NonLocalConnection, NonLocalConnectionBuilder
 from localconnection import OutputError

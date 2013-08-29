@@ -61,7 +61,7 @@ The NonLocalConnection
 The NonLocalConnectionBuilder
 -----------------------------
 
-.. currentmodule:: arachne.connections.nonlocalconnection
+.. currentmodule:: apcommand.connections.nonlocalconnection
 .. autosummary::
    :toctree: api
 

@@ -20,7 +20,7 @@ This is a module to set the logging level.
 API
 ---
 
-.. currentmodule:: arachne.log_setter
+.. currentmodule:: apcommand.log_setter
 
 .. autosummary::
    :toctree: api

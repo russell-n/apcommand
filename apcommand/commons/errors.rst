@@ -8,7 +8,7 @@ In order to allow the separation of external errors (those which are not caused 
    OperatorError -|> Exception
    ComponentError -|> Exception
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 The OperatorError
 -----------------
@@ -39,7 +39,7 @@ Remote-Connection Errors
 
 The Remote-Connection errors are raised if there is a problem communicating with a remote device.
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 .. autosummary::
    :toctree: api
@@ -63,7 +63,7 @@ Command Errors
 
 A command error is raised if there was an error executing a command. It does not reflect a problem with the system but is specific to the command that was issued on a device.
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 .. autosummary::
    :toctree: api
@@ -79,7 +79,7 @@ A command error is raised if there was an error executing a command. It does not
 StorageError
 ------------
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 .. autosummary::
    :toctree: api
@@ -100,7 +100,7 @@ Affector Errors
 
 Affectors are things that affect the state of the hardware infrastructure (e.g. networked power-switches). These are generally harder to anticipate since we are reaching outside the system.
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 .. autosummary::
    :toctree: api
@@ -118,7 +118,7 @@ User Errors
 
 These errors are meant for misconfigured configurations or invalid command-line arguments.
 
-.. currentmodule:: arachne.commons.errors
+.. currentmodule:: apcommand.commons.errors
 
 .. autosummary::
    :toctree: api

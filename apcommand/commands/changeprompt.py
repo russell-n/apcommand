@@ -4,7 +4,7 @@ import random
 from string import ascii_letters, digits
 from itertools import repeat
 
-# arachne libraries
+# this package
 from apcommand.baseclass import BaseClass
 
 

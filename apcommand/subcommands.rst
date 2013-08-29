@@ -32,9 +32,17 @@ Collaborators:
    :toctree: api
 
    SubCommand -|> BaseClass
+   SubCommand.access_point
    SubCommand.up
    SubCommand.down
-   SubCommand.destroy   
+   SubCommand.destroy
+   SubCommand.status
+   SubCommand.reset
+   SubCommand.channel
+   SubCommand.ssid
+   SubCommand.security
+   SubCommand.command
+   SubCommand.ipaddress
 
 
 
@@ -50,7 +58,6 @@ The sub-command is largely ignorant of what the objects it holds does so this is
    TestSubCommand.test_up
    TestSubCommand.test_down
    TestSubCommand.test_destroy
-   TestSubCommand.test_constructor
    TestSubCommand.test_args
    TestSubCommand.test_status
    TestSubCommand.test_security

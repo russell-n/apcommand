@@ -16,7 +16,12 @@ apcommand.accesspoints.atheros.AtherosAR5KAP
       ~AtherosAR5KAP.__init__
       ~AtherosAR5KAP.destroy
       ~AtherosAR5KAP.down
-      ~AtherosAR5KAP.log_lines
+      ~AtherosAR5KAP.exec_command
+      ~AtherosAR5KAP.reset
+      ~AtherosAR5KAP.set_channel
+      ~AtherosAR5KAP.set_ip
+      ~AtherosAR5KAP.set_security
+      ~AtherosAR5KAP.set_ssid
       ~AtherosAR5KAP.status
       ~AtherosAR5KAP.up
    
@@ -28,7 +33,10 @@ apcommand.accesspoints.atheros.AtherosAR5KAP
 
    .. autosummary::
    
+      ~AtherosAR5KAP.command_executor
       ~AtherosAR5KAP.connection
+      ~AtherosAR5KAP.log_lines
       ~AtherosAR5KAP.logger
+      ~AtherosAR5KAP.validate
    
    

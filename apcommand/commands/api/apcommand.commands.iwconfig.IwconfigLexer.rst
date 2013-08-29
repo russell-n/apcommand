@@ -14,7 +14,6 @@ apcommand.commands.iwconfig.IwconfigLexer
    .. autosummary::
    
       ~IwconfigLexer.__init__
-      ~IwconfigLexer.output
       ~IwconfigLexer.search
       ~IwconfigLexer.validate
    
@@ -27,20 +26,12 @@ apcommand.commands.iwconfig.IwconfigLexer
    .. autosummary::
    
       ~IwconfigLexer.bitrate
-      ~IwconfigLexer.bitrate_expression
       ~IwconfigLexer.bssid
-      ~IwconfigLexer.bssid_expression
       ~IwconfigLexer.found_interface
       ~IwconfigLexer.frequency
-      ~IwconfigLexer.frequency_expression
-      ~IwconfigLexer.interface_expression
       ~IwconfigLexer.noise
-      ~IwconfigLexer.noise_expression
       ~IwconfigLexer.protocol
-      ~IwconfigLexer.protocol_expression
       ~IwconfigLexer.rssi
-      ~IwconfigLexer.rssi_expression
       ~IwconfigLexer.ssid
-      ~IwconfigLexer.ssid_expression
    
    

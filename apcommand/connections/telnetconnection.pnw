@@ -32,7 +32,7 @@ import os.path
 import telnetlib
 import time
 
-# arachne libraries
+# this package
 from apcommand.baseclass import BaseClass
 from apcommand.commands import changeprompt
 
@@ -619,8 +619,7 @@ Testing the TelnetConnectionBuilder
 .. autosummary::
    :toctree: api
 
-   TestTelnetConnectionBuilder.test_plugin
-   TestTelnetConnectionBuilder.test_product
+   TestTelnetConnectionBuilder
 
 <<name='test_imports', echo=False>>=
 # python standard library

@@ -39,6 +39,7 @@ class SubCommand(BaseClass):
         '''
         The Access point controller
 
+        :return: AP Controller
         '''
         # assume that the accesspoint class has valuable defaults
         # only pass in parameters that have been set by the arguments
@@ -165,6 +166,20 @@ class SubCommand(BaseClass):
         """
         ap = self.access_point(args)
         ap.exec_command(args.command)
+        return
+
+    @try_except
+    def ipaddress(self, args):
+        """
+        Sets the AP's ip address
+
+        :param:
+
+         - `args`: namespace with `ipaddress`, `subnetmask` attributes
+        """
+        ap = self.access_point(args)
+        ap.set_ip(address=args.ipaddress,
+                  mask=args.subnetmask)
         return
 
 

@@ -1,8 +1,7 @@
 The ReadOutput
 ==============
-
+.. currentmodule:: apcommand.commons.readoutput
 The `ReadOutput` acts as a file-like object for output.
-
 
 
 

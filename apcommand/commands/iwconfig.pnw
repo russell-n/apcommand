@@ -381,11 +381,8 @@ class IwconfigLexer(object):
    TestIwconfig.test_rssi
    TestIwconfig.test_noise
    TestIwconfig.test_bssid
-   TestIwconfig.test_frequency_expression
    TestIwconfig.test_frequency
-   TestIwconfig.test_protocol_expression
    TestIwconfig.test_protocol
-   TestIwconfig.test_interface_expression
    TestIwconfig.test_interface
 
 <<name='test_imports', echo=False>>=
