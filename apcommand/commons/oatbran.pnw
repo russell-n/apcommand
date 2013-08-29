@@ -623,7 +623,7 @@ MAC_ADDRESS = Group.named(name=MAC_ADDRESS_NAME,
                                  expression=":".join([HEX_PAIR] * 6))
 @
 <%
-for case in (TestOatBranGroup, TestOatBranClass, TestOatBranQuantifier
+for case in (TestOatBranGroup, TestOatBranClass, TestQuantifier,
              TestBoundaries, TestNumbers):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
