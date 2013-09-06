@@ -5,9 +5,36 @@ Oat Bran helps with regular expressions. Names are uppercased to avoid keyword c
 <<name='import', echo=False>>=
 import string
 @
-<<name='constants', echo=False>>=
+<<name='constants', >>=
+# the class-based expressions are mostly for organization
+# but sometimes they're just too clunky
 LEFT_BRACKET = '['
 RIGHT_BRACKET = ']'
+OR = '|'
+@
+
+Formal Definition
+-----------------
+
+These are the basic building blocks of regular expressions.
+
+.. autosummary::
+   :toctree: api
+
+   FormalDefinition.empty_string
+   FormalDefinition.alternative
+   FormalDefinition.OR
+   FormalDefinition.kleene_star
+
+<<name='FormalDefinition', echo=False>>=
+class FormalDefinition(object):
+    """
+    The basic operators and elements of a regular expression
+    """
+    empty_string = '^$'
+    alternative = '|'
+    OR = alternative
+    kleene_star = "*"
 @
 
 Groups
@@ -85,7 +112,11 @@ Quantifiers
    :toctree: api
 
    Quantifier
+   Quantifier.one_or_more
+   Quantifier.zero_or_more
+   Quantifier.zero_or_one
    Quantifier.exactly
+   Quantifier.m_to_n
 
 <<name='Quantifier', echo=False>>=
 class Quantifier(object):
@@ -95,8 +126,13 @@ class Quantifier(object):
     __slots__ = ()
 
     one_or_more = '+'
-    zero_or_more = '*'
-    zero_or_one = '?'
+
+    @staticmethod
+    def zero_or_one(pattern):
+        """
+        Adds the zero-or-one quantifier to the pattern
+        """
+        return '{0}?'.format(pattern)
 
     @staticmethod
     def exactly(repetitions):
@@ -108,6 +144,15 @@ class Quantifier(object):
          - `repetitions`: number of times pattern has to repeat to match
         """
         return "{{{0}}}".format(repetitions)
+
+    @staticmethod
+    def zero_or_more(pattern):
+        """
+        Adds the kleene star to the pattern
+
+        :return: pattern*
+        """
+        return "{0}*".format(pattern)
 
     @staticmethod
     def m_to_n(m, n):
@@ -132,6 +177,8 @@ A helper with character classes.
    :toctree: api
 
    CharacterClass
+   CharacterClass.alpha_num
+   CharacterClass.alpha_nums
    CharacterClass.character_class
    CharacterClass.not_in      
 
@@ -179,6 +226,8 @@ Boundaries
    :toctree: api
 
    Boundaries
+   Boundaries.string_start
+   Boundaries.string_end
    Boundaries.word
    Boundaries.string
    
@@ -226,6 +275,15 @@ Numbers
    :toctree: api
 
    Numbers
+   Numbers.decimal_point
+   Numbers.digit
+   Numbers.digits
+   Numbers.non_digit
+   Numbers.non_zero
+   Numbers.single_digit
+   Numbers.two_digits
+   Numbers.one_hundreds
+   Numbers.natural
 
 <<name='Numbers', echo=False>>=
 class Numbers(object):
@@ -236,11 +294,25 @@ class Numbers(object):
     
     decimal_point = r'\.'
     digit = r'\d'
+    digits = digit + Quantifier.one_or_more
     non_digit = r'\D'
     non_zero = CharacterClass.character_class("1-9")
     single_digit = Boundaries.word(digit)
     two_digits = Boundaries.word(non_zero + digit)
+    one_hundreds = Boundaries.word("1" + digit + digit)
+    optional_digits = Quantifier.zero_or_more(digit)
+    natural = (Boundaries.word(Group.not_preceded_by('-' + OR + decimal_point + OR + '0') +
+                                                    non_zero + optional_digits +
+                                                    Group.not_followed_by(decimal_point + digits)) + OR + 
+                                                    Boundaries.word('0'))
+    
+    integer = (Group.not_preceded_by(decimal_point + OR + '0') +
+                               Quantifier.zero_or_one('-') + 
+                               non_zero + optional_digits +
+                               Group.not_followed_by(decimal_point + digits) + OR + 
+                               Boundaries.word('0'))
 @
+
 
 <<name='test_imports', echo=False>>=
 # python standard library
@@ -353,8 +425,9 @@ class TestOatBranClass(unittest.TestCase):
         """
         expression = CharacterClass.alpha_num
         character = random.choice(string.letters + string.digits + '_')
-        non_alpha = random.choice(string.punctuation)
+        non_alpha = random.choice(string.punctuation.replace('_', ''))
         self.assertIsNotNone(re.search(expression, character))
+        print non_alpha
         self.assertIsNone(re.search(expression, non_alpha))
         return
 
@@ -392,13 +465,10 @@ class TestQuantifier(unittest.TestCase):
         """
         Does it return the kleene star?
         """
-        expected = '*'
-        metacharacter = Quantifier.zero_or_more
-        self.assertEqual(expected, metacharacter)
         substring = Randomizer.letters()
         text = Randomizer.letters()
         complement = text + Randomizer.letters_complement(substring)
-        expression = text + "(" + substring + ")" + metacharacter
+        expression = text + Quantifier.zero_or_more('(' + substring + ')')
         text_1 = text + substring * random.randint(0, 10) + Randomizer.letters()
         self.assertIsNotNone(re.search(expression, complement))
         self.assertIsNotNone(re.search(expression, text_1))
@@ -408,12 +478,9 @@ class TestQuantifier(unittest.TestCase):
         """
         Does it return the zero-or-one quantifier?
         """
-        expected = '?'
-        metacharacter = Quantifier.zero_or_one
-        self.assertEqual(expected, metacharacter)
         substring = Randomizer.letters()
         text = Randomizer.letters()
-        expression = text +  "(" + substring + ")" + metacharacter
+        expression = text +  Quantifier.zero_or_one("(" + substring + ")")
         text_1 = text + substring * Randomizer.integer()
         text_2 = text + substring * Randomizer.integer()
         self.assertIsNotNone(re.search(expression, text_1))
@@ -569,6 +636,136 @@ class TestNumbers(unittest.TestCase):
         fail = random.choice([str(Randomizer.integer(0,9)), str(Randomizer.integer(100,1000))])
         self.assertIsNotNone(re.search(expression, test))
         self.assertIsNone(re.search(expression, fail))
+        return
+
+    def test_one_hundreds(self):
+        """
+        Does it match values from 100-199?
+        """
+        number = "{0}".format(random.randint(100,199))
+        low_number = str(random.randint(-100,99))
+        high_number = str(random.randint(200,500))
+        float_number = str(random.uniform(100,199))
+        text = Randomizer.letters() + str(random.randint(100,199))
+        self.assertIsNotNone(re.search(Numbers.one_hundreds, number))
+        self.assertIsNone(re.search(Numbers.one_hundreds, low_number))
+        self.assertIsNone(re.search(Numbers.one_hundreds, high_number))
+        # it only checks word boundaries and the decimal point is a boundary
+        self.assertIsNotNone(re.search(Numbers.one_hundreds, float_number))
+        # it needs a word boundary so letters smashed against it will fail
+        self.assertIsNone(re.search(Numbers.one_hundreds, text))
+        return
+
+    def test_digits(self):
+        "Does it match one or more digits?"
+        expression = Group.named(name='digits', expression=Numbers.digits)
+        first = "{0}".format(random.randint(0,9))
+        rest = str(random.randint(0,1000))
+        test = first + rest
+        self.assertIsNotNone(re.search(expression, test))
+        match = re.search(expression, test)
+        self.assertEqual(match.group('digits'), test)
+        mangled = Randomizer.letters() + test + Randomizer.letters()
+        match = re.search(expression, mangled)
+        self.assertEqual(match.group('digits'), test)
+        return
+
+    def test_natural_numbers(self):
+        """
+        Does it match natural (positive integers)?
+        """
+        name = 'natural'
+        expression = Group.named(name, Numbers.natural)
+        # I include 0
+        zero = '0'
+        match = re.search(expression, zero)
+        self.assertEqual(match.group(name), zero)
+
+        # number
+        number = str(random.randint(0,1000))
+        match = re.search(expression, number)
+        self.assertEqual(match.group(name), number)
+
+        # positive integers only
+        negative = '-' + number
+        match = re.search(expression, negative)
+        self.assertIsNone(match)
+
+        # no real numbers
+        real = number + '.' + str(Randomizer.integer())
+        self.assertIsNone(re.search(expression, real))
+
+        # but allow end of sentence (I'm not sure if this one makes sense)
+        last_word = number + '. A number'
+        match = re.search(expression, last_word)
+        self.assertEqual(match.group(name), number)
+        return
+
+    def test_integer(self):
+        """
+        Does it match positive and negative integers?
+        """
+        name = 'integer'
+        expression = Group.named(name,
+                                 Numbers.integer)
+        zero = '0'
+        text = zero + ' ' + Randomizer.letters()
+        self.assertEqual(re.search(expression, zero).group(name), zero)
+
+        # integer
+        text = str(Randomizer.integer())
+        self.assertEqual(re.search(expression, text).group(name), text)
+
+        # negative
+        text = '-'+ str(Randomizer.integer())
+        print expression
+        self.assertEqual(re.search(expression, text).group(name), text)
+
+        # real
+        text = random.choice(('', '-')) + str(Randomizer.integer()) + '.' + str(Randomizer.integer())
+        self.assertIsNone(re.search(expression, text))
+        return
+       
+@
+<<name='TestFormalDefinition', echo=False>>=
+class TestFormalDefinition(unittest.TestCase):
+    def test_empty_string(self):
+        "Does it match only an empty string?"
+        name = 'empty'
+        expression = Group.named(name,
+                                 FormalDefinition.empty_string)
+        empty = ''
+        not_empty = Randomizer.letters()
+        match = re.search(expression, empty)
+        self.assertEqual(empty, match.group(name))
+        self.assertIsNone(re.search(expression, not_empty))
+        return
+
+    def test_alternation(self):
+        """
+        Does it match alternatives?
+        """
+        name = 'or'
+        terms = [Randomizer.letters() for term in range(random.randint(1, 100))]
+        expression = Group.named(name,
+                                 FormalDefinition.alternative.join(terms))
+        test = terms[random.randrange(len(terms))]
+        match = re.search(expression, test)
+        self.assertEqual(test, match.group(name))
+        return
+
+    def test_kleene_start(self):
+        """
+        Does it match zero or more of something?
+        """
+        name = 'kleene'
+        term = random.choice(string.letters)
+        expression = Group.named(name,
+                                 term + FormalDefinition.kleene_star)
+        test = term * random.randint(0, 100)
+        match = re.search(expression, test)
+        self.assertEqual(test, match.group(name))
+        return
 @
 <<name='unconverted'>>=
 # exceptions
@@ -582,16 +779,16 @@ OR = "|"
 
 #anything and everything
 ANYTHING = r"."
-EVERYTHING = ANYTHING + Quantifier.zero_or_more
+EVERYTHING = Quantifier.zero_or_more(ANYTHING)
 
 # numbers
-ONE_HUNDREDS = Boundaries.word("1" + Numbers.digit + Numbers.digit)
+
 NATURAL = Numbers.digit + Quantifier.one_or_more
 
-INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  "-" + Quantifier.zero_or_one + NATURAL + 
+INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  Quantifier.zero_or_one('-') + NATURAL + 
            Group.not_followed_by(Numbers.decimal_point))
 
-FLOAT = "-" + Quantifier.zero_or_one + NATURAL + Numbers.decimal_point + NATURAL
+FLOAT = Quantifier.zero_or_one('-') + NATURAL + Numbers.decimal_point + NATURAL
 REAL = Group.group(FLOAT + OR + INTEGER)
 HEX = CharacterClass.character_class(string.hexdigits)
 HEXADECIMALS = HEX + Quantifier.one_or_more
@@ -600,18 +797,18 @@ SPACE = r"\s"
 SPACES = SPACE + Quantifier.one_or_more
 NOT_SPACE = r'\S'
 NOT_SPACES = NOT_SPACE + Quantifier.one_or_more
-OPTIONAL_SPACES = SPACE + Quantifier.zero_or_more
+OPTIONAL_SPACES = Quantifier.zero_or_more(SPACE)
 
 # common constants
 DASH = "-"
 LETTER = CharacterClass.character_class(characters=string.ascii_letters)
 LETTERS = LETTER + Quantifier.one_or_more
-OPTIONAL_LETTERS = LETTER + Quantifier.zero_or_more
+OPTIONAL_LETTERS = Quantifier.zero_or_more(LETTER)
 
 # SPECIAL CASES
 # NETWORKING
 DOT = Numbers.decimal_point
-OCTET = Group.group(expression=OR.join([Numbers.single_digit, Numbers.two_digits, ONE_HUNDREDS,
+OCTET = Group.group(expression=OR.join([Numbers.single_digit, Numbers.two_digits, Numbers.one_hundreds,
                          Boundaries.word("2[0-4][0-9]"), Boundaries.word("25[0-5]")]))
 
 IP_ADDRESS = DOT.join([OCTET] * 4)
@@ -624,7 +821,7 @@ MAC_ADDRESS = Group.named(name=MAC_ADDRESS_NAME,
 @
 <%
 for case in (TestOatBranGroup, TestOatBranClass, TestQuantifier,
-             TestBoundaries, TestNumbers):
+             TestBoundaries, TestNumbers, TestFormalDefinition):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
 %>

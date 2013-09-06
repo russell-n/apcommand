@@ -4,6 +4,21 @@ The OatBran
 Oat Bran helps with regular expressions. Names are uppercased to avoid keyword clashes
 
 
+Formal Definition
+-----------------
+
+These are the basic building blocks of regular expressions.
+
+.. autosummary::
+   :toctree: api
+
+   FormalDefinition.empty_string
+   FormalDefinition.alternative
+   FormalDefinition.OR
+   FormalDefinition.kleene_star
+
+
+
 Groups
 ------
 
@@ -24,7 +39,11 @@ Quantifiers
    :toctree: api
 
    Quantifier
+   Quantifier.one_or_more
+   Quantifier.zero_or_more
+   Quantifier.zero_or_one
    Quantifier.exactly
+   Quantifier.m_to_n
 
 
 
@@ -37,6 +56,8 @@ A helper with character classes.
    :toctree: api
 
    CharacterClass
+   CharacterClass.alpha_num
+   CharacterClass.alpha_nums
    CharacterClass.character_class
    CharacterClass.not_in      
 
@@ -49,6 +70,8 @@ Boundaries
    :toctree: api
 
    Boundaries
+   Boundaries.string_start
+   Boundaries.string_end
    Boundaries.word
    Boundaries.string
    
@@ -61,6 +84,15 @@ Numbers
    :toctree: api
 
    Numbers
+   Numbers.decimal_point
+   Numbers.digit
+   Numbers.digits
+   Numbers.non_digit
+   Numbers.non_zero
+   Numbers.single_digit
+   Numbers.two_digits
+   Numbers.one_hundreds
+   Numbers.natural
 
 
 
@@ -86,7 +118,7 @@ Numbers
     EVERYTHING = ANYTHING + Quantifier.zero_or_more
     
     # numbers
-    ONE_HUNDREDS = Boundaries.word("1" + Numbers.digit + Numbers.digit)
+    
     NATURAL = Numbers.digit + Quantifier.one_or_more
     
     INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  "-" + Quantifier
@@ -115,7 +147,7 @@ Numbers
     # NETWORKING
     DOT = Numbers.decimal_point
     OCTET = Group.group(expression=OR.join([Numbers.single_digit, Numbers.two_d
-    igits, ONE_HUNDREDS,
+    igits, Numbers.one_hundreds,
                              Boundaries.word("2[0-4][0-9]"), Boundaries.word("2
     5[0-5]")]))
     
@@ -130,7 +162,7 @@ Numbers
     
 
 
-(?<!bXuQveMnZEDuPcCZDrAyMJqRttzcrcHysrNpwjCcRarwGdvmwTICWJAzQVjfyZZAiNlhYIOvUFBSdgMxOznWmxEv)
-etnAlQneYXZnNzrYRaFVnceTtZQbgpxnfvhBBPtkvkMtbHxCHbojoNdPyAnlkItnzvLfxMNiHDWlgv
-bXuQveMnZEDuPcCZDrAyMJqRttzcrcHysrNpwjCcRarwGdvmwTICWJAzQVjfyZZAiNlhYIOvUFBSdgMxOznWmxEvetnAlQneYXZnNzrYRaFVnceTtZQbgpxnfvhBBPtkvkMtbHxCHbojoNdPyAnlkItnzvLfxMNiHDWlgv
+(?<!vWqFuYsPjMLEpNoVxdMOLWHWPBsFWDRclWOOHxdltkgybspNSJGPXmEEPpKHaDR)
+FdqGgkSVlqzPLMhcffjYuLOMmNDqaVmQryiArstPqfYsJExLxpCOgFGJOoSGCForKdeDcOHVBuqpeIDckGaECOkljYRYkkZmPjn
+vWqFuYsPjMLEpNoVxdMOLWHWPBsFWDRclWOOHxdltkgybspNSJGPXmEEPpKHaDRFdqGgkSVlqzPLMhcffjYuLOMmNDqaVmQryiArstPqfYsJExLxpCOgFGJOoSGCForKdeDcOHVBuqpeIDckGaECOkljYRYkkZmPjn
 
