@@ -309,7 +309,7 @@ class Numbers(object):
     integer = (Group.not_preceded_by(decimal_point + OR + '0') +
                                Quantifier.zero_or_one('-') + 
                                non_zero + optional_digits +
-                               Group.not_followed_by(decimal_point + digits) + OR + 
+                               Group.not_followed_by(decimal_point + digits) + r'\b' + OR + 
                                Boundaries.word('0'))
 @
 
@@ -710,7 +710,7 @@ class TestNumbers(unittest.TestCase):
                                  Numbers.integer)
         zero = '0'
         text = zero + ' ' + Randomizer.letters()
-        self.assertEqual(re.search(expression, zero).group(name), zero)
+        self.assertEqual(re.search(expression, text).group(name), zero)
 
         # integer
         text = str(Randomizer.integer())
@@ -718,12 +718,15 @@ class TestNumbers(unittest.TestCase):
 
         # negative
         text = '-'+ str(Randomizer.integer())
-        print expression
         self.assertEqual(re.search(expression, text).group(name), text)
 
         # real
         text = random.choice(('', '-')) + str(Randomizer.integer()) + '.' + str(Randomizer.integer())
-        self.assertIsNone(re.search(expression, text))
+        print text
+        print expression
+        match = re.search(expression, text)
+        print match.groups()
+        self.assertIsNone(match)
         return
        
 @
