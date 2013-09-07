@@ -2,12 +2,29 @@ The OatBran
 ===========
 .. currentmodule:: apcommand.commons.oatbran
 Oat Bran helps with regular expressions. Names are uppercased to avoid keyword clashes
+::
+
+    # the class-based expressions are mostly for organization
+    # but sometimes they're just too clunky
+    LEFT_BRACKET = '['
+    RIGHT_BRACKET = ']'
+    OR = '|'
+    
+    
+
 
 
 Formal Definition
 -----------------
 
 These are the basic building blocks of regular expressions.
+
+.. csv-table:: Formal Definition
+   :header: Name,Symbol
+
+   empty_string,:math:`\varepsilon`
+   alternative (OR),:math:`|`
+   kleene_star, :math:`*`
 
 .. autosummary::
    :toctree: api
@@ -80,6 +97,10 @@ Boundaries
 Numbers
 -------
 
+The numbers are broken up into types based on those listed `here <http://mathworld.wolfram.com/CountingNumber.html>`_. I was originally using the more `traditional number types <http://en.wikipedia.org/wiki/List_of_types_of_numbers>`_ but I keep forgetting which ones have zero in them so I will work with just positive/negative, non-positive/non-negative, and integer/real.
+
+
+
 .. autosummary::
    :toctree: api
 
@@ -88,12 +109,12 @@ Numbers
    Numbers.digit
    Numbers.digits
    Numbers.non_digit
-   Numbers.non_zero
+   Numbers.non_zero_digit
    Numbers.single_digit
    Numbers.two_digits
    Numbers.one_hundreds
    Numbers.natural
-
+   
 
 
 .. autosummary::
@@ -115,18 +136,18 @@ Numbers
     
     #anything and everything
     ANYTHING = r"."
-    EVERYTHING = ANYTHING + Quantifier.zero_or_more
+    EVERYTHING = Quantifier.zero_or_more(ANYTHING)
     
     # numbers
     
     NATURAL = Numbers.digit + Quantifier.one_or_more
     
-    INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  "-" + Quantifier
-    .zero_or_one + NATURAL + 
+    INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  Quantifier.zero_
+    or_one('-') + NATURAL + 
                Group.not_followed_by(Numbers.decimal_point))
     
-    FLOAT = "-" + Quantifier.zero_or_one + NATURAL + Numbers.decimal_point + NA
-    TURAL
+    FLOAT = Quantifier.zero_or_one('-') + NATURAL + Numbers.decimal_point + NAT
+    URAL
     REAL = Group.group(FLOAT + OR + INTEGER)
     HEX = CharacterClass.character_class(string.hexdigits)
     HEXADECIMALS = HEX + Quantifier.one_or_more
@@ -135,13 +156,13 @@ Numbers
     SPACES = SPACE + Quantifier.one_or_more
     NOT_SPACE = r'\S'
     NOT_SPACES = NOT_SPACE + Quantifier.one_or_more
-    OPTIONAL_SPACES = SPACE + Quantifier.zero_or_more
+    OPTIONAL_SPACES = Quantifier.zero_or_more(SPACE)
     
     # common constants
     DASH = "-"
     LETTER = CharacterClass.character_class(characters=string.ascii_letters)
     LETTERS = LETTER + Quantifier.one_or_more
-    OPTIONAL_LETTERS = LETTER + Quantifier.zero_or_more
+    OPTIONAL_LETTERS = Quantifier.zero_or_more(LETTER)
     
     # SPECIAL CASES
     # NETWORKING
@@ -162,7 +183,11 @@ Numbers
     
 
 
-(?<!vWqFuYsPjMLEpNoVxdMOLWHWPBsFWDRclWOOHxdltkgybspNSJGPXmEEPpKHaDR)
-FdqGgkSVlqzPLMhcffjYuLOMmNDqaVmQryiArstPqfYsJExLxpCOgFGJOoSGCForKdeDcOHVBuqpeIDckGaECOkljYRYkkZmPjn
-vWqFuYsPjMLEpNoVxdMOLWHWPBsFWDRclWOOHxdltkgybspNSJGPXmEEPpKHaDRFdqGgkSVlqzPLMhcffjYuLOMmNDqaVmQryiArstPqfYsJExLxpCOgFGJOoSGCForKdeDcOHVBuqpeIDckGaECOkljYRYkkZmPjn
+(?<!ULPXdDcbbsWJXijdQedVRFNSUHEWsgFVqqqyeKggZIleKBkpLhOPvEDaafJBjjyuvWCChgqavwMNDqKZj)
+nBSiqlJoHvbvwEYqlYRAjAIUZMmmjQeegLPRpZBlNRHRKvPIhPBOPnapQLW
+ULPXdDcbbsWJXijdQedVRFNSUHEWsgFVqqqyeKggZIleKBkpLhOPvEDaafJBjjyuvWCChgqavwMNDqKZjnBSiqlJoHvbvwEYqlYRAjAIUZMmmjQeegLPRpZBlNRHRKvPIhPBOPnapQLW
++
+-57.42
+(?P<integer>(?<!\.|0)-?[1-9]\d*(?!\.\d+)\b|\b0\b)
+('2',)
 
