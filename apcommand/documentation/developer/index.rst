@@ -7,7 +7,7 @@ Access Points:
    :maxdepth: 2
 
    Atheros <../../accesspoints/atheros>
-   Broadcom <../../accesspoints/broadcom>
+   Broadcom <../../accesspoints/broadcom/broadcom>
 
 Miscellany:
 
