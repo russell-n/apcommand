@@ -6,15 +6,6 @@ import string
 # but sometimes they're just too clunky
 LEFT_BRACKET = '['
 RIGHT_BRACKET = ']'
-OR = '|'
-
-ONE_OR_MORE = '+'
-ZERO_OR_MORE = '*'
-SPACE = r"\s"
-SPACES = SPACE + ONE_OR_MORE
-NOT_SPACE = r'\S'
-NOT_SPACES = NOT_SPACE + ONE_OR_MORE
-OPTIONAL_SPACES = SPACE
 
 
 
@@ -108,7 +99,12 @@ class Quantifier(object):
     """
     __slots__ = ()
 
-    one_or_more = '+'
+    @staticmethod
+    def one_or_more(pattern):
+        """
+        Adds the one-or-more quantifier to the end of the pattern.
+        """
+        return '{0}+'.format(pattern)    
 
     @staticmethod
     def zero_or_one(pattern):
@@ -158,8 +154,11 @@ class CharacterClass(object):
     __slots__ = ()
 
     alpha_num = r"\w"
-    alpha_nums = alpha_num + Quantifier.one_or_more
-    
+    alpha_nums = Quantifier.one_or_more(alpha_num)
+    digit = r'\d'
+    non_digit = r'\D'
+    non_zero_digit = r"[1-9]"
+
     @staticmethod
     def character_class(characters):
         """
@@ -223,6 +222,24 @@ class Boundaries(object):
         return r"^{e}$".format(e=string)
 
 
+class CommonPatterns(object):
+    """
+    The common patterns that were leftover
+    """
+    __slots__ = ()
+    #anything and everything
+    anything = r"."
+    everything = Quantifier.zero_or_more(anything)
+    letter = CharacterClass.character_class(characters=string.ascii_letters)
+    letters = Quantifier.one_or_more(letter)
+    optional_letters = Quantifier.zero_or_more(letter)
+    space = r'\s'
+    spaces = Quantifier.one_or_more(space)
+    optional_spaces = Quantifier.zero_or_more
+    not_space = r'\S'
+    not_spaces = Quantifier.one_or_more(not_space)
+
+
 class Numbers(object):
     """
     A class to hold number-related expressions
@@ -230,43 +247,73 @@ class Numbers(object):
     __slots__ = ()
     
     decimal_point = r'\.'
-    digit = r'\d'
-    digits = digit + Quantifier.one_or_more
-    non_digit = r'\D'
-    non_zero_digit = CharacterClass.character_class("1-9")
-    single_digit = Boundaries.word(digit)
-    two_digits = Boundaries.word(non_zero_digit + digit)
-    one_hundreds = Boundaries.word("1" + digit + digit)
-    optional_digits = Quantifier.zero_or_more(digit)
+    single_digit = Boundaries.word(CharacterClass.digit)
+    digits = Quantifier.one_or_more(CharacterClass.digit)
+    two_digits = Boundaries.word(CharacterClass.non_zero_digit + CharacterClass.digit)
+    one_hundreds = Boundaries.word("1" + CharacterClass.digit * 2)
+    optional_digits = Quantifier.zero_or_more(CharacterClass.digit)
     # python considers string-start and whitespace to be different lengths
     # so to avoid '.' (which is a word-boundary character) and use line-starts and ends
     # and whitespace requires four alternatives
     START_PREFIX = Group.preceded_by(Boundaries.string_start)
     END_SUFFIX = Group.followed_by(Boundaries.string_end)
-    SPACE_PREFIX = Group.preceded_by(SPACE)
-    SPACE_SUFFIX = Group.followed_by(SPACE)
+    SPACE_PREFIX = Group.preceded_by(CommonPatterns.space)
+    SPACE_SUFFIX = Group.followed_by(CommonPatterns.space)
     # Zero
     ZERO = '0'
-    zero = (START_PREFIX + ZERO + END_SUFFIX + OR +
-            START_PREFIX + ZERO + SPACE_SUFFIX + OR +
-            SPACE_PREFIX + ZERO + END_SUFFIX + OR +
+    zero = (START_PREFIX + ZERO + END_SUFFIX +FormalDefinition.OR +
+            START_PREFIX + ZERO + SPACE_SUFFIX +FormalDefinition.OR +
+            SPACE_PREFIX + ZERO + END_SUFFIX +FormalDefinition.OR +
             SPACE_PREFIX + ZERO + SPACE_SUFFIX)
     # positive integer
-    z_plus = non_zero_digit + optional_digits
-    positive_integer = (START_PREFIX + z_plus + END_SUFFIX + OR +
-                        START_PREFIX + z_plus + SPACE_SUFFIX + OR +
-                        SPACE_PREFIX + z_plus + END_SUFFIX + OR +
+    z_plus = CharacterClass.non_zero_digit + optional_digits
+    positive_integer = (START_PREFIX + z_plus + END_SUFFIX +FormalDefinition.OR +
+                        START_PREFIX + z_plus + SPACE_SUFFIX +FormalDefinition.OR +
+                        SPACE_PREFIX + z_plus + END_SUFFIX +FormalDefinition.OR +
                         SPACE_PREFIX + z_plus + SPACE_SUFFIX )
-    natural = (Boundaries.word(Group.not_preceded_by('-' + OR + decimal_point + OR + '0') +
-                                                    non_zero_digit + optional_digits +
-                                                    Group.not_followed_by(decimal_point + digits)) + OR + 
-                                                    Boundaries.word('0'))
-    
-    integer = (Group.not_preceded_by(decimal_point + OR + '0') +
-                               Quantifier.zero_or_one('-') + 
-                               non_zero_digit + optional_digits +
-                               Group.not_followed_by(decimal_point + digits) + r'\b' + OR + 
+
+    nonnegative_integer = (Group.not_preceded_by(decimal_point +FormalDefinition.OR + '0') +
+                               CharacterClass.non_zero_digit + optional_digits +
+                               r'\b' +FormalDefinition.OR + 
                                Boundaries.word('0'))
+    
+    integer = (Group.not_preceded_by(decimal_point +FormalDefinition.OR + '0') +
+                               Quantifier.zero_or_one('-') + 
+                               CharacterClass.non_zero_digit + optional_digits +
+                               r'\b' +FormalDefinition.OR + 
+                               Boundaries.word('0'))
+
+    real = (Group.not_preceded_by(decimal_point +FormalDefinition.OR + '0') +
+                               Quantifier.zero_or_one('-') + 
+                               CharacterClass.digit + optional_digits +
+                               '.' + optional_digits + 
+                               r'\b' ) +FormalDefinition.OR + integer
+    
+    HEX = CharacterClass.character_class(string.hexdigits)
+    hexadecimal = Quantifier.one_or_more(HEX)
+
+
+
+class Networking(object):
+    """
+    Holds expressions to help with networking-related text.
+    """
+    __slots__ = ()
+    octet = Group.group(expression=FormalDefinition.OR.join([Numbers.single_digit,
+                                                             Numbers.two_digits,
+                                                             Numbers.one_hundreds,
+                                                             Boundaries.word("2[0-4][0-9]"),
+                                                             Boundaries.word("25[0-5]")]))
+
+    dot = Numbers.decimal_point
+
+    ip_address = dot.join([octet] * 4)
+
+    hex_pair =  Numbers.HEX + Quantifier.exactly(2)
+    mac_address = ":".join([hex_pair] * 6)
+
+
+
 
 
 # python standard library
@@ -274,6 +321,8 @@ import unittest
 import random
 import re
 
+#third-party
+import numpy.random as nrandom
 # this package
 from randomizer import Randomizer
 
@@ -362,10 +411,7 @@ class TestOatBranGroup(unittest.TestCase):
                          expr)
         text = Randomizer.letters(minimum=5)
 
-        print expr
-        print text
         is_preceded_by = prefix + text
-        print is_preceded_by        
         self.assertIsNone(re.search(expr + text, is_preceded_by))
         self.assertIsNotNone(re.search(expr + text, text))
         return
@@ -408,7 +454,6 @@ class TestOatBranClass(unittest.TestCase):
         character = random.choice(string.letters + string.digits + '_')
         non_alpha = random.choice(string.punctuation.replace('_', ''))
         self.assertIsNotNone(re.search(expression, character))
-        print non_alpha
         self.assertIsNone(re.search(expression, non_alpha))
         return
 
@@ -426,11 +471,9 @@ class TestQuantifier(unittest.TestCase):
         """
         character = random.choice(string.letters)
         complement = Randomizer.letters_complement(character)
-        expected = '+'
+
         text = Randomizer.letters() + character * random.randint(1,100) + Randomizer.letters()
-        metacharacter = Quantifier.one_or_more
-        self.assertEqual(expected, metacharacter)
-        expression = character + metacharacter
+        expression = character + '+'
         self.assertIsNone(re.search(expression, complement))
         self.assertIsNotNone(re.search(expression, text))
         return
@@ -455,8 +498,8 @@ class TestQuantifier(unittest.TestCase):
         substring = Randomizer.letters()
         text = Randomizer.letters()
         expression = text +  Quantifier.zero_or_one("(" + substring + ")")
-        text_1 = text + substring * Randomizer.integer()
-        text_2 = text + substring * Randomizer.integer()
+        text_1 = text + substring * random.randint(1,100)
+        text_2 = text + substring * random.randint(1,100)
         self.assertIsNotNone(re.search(expression, text_1))
         self.assertEqual(re.search(expression, text_2).groups()[0], substring)
         return
@@ -565,7 +608,7 @@ class TestNumbers(unittest.TestCase):
         """
         Does it return the digit character class?
         """
-        metacharacter = Numbers.digit
+        metacharacter = CharacterClass.digit
         test = Randomizer.integer(maximum=9)
         self.assertIsNotNone(re.search(metacharacter, str(test)))
         self.assertIsNone(re.search(metacharacter, Randomizer.letters()))
@@ -575,7 +618,7 @@ class TestNumbers(unittest.TestCase):
         """
         Does it return the anything-but-a-digit metacharacter?
         """
-        metacharacter = Numbers.non_digit
+        metacharacter = CharacterClass.non_digit
         test = str(Randomizer.integer(maximum=9))
         self.assertIsNone(re.search(metacharacter, test))
         return
@@ -584,7 +627,7 @@ class TestNumbers(unittest.TestCase):
         """
         Does it return an expression to match 1-9 only?
         """
-        expression = Numbers.non_zero_digit
+        expression = CharacterClass.non_zero_digit
         test = str(random.choice(range(1,10)))
         self.assertIsNotNone(re.search(expression, test))
         self.assertIsNone(re.search(expression, '0'))
@@ -617,10 +660,13 @@ class TestNumbers(unittest.TestCase):
         Does it match values from 100-199?
         """
         number = "{0}".format(random.randint(100,199))
-        low_number = str(random.randint(-100,99))
+        low_number = str(random.randint(-99,99))
         high_number = str(random.randint(200,500))
         float_number = str(random.uniform(100,199))
         text = Randomizer.letters() + str(random.randint(100,199))
+        name = 'onehundred'
+        expression = re.compile(Group.named(name,
+                                            Numbers.one_hundreds))
         self.assertIsNotNone(re.search(Numbers.one_hundreds, number))
         self.assertIsNone(re.search(Numbers.one_hundreds, low_number))
         self.assertIsNone(re.search(Numbers.one_hundreds, high_number))
@@ -667,69 +713,146 @@ class TestNumbers(unittest.TestCase):
         regex = re.compile(expression)
         # zero should fail
         self.assertIsNone(regex.search('0' ))
+
+        # positive integer (without sign) should match
+        first_digit = str(nrandom.randint(1,9))
+        positive_integer = first_digit + ''.join(str(i) for i in nrandom.random_integers(1,9,
+                                                                           size=nrandom.randint(100)))
+        match = regex.search(positive_integer)
+        self.assertEqual(match.group(name), positive_integer)
+
+        # negative integer should fail
+        negation = '-' + positive_integer
+        self.assertIsNone(regex.search(negation))
+
+        # surrounding white space should be trimmed off
+        spaces = " " * nrandom.randint(100) + positive_integer + ' ' * nrandom.randint(100)
+        match = regex.search(spaces)
+        self.assertEqual(match.group(name), positive_integer)
+
+        # leading zero should fail
+        leading_zeros = '0' * nrandom.randint(1,100) + positive_integer
+        self.assertIsNone(regex.search(leading_zeros))
         return
 
-    def test_natural_numbers(self):
-        """
-        Does it match natural (positive integers)?
-        """
-        name = 'natural'
-        expression = Group.named(name, Numbers.natural)
-        # I include 0
-        zero = '0'
-        match = re.search(expression, zero)
-        self.assertEqual(match.group(name), zero)
-
-        # number
-        number = str(random.randint(0,1000))
-        match = re.search(expression, number)
-        self.assertEqual(match.group(name), number)
-
-        # positive integers only
-        negative = '-' + number
-        match = re.search(expression, negative)
-        self.assertIsNone(match)
-
-        # no real numbers
-        real = number + '.' + str(Randomizer.integer())
-        self.assertIsNone(re.search(expression, real))
-
-        # but allow end of sentence (I'm not sure if this one makes sense)
-        last_word = number + '. A number'
-        match = re.search(expression, last_word)
-        self.assertEqual(match.group(name), number)
-        return
-
-    def test_integer(self):
+    def test_integers(self):
         """
         Does it match positive and negative integers?
-
-        **I was trying to make it exclude real-numbers but I give up**
         """
         name = 'integer'
-        expression = Group.named(name,
-                                 Numbers.integer)
+        expression = Group.named(name, Numbers.integer)
+        regex = re.compile(expression)
+        # 0 alone should match
         zero = '0'
-        text = zero + ' ' + Randomizer.letters()
-        #self.assertEqual(re.search(expression, text).group(name), zero)
+        match = regex.search(zero)
+        self.assertEqual(match.group(name), zero)
 
-        # integer
-        text = str(Randomizer.integer())
-        #self.assertEqual(re.search(expression, text).group(name), text)
+        # positive_integers should match
+        first_digit = str(nrandom.randint(1,9))
+        positive = first_digit +''.join(str(i) for i in nrandom.random_integers(0,9, nrandom.randint(1, 100)))
+        match = regex.search(positive)
+        self.assertEqual(match.group(name), positive)
 
-        # negative
-        text = '-'+ str(Randomizer.integer())
-        #self.assertEqual(re.search(expression, text).group(name), text)
+        # negatives should match
+        negative = '-' + positive
+        match = regex.search(negative)
+        self.assertEqual(match.group(name), negative)
 
-        # real
-        text = random.choice(('', '-')) + str(Randomizer.integer()) + '.' + str(Randomizer.integer())
-        print text
-        print expression
-        match = re.search(expression, text)
-        #print match.groups()
-        #self.assertIsNone(match)
+        # white space boundaries should work too
+        number = nrandom.choice(('','-')) + positive
+        text = " " * nrandom.randint(10) + number  + ' ' * nrandom.randint(10)
+        match = regex.search(text)
+        self.assertEqual(match.group(name), number)
+
+        # punctuation should work (like for csvs)
+        text = number + ','
+        match = regex.search(text)
+        self.assertEqual(match.group(name), number)
+
+        # match prefix to decimal points
+        # this is not really what I wanted but otherwise it's hard to use in text
+        text = number + '.' + str(nrandom.randint(100))
+        match = regex.search(text)
+        self.assertEqual(match.group(name), number)
         return
-       
+
+    def test_nonnegative_integer(self):
+        """
+        Does it match positive integers and 0?
+        """
+        name = 'nonnegative'
+        expression = Group.named(name,
+                                 Numbers.nonnegative_integer)
+        regex = re.compile(expression)
+        number = str(nrandom.randint(1,9)) + str(nrandom.randint(1000))
+        match = regex.search(number)
+        self.assertEqual(number, match.group(name))
+
+        # should match 0
+        zero = '0'
+        match = regex.search(zero)
+        self.assertEqual(match.group(name), zero)
+
+        # should not match negative
+        # but, to allow it in text, it will grab the integer to the right
+        # in other words, it assumes the `-` is part of a sentence but not part of the number
+        negation = '-' + number
+        match = regex.search(negation)
+        self.assertEqual(match.group(name), number)
+        return
+
+    def assert_match(self, regex, text, name, expected):
+        match = regex.search(text)
+        self.assertEqual(match.group(name), expected)
+        return
+
+    def test_real(self):
+        """
+        Does it match floating-point numbers?
+        """
+        name = 'real'
+        expression = Group.named(name,
+                                 Numbers.real)
+        regex = re.compile(expression)
+        # does it match 0?
+        zero = '0'
+        self.assert_match(regex, zero, name, zero)
+
+        # does it match a leading 0?
+        number = '0.' + str(nrandom.randint(100))
+        self.assert_match(regex, number, name, number)
+
+        # does it match a whole decimal
+        number = str(nrandom.randint(1,100)) + '.' + str(nrandom.randint(100))
+        self.assert_match(regex, number, name, number)
+
+        # what about positive and negative?
+        number = (random.choice(('', '-')) + str(nrandom.randint(100)) +
+                  random.choice(('', '.')) + str(nrandom.randint(100)))
+        text = ' ' * nrandom.randint(5) + number + ' ' * nrandom.randint(5)
+        self.assert_match(regex, text, name, number)
+
+        # what happens if it comes at the end of a sentence?
+        number = (random.choice(('', '-')) + str(nrandom.randint(100)) +
+                  random.choice(('', '.')) + str(nrandom.randint(100)))
+        text = number + '.'
+        self.assert_match(regex, text, name, number)
+        return
+
+    def test_hexadecimal(self):
+        """
+        Does it match hexadecimal numbers?
+        """
+        name = 'hexadecimal'
+        number = ''.join((random.choice(string.hexdigits) for char in xrange(random.randint(1,100))))
+        non_hex = 'IJKLMNOPQRSTUVWXYZ'
+        text = random.choice(non_hex) + number + non_hex
+        expression = re.compile(Group.named(name,
+                                 Numbers.hexadecimal))
+        match = expression.search(text)
+        self.assertEqual(match.group(name), number)
+        return
+
 
 
 class TestFormalDefinition(unittest.TestCase):
@@ -750,7 +873,9 @@ class TestFormalDefinition(unittest.TestCase):
         Does it match alternatives?
         """
         name = 'or'
-        terms = [Randomizer.letters() for term in range(random.randint(1, 100))]
+        # this might fail if one of the terms is a sub-string of another
+        # and the longer term is chosen as the search term
+        terms = [Randomizer.letters() for term in range(random.randint(10, 100))]
         expression = Group.named(name,
                                  FormalDefinition.alternative.join(terms))
         test = terms[random.randrange(len(terms))]
@@ -772,48 +897,40 @@ class TestFormalDefinition(unittest.TestCase):
         return
 
 
-# exceptions
-L_BRACKET = r"\["
-R_BRACKET = r"\]"
+class TestNetworking(unittest.TestCase):
+    def test_octet(self):
+        """
+        Does it match a valid octet?
+        """
+        name = 'octet'
+        expression = re.compile(Group.named(name,
+                                            Networking.octet))
+        for t1 in '198 10 1 255'.split():
+            match = expression.search(t1)
+            self.assertEqual(t1, match.group(name))
+        bad_octet = random.randint(256, 999)
+        self.assertIsNone(expression.search(str(bad_octet)))
+        return
 
-# operators
-OR = "|"
+    def test_ip_address(self):
+        """
+        Does it match a valid ip address?
+        """
+        name = 'ipaddress'
+        expression = re.compile(Group.named(name,
+                                            Networking.ip_address))
+        for text in '192.168.0.1 10.10.10.2 76.83.100.234'.split():
+            match = expression.search(text)
+            self.assertEqual(match.group(name), text)
+        for bad_ip in "10.10.10 12.9.49.256 ape".split():
+            self.assertIsNone(expression.search(bad_ip))
+        return
 
-# string help
-
-#anything and everything
-ANYTHING = r"."
-EVERYTHING = Quantifier.zero_or_more(ANYTHING)
-
-# numbers
-
-NATURAL = Numbers.digit + Quantifier.one_or_more
-
-INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  Quantifier.zero_or_one('-') + NATURAL + 
-           Group.not_followed_by(Numbers.decimal_point))
-
-FLOAT = Quantifier.zero_or_one('-') + NATURAL + Numbers.decimal_point + NATURAL
-REAL = Group.group(FLOAT + OR + INTEGER)
-HEX = CharacterClass.character_class(string.hexdigits)
-HEXADECIMALS = HEX + Quantifier.one_or_more
-
-
-# common constants
-DASH = "-"
-LETTER = CharacterClass.character_class(characters=string.ascii_letters)
-LETTERS = LETTER + Quantifier.one_or_more
-OPTIONAL_LETTERS = Quantifier.zero_or_more(LETTER)
-
-# SPECIAL CASES
-# NETWORKING
-DOT = Numbers.decimal_point
-OCTET = Group.group(expression=OR.join([Numbers.single_digit, Numbers.two_digits, Numbers.one_hundreds,
-                         Boundaries.word("2[0-4][0-9]"), Boundaries.word("25[0-5]")]))
-
-IP_ADDRESS = DOT.join([OCTET] * 4)
-
-# from commons.expressions
-MAC_ADDRESS_NAME = "mac_address"
-HEX_PAIR =  HEX + Quantifier.exactly(2)
-MAC_ADDRESS = Group.named(name=MAC_ADDRESS_NAME,
-                                 expression=":".join([HEX_PAIR] * 6))
+    def test_mac_address(self):
+        name = 'macaddress'
+        expression = re.compile(Group.named(name,
+                                            Networking.mac_address))
+        text = 'f8:d1:11:03:12:58'
+        self.assertEqual(expression.search(text).group(name),
+                         text)
+        return

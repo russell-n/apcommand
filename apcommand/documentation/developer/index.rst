@@ -4,27 +4,27 @@ Developer Documentation
 Access Points:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    Atheros <../../accesspoints/atheros>
+   Broadcom <../../accesspoints/broadcom>
 
 Miscellany:
 
 .. toctree::
    :maxdepth: 1
 
-   Arens' Atheros Code <../../arensatheros>
    The Base Class <../../baseclass>
    The Log Setter <../../log_setter>
 
 Command-Line Interface:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    The arguments <../../argumentparser>
    The sub-commands <../../subcommands>
-   The Main Module <../../main>
+   The Atheros Main Module <../../atheros>
 
 Helper Commands:
 
@@ -59,3 +59,10 @@ Connections:
    SSH Connection <../../connections/sshconnection>
    Telnect Connection <../../connections/telnetconnection>
    
+Arens Code:
+
+.. toctree::
+   :maxdepth: 2
+
+   Arens' Atheros Code <../../arensatheros>
+   Arens' BroadcomCode <../../arensbroadcom>

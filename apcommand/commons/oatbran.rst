@@ -8,7 +8,7 @@ Oat Bran helps with regular expressions. Names are uppercased to avoid keyword c
     # but sometimes they're just too clunky
     LEFT_BRACKET = '['
     RIGHT_BRACKET = ']'
-    OR = '|'
+    
     
     
 
@@ -36,21 +36,29 @@ These are the basic building blocks of regular expressions.
 
 
 
+
 Groups
 ------
+
+Besides the basic use of grouping with parentheses (to explicitly apply operations to multiple characters, for example), the Group hold perl (`(?<expression>)`) and python (`(?P<expression>)`) group-extensions. Since parentheses have to be symmetric these are applied as methods rather than strings that are added to other strings.
 
 .. autosummary::
    :toctree: api
 
    Group
+   Group.group
    Group.named
    Group.not_followed_by
    Group.not_preceded_by
+   Group.preceded_by
+   Group.followed_by
 
 
 
 Quantifiers
 -----------
+
+Quantifiers are used to describe repetitions of patterns. The `zero_or_more` quantifier is an alias for the `FormalDefinition.kleene_star`. Although I usually think of these as suffixes, the exact and m-to-n versions need braces so the quantifiers are applied as methods to make their use uniform. I use the string `format` method so they will not raise errors if passed non-strings as patterns.
 
 .. autosummary::
    :toctree: api
@@ -67,16 +75,21 @@ Quantifiers
 Character Classes
 -----------------
 
-A helper with character classes.
+A helper with character classes (stuff put in square-brackets ('[]')). There are some similar patterns in other classes. I tried to put single characters in this class (e.g. digit) and multiple characters or those with quantifiers in other classes (e.g. digits or optional_digits).
 
 .. autosummary::
    :toctree: api
 
    CharacterClass
+   CharacterClass.character_class
    CharacterClass.alpha_num
    CharacterClass.alpha_nums
+   CharacterClass.digit
+   CharacterClass.non_digit
+   CharacterClass.non_zero_digit
    CharacterClass.character_class
-   CharacterClass.not_in      
+   CharacterClass.not_in
+   
 
 
 
@@ -94,26 +107,71 @@ Boundaries
    
 
 
+Common Patterns
+---------------
+
+These are pattens that I use a lot but I could not think of where to put them.
+
+.. autosummary::
+   :toctree: api
+
+   CommonPatterns.anything
+   CommonPatterns.everything
+   CommonPatterns.letter
+   CommonPatterns.letters
+   CommonPatterns.optional_letters
+   CommonPatterns.space
+   CommonPatterns.spaces
+   CommonPatterns.optional_spaces
+   CommonPatterns.not_space
+   CommonPatterns.not_spaces
+   
+
+
+
+
 Numbers
 -------
 
 The numbers are broken up into types based on those listed `here <http://mathworld.wolfram.com/CountingNumber.html>`_. I was originally using the more `traditional number types <http://en.wikipedia.org/wiki/List_of_types_of_numbers>`_ but I keep forgetting which ones have zero in them so I will work with just positive/negative, non-positive/non-negative, and integer/real.
 
+.. csv-table:: Numbers
+   :header: Name,Description,Symbol
+   :delim: ;
 
+   positive_integer; :math:`1,2,\ldots`;:math:`\mathbb{Z}^+`
+   non_negative_integer; :math:0,1,\ldots` ; :math:`\mathbb{Z}^*`
+   non_positive_integer; :math:0, -1, -2,\ldots`;
+   integer;positive, negative, 0; :math:`\mathbb{Z}`
+   real_number;Positive,negative, 0;:math:`\mathbb{R}`
+
+   
+.. warning:: The integers are allowed to match even when surrounded by punctuation. This makes it okay for sentences and csvs, etc. but means that if given a floating point number it will match the substring to the left of the decimal point (e.g. 10.00213 will match 10).
+
+.. warning:: Along with the previous warning it should be noted that `nonnegative_integer` extracts the non-negative portion, it does not ignore negative integers. So if you have -300, the match will be 300. This may change once I start using this, but for now that is the behavior (useful for extracting ranges, maybe -- nonnegative_integer + '-' + nonnegative_integer):
+
+.. note:: `real` is treated as a super-set that matches floats or integers.
 
 .. autosummary::
    :toctree: api
 
    Numbers
    Numbers.decimal_point
-   Numbers.digit
    Numbers.digits
-   Numbers.non_digit
-   Numbers.non_zero_digit
-   Numbers.single_digit
    Numbers.two_digits
    Numbers.one_hundreds
-   Numbers.natural
+   Numbers.positive_integer
+   Numbers.nonnegative_integer
+   Numbers.integer
+   Numbers.real
+   Numbers.hexadecimal
+   
+
+
+.. autosummary::
+   :toctree: api
+
+   Networking.octet
    
 
 
@@ -123,71 +181,5 @@ The numbers are broken up into types based on those listed `here <http://mathwor
    TestQuantifier.test_one_or_more
    TestQuantifier.test_zero_or_more
    
-::
 
-    # exceptions
-    L_BRACKET = r"\["
-    R_BRACKET = r"\]"
-    
-    # operators
-    OR = "|"
-    
-    # string help
-    
-    #anything and everything
-    ANYTHING = r"."
-    EVERYTHING = Quantifier.zero_or_more(ANYTHING)
-    
-    # numbers
-    
-    NATURAL = Numbers.digit + Quantifier.one_or_more
-    
-    INTEGER = (Group.not_preceded_by(Numbers.decimal_point) +  Quantifier.zero_
-    or_one('-') + NATURAL + 
-               Group.not_followed_by(Numbers.decimal_point))
-    
-    FLOAT = Quantifier.zero_or_one('-') + NATURAL + Numbers.decimal_point + NAT
-    URAL
-    REAL = Group.group(FLOAT + OR + INTEGER)
-    HEX = CharacterClass.character_class(string.hexdigits)
-    HEXADECIMALS = HEX + Quantifier.one_or_more
-    
-    SPACE = r"\s"
-    SPACES = SPACE + Quantifier.one_or_more
-    NOT_SPACE = r'\S'
-    NOT_SPACES = NOT_SPACE + Quantifier.one_or_more
-    OPTIONAL_SPACES = Quantifier.zero_or_more(SPACE)
-    
-    # common constants
-    DASH = "-"
-    LETTER = CharacterClass.character_class(characters=string.ascii_letters)
-    LETTERS = LETTER + Quantifier.one_or_more
-    OPTIONAL_LETTERS = Quantifier.zero_or_more(LETTER)
-    
-    # SPECIAL CASES
-    # NETWORKING
-    DOT = Numbers.decimal_point
-    OCTET = Group.group(expression=OR.join([Numbers.single_digit, Numbers.two_d
-    igits, Numbers.one_hundreds,
-                             Boundaries.word("2[0-4][0-9]"), Boundaries.word("2
-    5[0-5]")]))
-    
-    IP_ADDRESS = DOT.join([OCTET] * 4)
-    
-    # from commons.expressions
-    MAC_ADDRESS_NAME = "mac_address"
-    HEX_PAIR =  HEX + Quantifier.exactly(2)
-    MAC_ADDRESS = Group.named(name=MAC_ADDRESS_NAME,
-                                     expression=":".join([HEX_PAIR] * 6))
-    
-    
-
-
-(?<!ULPXdDcbbsWJXijdQedVRFNSUHEWsgFVqqqyeKggZIleKBkpLhOPvEDaafJBjjyuvWCChgqavwMNDqKZj)
-nBSiqlJoHvbvwEYqlYRAjAIUZMmmjQeegLPRpZBlNRHRKvPIhPBOPnapQLW
-ULPXdDcbbsWJXijdQedVRFNSUHEWsgFVqqqyeKggZIleKBkpLhOPvEDaafJBjjyuvWCChgqavwMNDqKZjnBSiqlJoHvbvwEYqlYRAjAIUZMmmjQeegLPRpZBlNRHRKvPIhPBOPnapQLW
-+
--57.42
-(?P<integer>(?<!\.|0)-?[1-9]\d*(?!\.\d+)\b|\b0\b)
-('2',)
 
