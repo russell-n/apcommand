@@ -116,8 +116,7 @@ class HTTPConnection(BaseClass):
 
         :return: requests.Response object
         """
-        return requests.get(self.url,
-                            auth=(self.username, self.password), *args, **kwargs)
+        return self.request(GET, *args, **kwargs)
 
     
     def __getattr__(self, method):
@@ -203,10 +202,10 @@ class TestHTTPConnection(unittest.TestCase):
         """
         Does the calling the HTTPConnection do the same thing as GET?
         """
-        with patch('requests.get', self.requests):
+        with patch('requests.request', self.requests):
             data = {'wl_radio':'0'}
             outcome = self.connection(data=data)
-            self.requests.assert_called_with(self.url, auth=self.auth,
+            self.requests.assert_called_with(GET, self.url, auth=self.auth,
                                              data=data)
         return
 
