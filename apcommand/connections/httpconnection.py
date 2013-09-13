@@ -30,11 +30,62 @@ class HTTPConnection(BaseClass):
          - `path`: optional path to add to URL
          - `protocol`: transport protocol (most likely 'http')
         """
+        self._hostname = None
         self.hostname = hostname
         self.username = username
         self.password = password
+        self._protocol = None
         self.protocol = protocol
+        self._path = None
         self.path = path
+        self._url = None
+        return
+
+    @property
+    def protocol(self):
+        """
+        The protocol for the URL (probabl http, maybe ftp)
+        """
+        return self._protocol
+
+    @protocol.setter
+    def protocol(self, new_protocol):
+        """
+        Sets the protocol, resets the url
+        """
+        self._protocol = new_protocol.lower()
+        self._url = None
+        return
+
+    @property
+    def hostname(self):
+        """
+        The address for the HTTP server
+        """
+        return self._hostname
+
+    @hostname.setter
+    def hostname(self, new_hostname):
+        """
+        Sets the hostname and resets the URL
+        """
+        self._hostname = new_hostname
+        self._url = None
+        return
+
+    @property
+    def path(self):
+        """
+        A path-string for the URL
+        """
+        return self._path
+
+    @path.setter
+    def path(self, new_path):
+        """
+        Sets the path and re-sets the url
+        """
+        self._path = new_path
         self._url = None
         return
 
@@ -65,8 +116,8 @@ class HTTPConnection(BaseClass):
 
         :return: requests.Response object
         """
-        return requests.request(GET, self.url,
-                                auth=(self.username, self.password), *args, **kwargs)
+        return requests.get(self.url,
+                            auth=(self.username, self.password), *args, **kwargs)
 
     
     def __getattr__(self, method):
@@ -152,10 +203,33 @@ class TestHTTPConnection(unittest.TestCase):
         """
         Does the calling the HTTPConnection do the same thing as GET?
         """
-        with patch('requests.request', self.requests):
+        with patch('requests.get', self.requests):
             data = {'wl_radio':'0'}
             outcome = self.connection(data=data)
-            self.requests.assert_called_with('GET', self.url, auth=self.auth,
+            self.requests.assert_called_with(self.url, auth=self.auth,
                                              data=data)
-            return
+        return
+
+    def test_set_parameter(self):
+        """
+        Does setting parameters that affect the url reset it?
+        """
+        new_path = random_letters()
+        self.assertEqual(self.url, self.connection.url)
+        self.connection.path = new_path
+        new_url = self.url.replace(self.path, new_path)
+        self.assertEqual(new_url,
+                         self.connection.url)
+        new_hostname = random_letters()
+
+        self.connection.hostname = new_hostname
+        new_url = new_url.replace(self.hostname, new_hostname)
+        self.assertEqual(new_url, self.connection.url)
+
+        new_protocol = random_letters()
+        new_url = new_url.replace(PROTOCOL, new_protocol.lower())
+        self.connection.protocol = new_protocol
+        self.assertEqual(new_url,
+                         self.connection.url)
+        return
 
