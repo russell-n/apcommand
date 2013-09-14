@@ -1,0 +1,411 @@
+<!--
+Copyright (C) 2009, Broadcom Corporation
+All Rights Reserved.
+
+THIS SOFTWARE IS OFFERED "AS IS", AND BROADCOM GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE. BROADCOM
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE.
+$ID$-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<title>Broadcom Home Gateway Reference Design: SSID</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="style.css" media="screen">
+<script language="JavaScript" type="text/javascript" src="overlib.js"></script>
+<script language="JavaScript" type="text/javascript">
+<!--
+function wl_recalc()
+{
+   var ure_disable = "1";
+   var wme_enabled = "on";   var mode = "ap";   
+   document.forms[0].wl_mode.disabled = 1;
+   if (ure_disable == "0") {
+		document.forms[0].wl_bridge.disabled = 1;
+   }
+
+   if (wme_enabled != "on") {
+		document.forms[0].wl_wme_bss_disable.disabled = 1;
+   }
+   if (mode == "sta") {
+		document.forms[0].wl_wmf_bss_enable.disabled = 1;
+		document.forms[0].wl_bss_maxassoc.disabled = 1;
+   }
+   if(mode == "ap") {
+		document.forms[0].wl_mcast_regen_bss_enable.disabled = 1;
+   }
+}
+
+function wl_closed_check()
+{
+/*
+*/
+	var msg = "Selecting Closed hides the network will disable the WPS, Are you sure?";
+	var wps_mode = "enabled";
+
+	if (wps_mode == "enabled" && document.forms[0].wl_closed.value == "1" && !confirm(msg))
+		document.forms[0].wl_closed.value = "0";
+/*
+*/
+}
+
+function wl_macmode_check()
+{
+/*
+*/
+	var msg = "Selecting allow empty MAC Address will disable the WPS, Are you sure?";
+	var wps_mode = "enabled";
+	var old_value = document.forms[0].wl_macmode.value;
+
+	if (wps_mode == "enabled" && document.forms[0].wl_macmode.value == "allow" &&
+		document.forms[0].wl_maclist0.value == "" && document.forms[0].wl_maclist1.value == "" &&
+		document.forms[0].wl_maclist2.value == "" && document.forms[0].wl_maclist3.value == "" &&
+		document.forms[0].wl_maclist4.value == "" && document.forms[0].wl_maclist5.value == "" &&
+		document.forms[0].wl_maclist6.value == "" && document.forms[0].wl_maclist7.value == "" &&
+		document.forms[0].wl_maclist8.value == "" && document.forms[0].wl_maclist9.value == "" &&
+		document.forms[0].wl_maclist10.value == "" && document.forms[0].wl_maclist11.value == "" &&
+		document.forms[0].wl_maclist12.value == "" && document.forms[0].wl_maclist13.value == "" &&
+		document.forms[0].wl_maclist14.value == "" && document.forms[0].wl_maclist15.value == "" &&
+		!confirm(msg))
+			document.forms[0].wl_macmode.value = old_value;
+/*
+*/
+}
+
+//-->
+</script>
+</head>
+
+<body onLoad="wl_recalc();">
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+<input type=hidden name="wl_mode_changed" value=0>
+<input type=hidden name="wl_ure_changed" value=0>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#cc0000">
+  <tr>
+  <td><a href="index.asp"><img border="0" src="basic.gif" alt="Basic"></a></td>
+  <td><a href="lan.asp"><img border="0" src="lan.gif" alt="LAN"></a></td>
+  <td><a href="wan.asp"><img border="0" src="wan.gif" alt="WAN"></a></td>
+  <td><a href="status.asp"><img border="0" src="status.gif" alt="Status"></a></td>
+  <td><a href="filter.asp"><img border="0" src="filter.gif" alt="Filters"></a></td>
+  <td><a href="forward.asp"><img border="0" src="forward.gif" alt="Routing"></a></td>
+  <td><a href="qos.asp"><img border="0" src="qos.gif" alt="IQos"></a></td>
+  <td><a href="radio.asp"><img border="0" src="radio.gif" alt="Wlan I/F"></a></td>
+  <td><a href="ssid.asp"><img border="0" src="ssid.gif" alt="xyz"></a></td>
+  <td><a href="security.asp"><img border="0" src="security.gif" alt="Security"></a></td>
+  <td><a href="firmware.asp"><img border="0" src="firmware.gif" alt="Firmware"></a></td>
+  <td width="100%"></td>
+</tr>
+
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td colspan="2" class="edge"><img border="0" src="blur_new.jpg" alt=""></td>
+  </tr>
+  <tr>
+    <td><img border="0" src="logo_new.gif" alt=""></td>
+    <td width="100%" valign="top">
+	<br>
+	<span class="title">SSID</span><br>
+	<span class="subtitle">This page allows you to configure the Virtual interfaces for each
+	Physical interface.</span>
+    </td>
+  </tr>
+</table>
+
+<form method="post" action="ssid.asp">
+<input type="hidden" name="page" value="ssid.asp">
+
+
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selects which wireless interface to configure.', LEFT);"
+	onMouseOut="return nd();">
+	Wireless Interface:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_unit" onChange="submit();">
+	  <option value="0" selected>(00:90:4C:09:11:03)</option>
+<option value="1" >(00:90:4C:13:11:03)</option>
+
+	</select>
+    </td>
+  </tr>
+</table>
+
+<p>
+<table border="0" cellpadding="0" cellspacing="0"> <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selects desired BSS to configure.', LEFT);"
+	onMouseOut="return nd();">
+	BSS-MAC (SSID):&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_bssid" onChange="submit();">
+	  <option value=0 selected > 00:90:4C:09:11:03 (hownowbrowndog enabled) </option>
+<option value=1  > 02:90:4C:09:11:04 ( disabled)</option>
+<option value=2  > 02:90:4C:09:11:05 ( disabled)</option>
+<option value=3  > 02:90:4C:09:11:06 ( disabled)</option>
+<option value=4  > 02:90:4C:09:11:07 ( disabled)</option>
+<option value=5  > 02:90:4C:09:11:08 ( disabled)</option>
+<option value=6  > 02:90:4C:09:11:09 ( disabled)</option>
+<option value=7  > 02:90:4C:09:11:0A ( disabled)</option>
+<option value=8  > 02:90:4C:09:11:0B ( disabled)</option>
+<option value=9  > 02:90:4C:09:11:0C ( disabled)</option>
+<option value=10  > 02:90:4C:09:11:0D ( disabled)</option>
+<option value=11  > 02:90:4C:09:11:0E ( disabled)</option>
+<option value=12  > 02:90:4C:09:11:0F ( disabled)</option>
+<option value=13  > 02:90:4C:09:11:00 ( disabled)</option>
+<option value=14  > 02:90:4C:09:11:01 ( disabled)</option>
+<option value=15  > 02:90:4C:09:11:02 ( disabled)</option>
+
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('It shows whether the BSSID is AP, WirelessBridge, WET or STA ', LEFT);"
+	onMouseOut="return nd();">
+	Mode:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_mode">
+	<option value="ap" selected>Access Point</option>
+<option value="wds" >Wireless Bridge</option>
+
+	</select>
+    </td>
+  </tr>
+  
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Enables or disables this SSID .', LEFT);"
+	onMouseOut="return nd();">
+	BSS Enabled:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_bss_enabled">
+	  <option value="0" >Disabled</option> 
+	  <option value="1" selected>Enabled</option>
+	</select>
+    </td>
+  </tr>  
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Sets the Network Name (also known as SSID) of this network.', LEFT);"
+	onMouseOut="return nd();">
+	Network Name (SSID):&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_ssid" value="hownowbrowndog" size="32" maxlength="32"></td>
+  </tr>  
+    
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selecting <b>Closed</b> hides the network from active scans. Selecting <b>Open</b> reveals the network to active scans.', LEFT);"
+	onMouseOut="return nd();">
+	Network Type:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+    <select name="wl_closed" onChange="wl_closed_check();">
+	  <option value="0" selected>Open</option>
+	  <option value="1" >Closed</option>
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selecting <b>On</b> enables AP isolation mode.  When enabled, STAs associated to the AP will not be able to communicate with each other.', LEFT);"
+	onMouseOut="return nd();">
+	AP Isolation:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_ap_isolate">
+	  <option value="0" selected>Off</option>
+	  <option value="1" >On</option>
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selects desired Bridge br0 or br1 .', LEFT);"
+	onMouseOut="return nd();">
+	Network Bridge:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>  <select name="wl_bridge" >  <option value=0 selected >LAN </option>
+<option value=1          >Guest</option>
+ </select> 	</td>
+  </tr>  
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Sets the maximum associations the for this BSS.', LEFT);"
+	onMouseOut="return nd();">
+	BSS Max Associations Limit:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_bss_maxassoc" value="128" size="4" maxlength="4"></td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('When WMM is enabled for the radio, selecting <b>On</b> allows WMM to be advertised in beacons and probes for this BSS.  <b>Off</b> disables advertisement of WMM in beacons and probes', LEFT);"
+	onMouseOut="return nd();">
+	WMM Advertise:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_wme_bss_disable">
+	  <option value="0" selected>Advertise</option>
+	  <option value="1" >Do Not Advertise</option>
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Choose <b>On</b> to enable Wireless Multicast Forwarding on this BSS.  <b>Off</b> disables the feature', LEFT);"
+	onMouseOut="return nd();">
+	WMF:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_wmf_bss_enable">
+	  <option value="1" >On</option>
+	  <option value="0" selected>Off</option>
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Choose <b>On</b> to enable Multicast Reverse Translation on this sta.  <b>Off</b> disables the feature', LEFT);"
+	onMouseOut="return nd();">
+	MCAST_REGEN:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_mcast_regen_bss_enable">
+	  <option value="1" selected>On</option>
+	  <option value="0" >Off</option>
+	</select>
+    </td>
+  </tr>
+</table>
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <th width="310"
+	onMouseOver="return overlib('Selects whether clients with the specified MAC address are allowed or denied wireless access.', LEFT);"
+	onMouseOut="return nd();">
+	MAC Restrict Mode:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<select name="wl_macmode" onChange="wl_macmode_check();">
+	  <option value="disabled" selected>Disabled</option>
+	  <option value="allow" >Allow</option>
+	  <option value="deny" >Deny</option>
+ 	</select>
+    </td>
+  </tr>
+  <tr>	
+    <th width="310" valign="top" rowspan="8"
+	onMouseOver="return overlib('Allows or denies wireless access to clients with the specified MAC addresses. The MAC address format is XX:XX:XX:XX:XX:XX.', LEFT);"
+	onMouseOut="return nd();">
+	<input type="hidden" name="wl_maclist" value="16">
+	MAC Addresses:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist0" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist1" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist2" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist3" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist4" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist5" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist6" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist7" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist8" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist9" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist10" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist11" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist12" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist13" value="" size="17" maxlength="17"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;</td>
+    <td><input name="wl_maclist14" value="" size="17" maxlength="17"></td>
+    <td><input name="wl_maclist15" value="" size="17" maxlength="17"></td>
+  </tr>
+</table>
+
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <th width="310" valign="top"
+	onMouseOver="return overlib('Stations currently authenticated to this AP.', LEFT);"
+	onMouseOut="return nd();">
+	Authenticated Stations:&nbsp;&nbsp;
+    </th>
+    <td>&nbsp;&nbsp;</td>
+    <td>
+	<table border="1" cellpadding="2" cellspacing="0">
+	  <tr align="center">
+	    <td class="label">MAC<br>Address</td>
+	    <td class="label">Association<br>Time</td>
+	    <td class="label">Authorized</td>
+	    <td class="label">WMM<br>Link</td>
+	    <td class="label">Power<br>Save</td>
+	    <td class="label">APSD<br>Default</td>
+	  </tr>
+	  
+	</table>
+    </td>
+  </tr>
+</table>
+
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="310"></td>
+      <td>&nbsp;&nbsp;</td>
+      <td>
+	  <input type="submit" name="action" value="Apply">
+	  <input type="reset" name="action" value="Cancel">
+      </td>
+    </tr>
+</table>
+
+</form>
+
+<p class="label">&#169;2001-2010 Broadcom Corporation. All rights
+reserved. 54g and XPress are trademarks of Broadcom Corporation.</p>
+
+</body>
+</html>

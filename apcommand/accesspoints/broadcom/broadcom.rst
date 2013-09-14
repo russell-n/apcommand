@@ -23,6 +23,21 @@ Where `C` is the `Control PC`, `V` is a `Ventriloquist PC` that uses `curl` to t
 
 Still, the use of `curl` seems inelegant, so I will attempt to do it with the python standard library module `urllib2` and related modules.
 
+.. note:: Right now I am trying out `requests <http://docs.python-requests.org/en/latest/>`_ instead of `urllib2` and `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ instead of just regular expressions.
+
+The BroadcomBCM94718NR
+----------------------
+
+.. uml::
+
+   BroadcomBCM94718NR -|> BaseClass
+   BroadcomBCM94718NR o- HTTPConnection
+   BroadcomBCM94718NR o- BroadcomRadioSoup
+   BroadcomBCM94718NR : enable_24_ghz
+   BroadcomBCM94718NR : enable_5_ghz
+
+
+
 
 
 

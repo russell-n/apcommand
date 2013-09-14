@@ -3,6 +3,57 @@ HTTP Connection
 .. currentmodule:: apcommand.connections.httpconnection
 This is a client-connection to communicate with HTTP-servers. Since some of the parameters are reminiscent of telnet and SSH sessions I will model it somewhat after the SSHConnection, but it will primarily act as an interface to the `requests <http://docs.python-requests.org/en/latest/>`_ package.
 
+Example Get
+-----------
+
+An example use based on the Broadcom BCM94718NR::
+
+    connection = HTTPConnection('192.168.1.1', password='admin', path='radio.asp')
+    response = connection(data={'wl_unit':'0'})
+    print response.text
+
+The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on :ref:`Aren's Broadcom Code <arens-broadcom>` which translates to curl's::
+
+   curl -d 'wl_unit=0' --user :admin http://192.168.1.1/radio.asp
+
+Setting parts of the URL in the HTTPConnection will re-build the URL so you could get the `ssid` page instead of the `radio` page like this::
+
+    # re-using the previous connection
+    connection.path = 'ssid.asp'
+    response = connection.get(data={'wl_unit':'0'})
+    print response.text
+
+The use of `connection.get` is not a typo, the call is just a 'GET' call, since I figured it is the most common thing to do. The `repsonse` returned is a `requests.Response <http://docs.python-requests.org/en/latest/user/quickstart/#response-content>`_ object so the HTTPConnection doesn't act exactly like the other connections (which return standard-out and standard error in a tuple). There's more information here so I figured it would be better to return the whole thing rather than throw away stuff.
+
+Persistence of Data
+-------------------
+
+Since I tested this a lot using `ipython` I made it so that it will store the `data` attribute and add it automatically when a request is made::
+
+    connection = HTTPConnection('192.168.1.1', password='admin', path='radio.asp', data={'wl_unit':'0'})
+    response = connection()
+    print response.text
+
+Should work the same as the first example. If you want to temporarily use a different data-set, pass in the dictionary (using the parameter name explicitly)::
+
+    response = connection(data={'wl_unit':'1'})
+
+If you want to get rid of the data set it to None, if you want to change it just assign it a new value::
+
+    # no default data
+    connection.data = None
+
+    # new default data
+    connection.data = {'wl_unit':'1'}
+
+In this initial use I don't use parameters so I didn't do the same thing for them or any other settings that can be passed in --
+
+   * The URL and authentication are always taken from the HTTPConnection properties
+
+   * The data will be taken from the HTTPConnection properties if set or from the arguments if passed in
+
+   * Everything else needs to be passed in when the connection is called
+    
 .. uml::
 
    HTTPConnection o- requests.Request

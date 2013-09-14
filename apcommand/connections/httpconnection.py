@@ -18,7 +18,7 @@ class HTTPConnection(BaseClass):
     Acts as a client connection to an HTTP server
     """
     def __init__(self, hostname, username=EMPTY_STRING, password=EMPTY_STRING,
-                 protocol=PROTOCOL, path=EMPTY_STRING):
+                 path=EMPTY_STRING, data=None, protocol=PROTOCOL):
         """
         HTTPConnection constructor
 
@@ -29,6 +29,7 @@ class HTTPConnection(BaseClass):
          - `password`: password for sites needing authentication
          - `path`: optional path to add to URL
          - `protocol`: transport protocol (most likely 'http')
+         - `data`: dictionary of data for the page
         """
         self._hostname = None
         self.hostname = hostname
@@ -38,6 +39,7 @@ class HTTPConnection(BaseClass):
         self.protocol = protocol
         self._path = None
         self.path = path
+        self.data = data
         self._url = None
         return
 
@@ -107,6 +109,9 @@ class HTTPConnection(BaseClass):
 
         :return: requests.Response object
         """
+        if 'data' not in kwargs and self.data is not None:
+            return requests.request(method, self.url, data=self.data,
+                             auth=(self.username, self.password), *args, **kwargs)
         return requests.request(method, self.url,
                                 auth=(self.username, self.password), *args, **kwargs)
 
@@ -153,11 +158,13 @@ class TestHTTPConnection(unittest.TestCase):
         self.username = random_letters()
         self.password = random_letters()
         self.auth = (self.username, self.password)
+        self.data = {"wl_unit":'0'}
         self.path = 'radio.asp'
         self.url = 'http://' + self.hostname + '/' + self.path
         self.connection = HTTPConnection(hostname=self.hostname,
                                          username=self.username,
                                          password=self.password,
+                                         data=self.data,
                                          path=self.path)
 
         # mocks
@@ -177,6 +184,8 @@ class TestHTTPConnection(unittest.TestCase):
         
         self.assertEqual(self.url,
                          self.connection.url)
+        self.assertEqual(self.data,
+                         self.connection.data)
         return
 
     def test_request(self):
@@ -186,11 +195,14 @@ class TestHTTPConnection(unittest.TestCase):
         with patch('requests.request', self.requests):
             # get
             outcome = self.connection.get()
+            self.assertIsNotNone(self.connection.data)
             self.requests.assert_called_with('GET', self.connection.url,
-                                                  auth=self.auth)
+                                                  auth=self.auth,
+                                                  data=self.data)
             self.assertEqual(outcome, self.response)
             # post
             params = {'xor':'1', 'aor':'0'}
+            self.connection.data = None
             outcome = self.connection.post(params=params)
             self.requests.assert_called_with('POST', self.connection.url,
                                              auth=self.auth,
@@ -203,7 +215,7 @@ class TestHTTPConnection(unittest.TestCase):
         Does the calling the HTTPConnection do the same thing as GET?
         """
         with patch('requests.request', self.requests):
-            data = {'wl_radio':'0'}
+            data = {'wl_radio':'1'}
             outcome = self.connection(data=data)
             self.requests.assert_called_with(GET, self.url, auth=self.auth,
                                              data=data)
