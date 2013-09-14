@@ -8,6 +8,13 @@ Access Points:
 
    Atheros <../../accesspoints/atheros>
    Broadcom <../../accesspoints/broadcom/broadcom>
+   
+Parsers:
+
+.. toctree::
+   :toctree: api
+
+   Broadcom Radio Soup <../../accesspoints/broadcom/broadcom_parser>
 
 Miscellany:
 
@@ -56,8 +63,8 @@ Connections:
    Non-Local Connection <../../connections/nonlocalconnection>
    Line Producer <../../connections/producer>
    Shared Counter <../../connections/sharedcounter>
-   SSH Connection <../../connections/sshconnection>
    Telnect Connection <../../connections/telnetconnection>
+   HTTP Connection <../../connections/httpconnection>
    
 Arens Code:
 
