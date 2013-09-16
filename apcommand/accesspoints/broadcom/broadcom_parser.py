@@ -34,6 +34,8 @@ COUNTRY = 'wl_country_code'
 CHANNEL = 'wl_channel'
 BANDWIDTH = 'wl_nbw_cap'
 SELECTED_EXPRESSION = r'selected\svalue=.*>(?P<{0}>.*)<'
+SELECTED = 'selected'
+GENERIC_SELECTED_EXPRESSION = SELECTED_EXPRESSION.format(SELECTED)
 BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
 SIDEBAND = 'wl_nctrlsb'
 SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
@@ -66,7 +68,19 @@ class BroadcomRadioSoup(BaseClass):
         self._channel = None
         self._bandwidth = None
         self._sideband = None
+
+        # regular expressions
+        self._selected_expression = None
         return
+
+    @property
+    def selected_expression(self):
+        """
+        Compiled regex to get text from selected option
+        """
+        if self._selected_expression is None:
+            self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
+        return self._selected_expression
 
     @property
     def html(self):
@@ -159,23 +173,17 @@ class BroadcomRadioSoup(BaseClass):
         return self.soup.find(attrs={NAME:COUNTRY}).option[VALUE]
 
     @property
-    def interface_24_state(self):
+    def interface_state(self):
         """
-        Get the state of the 2.4 Ghz radio (enabled or disabled)
+        Get the state of currently selected radio (enabled or disabled)
 
         :return: 'Enabled' or 'Disabled'
         """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ONE).text
-
-    @property
-    def interface_5_state(self):
-        """
-        Get the state of the 5 Ghz radio (enabled or disabled)
-
-        :return: 'Enabled' or 'Disabled'
-        """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ZERO).text
-
+        for line in self.soup.find(attrs={'name':'wl_radio'}):
+            match = self.selected_expression.search(str(line))
+            if match:
+                return match.group(SELECTED)
+                
     @property
     def channel(self):
         """
@@ -189,9 +197,9 @@ class BroadcomRadioSoup(BaseClass):
         The bandwidth setting (for both bands)
         """
         for line in self.soup.find(attrs={NAME:BANDWIDTH}):
-            match = re.search(BANDWIDTH_EXPRESSION, str(line))
+            match = self.selected_expression.search(str(line))
             if match:
-                return match.group(BANDWIDTH)
+                return match.group(SELECTED)
 
     @property
     def sideband(self):
@@ -201,9 +209,9 @@ class BroadcomRadioSoup(BaseClass):
         :return: 'Upper', 'Lower', or None
         """
         for line in self.soup.find(attrs={NAME:SIDEBAND}):
-            match = re.search(SIDEBAND_EXPRESSION, str(line))
+            match = self.selected_expression.search(str(line))
             if match:
-                return match.group(SIDEBAND).rstrip()
+                return match.group(SELECTED).rstrip()
         
 
 
@@ -295,8 +303,11 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         Does it correctly get the state of the radio?
         """
-        self.assertEqual(self.soup.interface_24_state, 'Enabled')
-        self.assertEqual(self.soup.interface_5_state, 'Disabled')
+        self.assertEqual(self.soup.interface_state, 'Disabled')
+        expected = 'Enabled'
+        self.assertEqual(self.soup_5.interface_state, expected,
+                         'Soup 5: expected: {0}, actual: {1}'.format(expected,
+                                                                     self.soup_5.interface_state))
         return
 
     def test_channel(self):

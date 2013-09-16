@@ -142,8 +142,6 @@ Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"``
 
 Then uses ``.text`` to get the state of the interface. Use ``.text`` to get the text between tags.
 
-.. warning:: The ``value="0"`` attribute appears to be somewhat arbitrary -- sometimes the 2.4 Ghz tag will be "0" and sometimes the 5 GHz will be "0". It looks like each drop-down menu will have to be checked to see what is being referred to.
-    
 
 .. uml::
 
@@ -162,8 +160,7 @@ This is the interface for those who want to use this to get text from an html in
    BroadcomRadioSoup.mac_24_ghz
    BroadcomRadioSoup.mac_5_ghz
    BroadcomRadioSoup.country
-   BroadcomRadioSoup.interface_24_state
-   BroadcomRadioSoup.interface_5_state
+   BroadcomRadioSoup.interface_state
    BroadcomRadioSoup.channel
    BroadcomRadioSoup.bandwidth
    BroadcomRadioSoup.sideband
@@ -184,4 +181,8 @@ This is the interface for those who want to add to the Soup.
    BroadcomRadioSoup.get_value_zero
    
 
+<select name="wl_radio">
+<option selected value="0">Disabled</option>
+<option value="1">Enabled</option>
+</select>
 
