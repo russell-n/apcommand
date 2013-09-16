@@ -24,10 +24,10 @@ from apcommand.baseclass import BaseClass
 
 NAME = 'name'
 VALUE = 'value'
-GHZ_24 = '0'
-GHZ_5 = '1'
-VALUE_24 = {VALUE:GHZ_24}
-VALUE_5 = {VALUE:GHZ_5}
+ZERO = '0'
+ONE = '1'
+VALUE_ZERO = {VALUE:ZERO}
+VALUE_ONE = {VALUE:ONE}
 WIRELESS_INTERFACE = 'wl_unit'
 INTERFACE = 'wl_radio'
 COUNTRY = 'wl_country_code'
@@ -107,29 +107,29 @@ class BroadcomRadioSoup(BaseClass):
         """
         return self.soup.find(attrs={NAME:WIRELESS_INTERFACE})
 
-    def get_24_ghz(self, tag):
+    def get_value_one(self, tag):
         """
-        Gets the first 24 ghz tag from a tag (subtree)
+        Gets the value='1' tag from a tag (subtree) 
 
         :param:
 
-         - `tag`: bs4.element.Tag with 2.4 GHz tag in it
+         - `tag`: bs4.element.Tag with value='1' tag in it
 
-        :return: tag with 2.4 GHz value
+        :return: tag with value='1' in it
         """
-        return tag.find(attrs=VALUE_24)
+        return tag.find(attrs=VALUE_ONE)
 
-    def get_5_ghz(self, tag):
+    def get_value_zero(self, tag):
         """
-        Gets the first 5 Ghz tag from a tag (subtree)
+        Gets the first value='0' tag from a tag (subtree) 
 
         :param:
 
-         - `tag`: bs4.element.Tag with 5 GHz tag in it
+         - `tag`: bs4.element.Tag with value='0' tag in it
 
         :return: bs4.element.Tag child of original tag 
         """
-        return tag.find(attrs=VALUE_5)
+        return tag.find(attrs=VALUE_ZERO)
 
     @property
     def mac_24_ghz(self):
@@ -138,7 +138,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: (<MAC ADDRESS>)
         """
-        return self.get_24_ghz(self.wireless_interface).text
+        return self.get_value_zero(self.wireless_interface).text
 
     @property
     def mac_5_ghz(self):
@@ -147,7 +147,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: (<5 GHz MAC Address>)
         """
-        return self.get_5_ghz(self.wireless_interface).text
+        return self.get_value_one(self.wireless_interface).text
 
     @property
     def country(self):
@@ -165,7 +165,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: 'Enabled' or 'Disabled'
         """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_24).text
+        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ONE).text
 
     @property
     def interface_5_state(self):
@@ -174,7 +174,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: 'Enabled' or 'Disabled'
         """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_5).text
+        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ZERO).text
 
     @property
     def channel(self):
@@ -218,8 +218,8 @@ from mock import MagicMock, patch
 
 class TestBroadcomRadioSoup(unittest.TestCase):
     def setUp(self):
-        # if you put a file open outside of the class sphinx will crash
-        # because the make file is in a different folder 
+        # if you put a file open outside of the class imports will crash
+        # unless you happen to be running the code in this folder
         self.radio_html = open('radio_asp.html').read()
         self.soup = BroadcomRadioSoup(self.radio_html)
         self.soup_5 = BroadcomRadioSoup(open('radio_5_asp.html').read())
@@ -268,10 +268,10 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         band_5 = '<option value="1">(00:90:4C:13:11:03)</option>'
 
         tag = self.soup.wireless_interface
-        outcome = self.soup.get_24_ghz(tag)
+        outcome = self.soup.get_value_zero(tag)
         self.assertEqual(str(outcome), band_24)
 
-        self.assertEqual(str(self.soup.get_5_ghz(tag)), band_5)
+        self.assertEqual(str(self.soup.get_value_one(tag)), band_5)
         return
 
     def test_mac_address(self):
@@ -295,8 +295,8 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         Does it correctly get the state of the radio?
         """
-        self.assertEqual(self.soup.interface_24_state, 'Disabled')
-        self.assertEqual(self.soup.interface_5_state, 'Enabled')
+        self.assertEqual(self.soup.interface_24_state, 'Enabled')
+        self.assertEqual(self.soup.interface_5_state, 'Disabled')
         return
 
     def test_channel(self):

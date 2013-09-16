@@ -57,6 +57,7 @@ The answer for now will be to use BeautifulSoup function calls instead of regula
 
 .. note:: So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag. I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
 
+.. _broadcom-parser-wireless-interface:
 The Wireless Interface
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -103,7 +104,7 @@ The query::
 
     self.soup.find(attrs={'name':'wl_unit'})
 
-Returns a `tag` which is an HTML sub-tree that has the name passed in to the call. Because it is a tag, you can do further searches within it -- use `find` to narrow the HTML tree down to just the part you are interested in.
+Returns a `tag <http://www.crummy.com/software/BeautifulSoup/bs4/doc/#tag>`_ which is an HTML sub-tree that has the name attribute that passed in to the ``find`` call (see the :ref:`Wireless Interface <broadcom-parser-wireless-interface>` section above for a sample output). Because it is a tag, you can do further searches within it. Use the ``find`` method to narrow the HTML tree down to just the part you are interested in.
 
 Tag Attributes
 ++++++++++++++
@@ -135,11 +136,13 @@ First uses ``find` to narrow the HTML tree down to the 'wl_radio' subtree (Beaut
     <option value="1">Enabled</option>
     </select>
 
-Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu which seems to mostly mean the 2.4 GHz interface, but be aware that this is an index, not an actual assignment -- in another menu ``value="0"`` will also get you the first item in the menu, but that is not guaranteed to mean the 2.4 GHz interface, it is context specific)::
+Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu)::
 
     <option selected value="0">Disabled</option>
 
 Then uses ``.text`` to get the state of the interface. Use ``.text`` to get the text between tags.
+
+.. warning:: The ``value="0"`` attribute appears to be somewhat arbitrary -- sometimes the 2.4 Ghz tag will be "0" and sometimes the 5 GHz will be "0". It looks like each drop-down menu will have to be checked to see what is being referred to.
     
 
 .. uml::
@@ -177,8 +180,8 @@ This is the interface for those who want to add to the Soup.
    BroadcomRadioSoup.html
    BroadcomRadioSoup.soup
    BroadcomRadioSoup.wireless_interface
-   BroadcomRadioSoup.get_24_ghz
-   BroadcomRadioSoup.get_5_ghz
+   BroadcomRadioSoup.get_value_one
+   BroadcomRadioSoup.get_value_zero
    
 
 

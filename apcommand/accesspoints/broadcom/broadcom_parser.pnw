@@ -138,11 +138,13 @@ First uses ``find` to narrow the HTML tree down to the 'wl_radio' subtree (Beaut
     <option value="1">Enabled</option>
     </select>
 
-Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu which seems to mostly mean the 2.4 GHz interface, but be aware that this is an index, not an actual assignment -- in another menu ``value="0"`` will also get you the first item in the menu, but that is not guaranteed to mean the 2.4 GHz interface, it is context specific)::
+Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu)::
 
     <option selected value="0">Disabled</option>
 
 Then uses ``.text`` to get the state of the interface. Use ``.text`` to get the text between tags.
+
+.. warning:: The ``value="0"`` attribute appears to be somewhat arbitrary -- sometimes the 2.4 Ghz tag will be "0" and sometimes the 5 GHz will be "0". It looks like each drop-down menu will have to be checked to see what is being referred to.
     
 <<name='imports', echo=False>>=
 # python standard library
@@ -157,10 +159,10 @@ from apcommand.baseclass import BaseClass
 <<name="soup_constants", echo=False>>=
 NAME = 'name'
 VALUE = 'value'
-GHZ_24 = '0'
-GHZ_5 = '1'
-VALUE_24 = {VALUE:GHZ_24}
-VALUE_5 = {VALUE:GHZ_5}
+ZERO = '0'
+ONE = '1'
+VALUE_ZERO = {VALUE:ZERO}
+VALUE_ONE = {VALUE:ONE}
 WIRELESS_INTERFACE = 'wl_unit'
 INTERFACE = 'wl_radio'
 COUNTRY = 'wl_country_code'
@@ -206,8 +208,8 @@ This is the interface for those who want to add to the Soup.
    BroadcomRadioSoup.html
    BroadcomRadioSoup.soup
    BroadcomRadioSoup.wireless_interface
-   BroadcomRadioSoup.get_24_ghz
-   BroadcomRadioSoup.get_5_ghz
+   BroadcomRadioSoup.get_value_one
+   BroadcomRadioSoup.get_value_zero
    
 <<name='BroadcomRadioSoup', echo=False>>=
 class BroadcomRadioSoup(BaseClass):
@@ -278,29 +280,29 @@ class BroadcomRadioSoup(BaseClass):
         """
         return self.soup.find(attrs={NAME:WIRELESS_INTERFACE})
 
-    def get_24_ghz(self, tag):
+    def get_value_one(self, tag):
         """
-        Gets the first 24 ghz tag from a tag (subtree)
+        Gets the value='1' tag from a tag (subtree) 
 
         :param:
 
-         - `tag`: bs4.element.Tag with 2.4 GHz tag in it
+         - `tag`: bs4.element.Tag with value='1' tag in it
 
-        :return: tag with 2.4 GHz value
+        :return: tag with value='1' in it
         """
-        return tag.find(attrs=VALUE_24)
+        return tag.find(attrs=VALUE_ONE)
 
-    def get_5_ghz(self, tag):
+    def get_value_zero(self, tag):
         """
-        Gets the first 5 Ghz tag from a tag (subtree)
+        Gets the first value='0' tag from a tag (subtree) 
 
         :param:
 
-         - `tag`: bs4.element.Tag with 5 GHz tag in it
+         - `tag`: bs4.element.Tag with value='0' tag in it
 
         :return: bs4.element.Tag child of original tag 
         """
-        return tag.find(attrs=VALUE_5)
+        return tag.find(attrs=VALUE_ZERO)
 
     @property
     def mac_24_ghz(self):
@@ -309,7 +311,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: (<MAC ADDRESS>)
         """
-        return self.get_24_ghz(self.wireless_interface).text
+        return self.get_value_zero(self.wireless_interface).text
 
     @property
     def mac_5_ghz(self):
@@ -318,7 +320,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: (<5 GHz MAC Address>)
         """
-        return self.get_5_ghz(self.wireless_interface).text
+        return self.get_value_one(self.wireless_interface).text
 
     @property
     def country(self):
@@ -336,7 +338,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: 'Enabled' or 'Disabled'
         """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_24).text
+        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ONE).text
 
     @property
     def interface_5_state(self):
@@ -345,7 +347,7 @@ class BroadcomRadioSoup(BaseClass):
 
         :return: 'Enabled' or 'Disabled'
         """
-        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_5).text
+        return self.soup.find(attrs={NAME:INTERFACE}).find(attrs=VALUE_ZERO).text
 
     @property
     def channel(self):
@@ -440,10 +442,10 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         band_5 = '<option value="1">(00:90:4C:13:11:03)</option>'
 
         tag = self.soup.wireless_interface
-        outcome = self.soup.get_24_ghz(tag)
+        outcome = self.soup.get_value_zero(tag)
         self.assertEqual(str(outcome), band_24)
 
-        self.assertEqual(str(self.soup.get_5_ghz(tag)), band_5)
+        self.assertEqual(str(self.soup.get_value_one(tag)), band_5)
         return
 
     def test_mac_address(self):
@@ -467,8 +469,8 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         Does it correctly get the state of the radio?
         """
-        self.assertEqual(self.soup.interface_24_state, 'Disabled')
-        self.assertEqual(self.soup.interface_5_state, 'Enabled')
+        self.assertEqual(self.soup.interface_24_state, 'Enabled')
+        self.assertEqual(self.soup.interface_5_state, 'Disabled')
         return
 
     def test_channel(self):
