@@ -1,7 +1,7 @@
 The Broadcom BCM94718NR Access Point
 ====================================
 
-The Broadcom advertises a telnet connection but it will not let you log in. To control it you will need to send commands to its web-page. Although something like `Selenium <http://docs.seleniumhq.org/>`_ should work, to simplify the control for the command line, Aren used `curl <http://en.wikipedia.org/wiki/CURL>`_ is used to send commands to the Access Point.
+The Broadcom advertises a telnet connection but it will not let you log in. To control it you will need to send commands to its web-page. Although something like `Selenium <http://docs.seleniumhq.org/>`_ should work, to simplify the control for the command line, a more containde method will be used. Aren used `curl <http://en.wikipedia.org/wiki/CURL>`_ to send commands to the Access Point.
 
 Using `curl` introduces two problems:
 
@@ -23,7 +23,7 @@ Where `C` is the `Control PC`, `V` is a `Ventriloquist PC` that uses `curl` to t
 
 Still, the use of `curl` seems inelegant, so I will attempt to do it with the python standard library module `urllib2` and related modules.
 
-.. note:: Right now I am trying out `requests <http://docs.python-requests.org/en/latest/>`_ instead of `urllib2` and `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ instead of just regular expressions.
+.. note:: Right now I am trying out `requests <http://docs.python-requests.org/en/latest/>`_ (a replacement for `urllib2`) and `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ with regular expressions to read the html output.
 
 The BroadcomBCM94718NR
 ----------------------

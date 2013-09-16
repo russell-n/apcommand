@@ -1,6 +1,6 @@
 The Broadcom BCM94718NR Parser
 ==============================
-.. currentmodule:: apcommand.accesspoints.broadcom.broadcom_expressions
+.. currentmodule:: apcommand.accesspoints.broadcom.broadcom_parser
 This is a module to hold an interpreter to pull information from the Broadcom html pages. It uses `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ to break the html tree apart and then regular expressions to extract the specific bits of text.
 
 The `radio.asp` HTML
@@ -57,12 +57,13 @@ The answer for now will be to use BeautifulSoup function calls instead of regula
 
 .. note:: So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag. I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
 
+.. _broadcom-parser-wireless-interface:
 The Wireless Interface
 ~~~~~~~~~~~~~~~~~~~~~~
 
 This is the drop-down that selects the current interface shown to the user (and which is configured if you are pushing changes).
 
-The output of ``soup.find(attrs={'name':'wl_unit'})``::
+The output of ``soup.find(attrs={'name':'wl_unit'})``:
 
 <<name='wl_unit', echo=False>>=
 wl_unit = """<select name="wl_unit" onchange="submit();">
@@ -91,8 +92,58 @@ class SoupError(RuntimeError):
 The BroadcomRadioSoup
 ---------------------
 
-This is a class to hold BeautifulSoup for the Broadcom Access point ``radio.asp`` page. I had hoped to do a single version but inspecting the pages reveals that the names have conflicts which would likely make it too confusing.
+This is a class to hold BeautifulSoup for the Broadcom Access point ``radio.asp`` page. I had hoped to do a single class for the Broadcom Web Interface but inspecting the pages reveals that the names have conflicts which would likely make it too confusing.
 
+The Soup Queries
+~~~~~~~~~~~~~~~~
+
+There are different kinds of queries going on in the BroadcomRadioSoup and since I'm already having trouble remembering what is going on, I'll document some of them here.
+
+Find
+++++
+
+The query::
+
+    self.soup.find(attrs={'name':'wl_unit'})
+
+Returns a `tag <http://www.crummy.com/software/BeautifulSoup/bs4/doc/#tag>`_ which is an HTML sub-tree that has the name attribute that passed in to the ``find`` call (see the :ref:`Wireless Interface <broadcom-parser-wireless-interface>` section above for a sample output). Because it is a tag, you can do further searches within it. Use the ``find`` method to narrow the HTML tree down to just the part you are interested in.
+
+Tag Attributes
+++++++++++++++
+
+The query::
+
+    self.soup.find(attrs={'name':'wl_country_code'}).option['value']
+
+First uses find to narrow the tree down to the subtree::
+
+    <select name="wl_country_code" onchange="wl_recalc();">
+    <option selected value="US"></option>
+    </select>
+
+
+Within this sub-tree the tag named `option`  has an attribute  named `value`, so the ``.option['value']`` returns the right-hand-side of ``value="US"``. This is the syntax used to get text from tag-attributes (as opposed to text between tags).
+
+Text
+~~~~
+
+This query::
+
+    self.soup.find(attrs={'name':'wl_radio'}).find(attrs={'value':'0'}).text
+
+First uses ``find` to narrow the HTML tree down to the 'wl_radio' subtree (BeautifulSoup tag)::
+
+    <select name="wl_radio">
+    <option selected value="0">Disabled</option>
+    <option value="1">Enabled</option>
+    </select>
+
+Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu which seems to mostly mean the 2.4 GHz interface, but be aware that this is an index, not an actual assignment -- in another menu ``value="0"`` will also get you the first item in the menu, but that is not guaranteed to mean the 2.4 GHz interface, it is context specific)::
+
+    <option selected value="0">Disabled</option>
+
+Then uses ``.text`` to get the state of the interface. Use ``.text`` to get the text between tags.
+    
 <<name='imports', echo=False>>=
 # python standard library
 import re
@@ -120,6 +171,44 @@ BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
 SIDEBAND = 'wl_nctrlsb'
 SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
 @
+.. uml::
+
+   BroadcomRadioSoup -|> BaseClass
+
+User (client) API
++++++++++++++++++
+
+This is the interface for those who want to use this to get text from an html input.
+   
+.. autosummary::
+   :toctree: api
+
+   BroadcomRadioSoup
+   BroadcomRadioSoup.html
+   BroadcomRadioSoup.mac_24_ghz
+   BroadcomRadioSoup.mac_5_ghz
+   BroadcomRadioSoup.country
+   BroadcomRadioSoup.interface_24_state
+   BroadcomRadioSoup.interface_5_state
+   BroadcomRadioSoup.channel
+   BroadcomRadioSoup.bandwidth
+   BroadcomRadioSoup.sideband
+
+Developer API
++++++++++++++
+
+This is the interface for those who want to add to the Soup.
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomRadioSoup
+   BroadcomRadioSoup.html
+   BroadcomRadioSoup.soup
+   BroadcomRadioSoup.wireless_interface
+   BroadcomRadioSoup.get_24_ghz
+   BroadcomRadioSoup.get_5_ghz
+   
 <<name='BroadcomRadioSoup', echo=False>>=
 class BroadcomRadioSoup(BaseClass):
     """
@@ -298,14 +387,13 @@ choose = random.choice
 # third-party
 from mock import MagicMock, patch
 @
-<<name='test_constants', echo=False>>=
-# needs to use a string for testing 
-radio_html = open('radio_asp.html').read()
-@
 <<name='TestBroadcomRadioSoup', echo=False>>=
 class TestBroadcomRadioSoup(unittest.TestCase):
     def setUp(self):
-        self.soup = BroadcomRadioSoup(radio_html)
+        # if you put a file open outside of the class imports will crash
+        # unless you happen to be running the code in this folder
+        self.radio_html = open('radio_asp.html').read()
+        self.soup = BroadcomRadioSoup(self.radio_html)
         self.soup_5 = BroadcomRadioSoup(open('radio_5_asp.html').read())
         return
 
@@ -313,7 +401,7 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         Does it the constructor set the right parameters
         """
-        self.assertEqual(radio_html, self.soup.html)
+        self.assertEqual(self.radio_html, self.soup.html)
         return
 
     def test_soup(self):
@@ -341,7 +429,6 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         Does it get the wireless interface?
         """
         # wl_unit is defined in the explanatory text
-        print self.soup.soup.find(attrs={'name':'wl_unit'})
         self.assertEqual(wl_unit, str(self.soup.wireless_interface))
         return
 

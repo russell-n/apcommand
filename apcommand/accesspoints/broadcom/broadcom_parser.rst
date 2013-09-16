@@ -1,6 +1,6 @@
 The Broadcom BCM94718NR Parser
 ==============================
-.. currentmodule:: apcommand.accesspoints.broadcom.broadcom_expressions
+.. currentmodule:: apcommand.accesspoints.broadcom.broadcom_parser
 This is a module to hold an interpreter to pull information from the Broadcom html pages. It uses `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ to break the html tree apart and then regular expressions to extract the specific bits of text.
 
 The `radio.asp` HTML
@@ -62,7 +62,7 @@ The Wireless Interface
 
 This is the drop-down that selects the current interface shown to the user (and which is configured if you are pushing changes).
 
-The output of ``soup.find(attrs={'name':'wl_unit'})``::
+The output of ``soup.find(attrs={'name':'wl_unit'})``:
 
 ::
 
@@ -89,11 +89,96 @@ Right now I am not sure what kind of errors are going to come up, but for runtim
 The BroadcomRadioSoup
 ---------------------
 
-This is a class to hold BeautifulSoup for the Broadcom Access point ``radio.asp`` page. I had hoped to do a single version but inspecting the pages reveals that the names have conflicts which would likely make it too confusing.
+This is a class to hold BeautifulSoup for the Broadcom Access point ``radio.asp`` page. I had hoped to do a single class for the Broadcom Web Interface but inspecting the pages reveals that the names have conflicts which would likely make it too confusing.
+
+The Soup Queries
+~~~~~~~~~~~~~~~~
+
+There are different kinds of queries going on in the BroadcomRadioSoup and since I'm already having trouble remembering what is going on, I'll document some of them here.
+
+Find
+++++
+
+The query::
+
+    self.soup.find(attrs={'name':'wl_unit'})
+
+Returns a `tag` which is an HTML sub-tree that has the name passed in to the call. Because it is a tag, you can do further searches within it -- use `find` to narrow the HTML tree down to just the part you are interested in.
+
+Tag Attributes
+++++++++++++++
+
+The query::
+
+    self.soup.find(attrs={'name':'wl_country_code'}).option['value']
+
+First uses find to narrow the tree down to the subtree::
+
+    <select name="wl_country_code" onchange="wl_recalc();">
+    <option selected value="US"></option>
+    </select>
 
 
-<select name="wl_unit" onchange="submit();">
-<option selected value="0">(00:90:4C:09:11:03)</option>
-<option value="1">(00:90:4C:13:11:03)</option>
-</select>
+Within this sub-tree the tag named `option`  has an attribute  named `value`, so the ``.option['value']`` returns the right-hand-side of ``value="US"``. This is the syntax used to get text from tag-attributes (as opposed to text between tags).
+
+Text
+~~~~
+
+This query::
+
+    self.soup.find(attrs={'name':'wl_radio'}).find(attrs={'value':'0'}).text
+
+First uses ``find` to narrow the HTML tree down to the 'wl_radio' subtree (BeautifulSoup tag)::
+
+    <select name="wl_radio">
+    <option selected value="0">Disabled</option>
+    <option value="1">Enabled</option>
+    </select>
+
+Then it uses ``find`` again to get the ``option`` tag that has the ``value="0"`` attribute (this is the first item in the drop-down menu which seems to mostly mean the 2.4 GHz interface, but be aware that this is an index, not an actual assignment -- in another menu ``value="0"`` will also get you the first item in the menu, but that is not guaranteed to mean the 2.4 GHz interface, it is context specific)::
+
+    <option selected value="0">Disabled</option>
+
+Then uses ``.text`` to get the state of the interface. Use ``.text`` to get the text between tags.
+    
+
+.. uml::
+
+   BroadcomRadioSoup -|> BaseClass
+
+User (client) API
++++++++++++++++++
+
+This is the interface for those who want to use this to get text from an html input.
+   
+.. autosummary::
+   :toctree: api
+
+   BroadcomRadioSoup
+   BroadcomRadioSoup.html
+   BroadcomRadioSoup.mac_24_ghz
+   BroadcomRadioSoup.mac_5_ghz
+   BroadcomRadioSoup.country
+   BroadcomRadioSoup.interface_24_state
+   BroadcomRadioSoup.interface_5_state
+   BroadcomRadioSoup.channel
+   BroadcomRadioSoup.bandwidth
+   BroadcomRadioSoup.sideband
+
+Developer API
++++++++++++++
+
+This is the interface for those who want to add to the Soup.
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomRadioSoup
+   BroadcomRadioSoup.html
+   BroadcomRadioSoup.soup
+   BroadcomRadioSoup.wireless_interface
+   BroadcomRadioSoup.get_24_ghz
+   BroadcomRadioSoup.get_5_ghz
+   
+
 

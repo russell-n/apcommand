@@ -216,13 +216,12 @@ choose = random.choice
 from mock import MagicMock, patch
 
 
-# needs to use a string for testing 
-radio_html = open('radio_asp.html').read()
-
-
 class TestBroadcomRadioSoup(unittest.TestCase):
     def setUp(self):
-        self.soup = BroadcomRadioSoup(radio_html)
+        # if you put a file open outside of the class sphinx will crash
+        # because the make file is in a different folder 
+        self.radio_html = open('radio_asp.html').read()
+        self.soup = BroadcomRadioSoup(self.radio_html)
         self.soup_5 = BroadcomRadioSoup(open('radio_5_asp.html').read())
         return
 
@@ -230,7 +229,7 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         Does it the constructor set the right parameters
         """
-        self.assertEqual(radio_html, self.soup.html)
+        self.assertEqual(self.radio_html, self.soup.html)
         return
 
     def test_soup(self):
@@ -258,7 +257,6 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         Does it get the wireless interface?
         """
         # wl_unit is defined in the explanatory text
-        print self.soup.soup.find(attrs={'name':'wl_unit'})
         self.assertEqual(wl_unit, str(self.soup.wireless_interface))
         return
 

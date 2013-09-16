@@ -12,7 +12,7 @@ Access Points:
 Parsers:
 
 .. toctree::
-   :toctree: api
+   :maxdepth: 1
 
    Broadcom Radio Soup <../../accesspoints/broadcom/broadcom_parser>
 
@@ -71,5 +71,5 @@ Arens Code:
 .. toctree::
    :maxdepth: 2
 
-   Arens' Atheros Code <../../arensatheros>
-   Arens' BroadcomCode <../../arensbroadcom>
+   Arens' Atheros Code <../../arenscode/arensatheros>
+   Arens' BroadcomCode <../../arenscode/arensbroadcom>
