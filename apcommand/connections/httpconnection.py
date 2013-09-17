@@ -15,6 +15,10 @@ GET = 'GET'
 EMPTY_STRING = ''
 
 
+class HTTPConnectionError(RuntimeError):
+   """An exception to raise if the server wasn't reachable."""
+
+
 class HTTPConnection(BaseClass):
     """
     Acts as a client connection to an HTTP server
@@ -35,6 +39,7 @@ class HTTPConnection(BaseClass):
          - `data`: dictionary of data for the page
          - `lock`: A re-entrant lock for users of the connection to share
         """
+        super(HTTPConnection, self).__init__()
         self._hostname = None
         self.hostname = hostname
         self.username = username
@@ -57,7 +62,7 @@ class HTTPConnection(BaseClass):
         """
         if self._lock is None:
             self._lock = threading.RLock()
-        return
+        return self._lock
 
     @property
     def protocol(self):
@@ -125,11 +130,16 @@ class HTTPConnection(BaseClass):
 
         :return: requests.Response object
         """
-        if 'data' not in kwargs and self.data is not None:
-            return requests.request(method, self.url, data=self.data,
-                             auth=(self.username, self.password), *args, **kwargs)
-        return requests.request(method, self.url,
-                                auth=(self.username, self.password), *args, **kwargs)
+        try:
+            if 'data' not in kwargs and self.data is not None:
+                return requests.request(method, self.url, data=self.data,
+                                        auth=(self.username, self.password), *args, **kwargs)
+            return requests.request(method, self.url,
+                                    auth=(self.username, self.password), *args, **kwargs)
+        except requests.ConnectionError as error:
+            self.logger.error(error)
+            self.logger.error("Check the server and the sleep times between requests")
+        raise HTTPConnectionError("Unable to connect to the server")
 
     def __call__(self, *args, **kwargs):
         """
@@ -138,7 +148,7 @@ class HTTPConnection(BaseClass):
         :return: requests.Response object
         """
         return self.request(GET, *args, **kwargs)
-
+        
     
     def __getattr__(self, method):
         """
@@ -152,6 +162,7 @@ class HTTPConnection(BaseClass):
         """
         def request_call(*args, **kwargs):
             return self.request(method.upper(), *args, **kwargs)
+
         return request_call
     
 

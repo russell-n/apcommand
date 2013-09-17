@@ -17,7 +17,7 @@ setup(name='apcommand',
       url = '',
       author_email="russellofallion@gmail.com",
       license = "",
-      install_requires = ['pudb', 'requests',
+      install_requires = ['pudb', 'requests', 'nose',
                           'beautifulsoup4', 'mock'],
       packages = find_packages(exclude=["__main__"]),
       include_package_data = True,
@@ -25,7 +25,7 @@ setup(name='apcommand',
       entry_points = """
 	  [console_scripts]
           atheros=apcommand.atheros:main
-          broadcom=apcommand.broadcom:main
+          broadcom=apcommand.broadcom_main:main
 	  """
       )
 

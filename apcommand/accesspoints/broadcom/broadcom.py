@@ -1,4 +1,7 @@
 
+# python standard library
+import time
+
 # this package
 from apcommand.baseclass import BaseClass
 import apcommand.connections.httpconnection as httpconnection
@@ -24,14 +27,14 @@ class BroadcomError(RuntimeError):
     "An Error to raise by broadcom classes"
 
 
-# a dictionary for data that changes the state of the broadcom
-action_dict = lambda: {'action':'Apply'}
-
 # a decorator to set the page to 'radio.asp'
 def radio_page(method):
     def _method(self, *args, **kwargs):
+        self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
         self.connection.path = RADIO_PAGE
         method(self, *args, **kwargs)
+        self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
+        time.sleep(self.sleep)
     return _method
 
 # a decorator to set the page to 'ssid.asp'
@@ -40,6 +43,10 @@ def ssid_page(method):
         self.connection.path = SSID_PAGE
         method(self, *args, **kwargs)
     return _method
+
+
+# a dictionary for data that changes the state of the broadcom
+action_dict = lambda: {'action':'Apply'}
 
 def set_24_data():
     """
@@ -57,12 +64,46 @@ def set_5_data():
     set_data[WIRELESS_INTERFACE] = UNIT_5_GHZ
     return set_data
 
+
+class RadioPageConnection(BaseClass):
+    """
+    A context manager for connecting to the radio.asp page
+    """
+    def __init__(self, connection, sleep=0.5):
+        """
+        RadioPageConnection constructor
+
+        :param:
+
+         - `connection`: Connection to the broadcom
+         - `sleep`: Time to sleep before exiting
+        """
+        super(RadioPageConnection, self).__init__()
+        self.connection = connection
+        self.sleep = sleep
+        return
+
+    def __enter__(self):
+        """
+        Sets the path and returns the connection
+        """
+        self.logger.debug('Setting the connection.path to "{0}"'.format(RADIO_PAGE))
+        self.connection.path = RADIO_PAGE
+        return self.connection
+
+    def __exit__(self, type, value, traceback):
+        self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
+        time.sleep(self.sleep)
+        return
+# end RadioPageConfigure    
+
+
 class BroadcomBCM94718NR(BaseClass):
     """
     A class to control and query the Broadcom BCM94718NR
     """
     def __init__(self, hostname='192.168.1.1', username='',
-                 password='admin'):
+                 password='admin', sleep=0.1):
         """
         BroadcomBCM94718NR Constructor
 
@@ -71,10 +112,12 @@ class BroadcomBCM94718NR(BaseClass):
          - `hostname`: address of the AP
          - `username`: login username (use empty string if none)
          - `password`: login password (use empty string if none)
+         - `sleep`: seconds to sleep after a call to the web server
         """
         self.hostname = hostname
         self.username = username
         self.password = password
+        self.sleep = sleep
         self._connection = None
         self._enable_24_data = None
         self._enable_5_data = None
@@ -93,7 +136,8 @@ class BroadcomBCM94718NR(BaseClass):
         A BroadcomChannelChanger
         """
         if self._channel_changer is None:
-            self._channel_changer = BroadcomChannelChanger(connection=self.connection)
+            self._channel_changer = BroadcomChannelChanger(connection=self.connection,
+                                                           sleep=self.sleep)
         return self._channel_changer
 
 
@@ -148,16 +192,18 @@ class BroadcomChannelChanger(BaseClass):
     """
     A channel changer for the broadcom 
     """
-    def __init__(self, connection):
+    def __init__(self, connection, sleep=0.5):
         """
         BroadcomChannelChanger constructor
 
         :param:
 
          - `connection`: connection to the AP 
+         - `sleep`: seconds to sleep between calls
         """
         super(BroadcomChannelChanger, self).__init__()
         self.connection = connection
+        self.sleep = sleep
         self._channel_map = None
         self._set_sideband_lower_data = None
         self._enable_24_data = None
@@ -247,7 +293,6 @@ class BroadcomChannelChanger(BaseClass):
         self.connection(data=self.disable_24_data)
         return
 
-
     @radio_page
     def disable_5_ghz(self):
         """
@@ -257,7 +302,6 @@ class BroadcomChannelChanger(BaseClass):
         self.connection(data=self.disable_5_data)
         return
 
-    @radio_page
     def set_channel(self, channel):
         """
         Sets the channel on the AP (and the sideband if 5ghz) 
@@ -266,7 +310,9 @@ class BroadcomChannelChanger(BaseClass):
         channel = str(channel)
         data = self.channel_map[channel]
         data[CONTROL_CHANNEL] = channel
-        self.connection(data=data)
+        # I decided not to use @radio_page because I call set_sideband_lower
+        with RadioPageConnection(self.connection, self.sleep):
+            self.connection(data=data)
 
         if channel in CHANNELS_5GHZ:
             self.set_sideband_lower()
@@ -335,6 +381,8 @@ class BroadcomChannelChanger(BaseClass):
                 self.enable_5_ghz()
                 self.disable_24_ghz()
             else:
+                self.logger.error("Valid 5 GHz Channels: {0}".format(','.join(CHANNELS_5GHZ)))
+                self.logger.error("Valid 2.4 GHz Channels: {0}".format(','.join(CHANNELS_24GHZ)))                
                 raise BroadcomError("Unknown Channel: {0}".format(channel))
             self.set_channel(channel)
             if self.reader(band) != channel:
@@ -350,16 +398,18 @@ class BroadcomChannelReader(BaseClass):
     """
     A class to get a channel reading from the broadcom AP
     """
-    def __init__(self, connection):
+    def __init__(self, connection, sleep=0.5):
         """
         BroadcomChannelReader constructor
 
         :param:
 
          - `connection`: Connection to the AP
+         - `sleep`: Seconds to sleep after calling the connection
         """
         super(BroadcomChannelReader, self).__init__()
         self.connection = connection
+        self.sleep = sleep
         self._soup = None
         return
 
@@ -391,6 +441,7 @@ class BroadcomChannelReader(BaseClass):
             self.soup.html = text
         else:
             raise BroadcomError("unrecognized band: {0}".format(band))
+        time.sleep(self.sleep)
         return self.soup.channel
 # end class BroadcomChannelReader    
 

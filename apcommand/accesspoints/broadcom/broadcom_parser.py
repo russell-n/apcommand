@@ -184,7 +184,12 @@ class BroadcomRadioSoup(BaseClass):
         """
         Gets the channel for the currently selected interface
         """
-        return self.soup.find(attrs={NAME:CHANNEL}).option[VALUE]
+        try:
+            return self.soup.find(attrs={NAME:CHANNEL}).option[VALUE]
+        except AttributeError as error:
+            self.logger.error(error)
+            self.logger.error(self.soup.find(attrs={NAME:CHANNEL}))
+            return
 
     @property
     def bandwidth(self):

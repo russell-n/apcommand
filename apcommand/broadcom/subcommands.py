@@ -1,19 +1,4 @@
-The Sub-Commands
-================
-.. currentmodule:: apcommand.broadcom.subcommands
-This module holds the sub-commands for the Arguments (methods that it will call).
 
-The try-except Decorator
-------------------------
-
-Since this is a user-level class (it is part of the command-line interface), exceptions are caught and logged, rather than allowing the interpreter to dump the stack-trace (it still logs and displays the stack-trace). To make this simpler a decorator is used to catch `Exception`.
-
-.. autosummary::
-   :toctree: api
-
-   try_except
-   
-<<name='try_except', echo=False>>=
 def try_except(func):
     """
     A decorator method to catch Exceptions
@@ -31,44 +16,14 @@ def try_except(func):
             log.logger.error(error)
             log.logger.debug(traceback.format_exc())
     return wrapped
-@
 
-Class SubCommand
-----------------
 
-Role: Holds the sub-commands for the Arguments (the methods to actually call base on what the user passed in).
-
-Collaborators:
-
-   * Broadcom 
-
-.. uml::
-
-   SubCommand o- Broadcom
-
-.. autosummary::
-   :toctree: api
-
-   SubCommand -|> BaseClass
-   SubCommand.access_point
-   SubCommand.up
-   SubCommand.down
-   SubCommand.destroy
-   SubCommand.status
-   SubCommand.reset
-   SubCommand.channel
-   SubCommand.ssid
-   SubCommand.security
-   SubCommand.command
-   SubCommand.ipaddress
-
-<<name='imports', echo=False>>=
 # this package
 from apcommand.baseclass import BaseClass
 import apcommand.accesspoints.broadcom.broadcom
 from apcommand.commons.errors import ArgumentError
-@
-<<name='SubCommand', echo=False>>=
+
+
 class SubCommand(BaseClass):
     """
     A holder of sub-commands
@@ -175,31 +130,14 @@ class SubCommand(BaseClass):
         ap.set_ip(address=args.ipaddress,
                   mask=args.subnetmask)
         return
-@
 
 
-Testing The SubCommand
-----------------------
-
-The sub-command is largely ignorant of what the objects it holds does so this is mainly to check that the methods exist and if called will catch exceptions.
-
-.. autosummary::
-   :toctree: api
-
-   TestSubCommand.test_up
-   TestSubCommand.test_down
-   TestSubCommand.test_destroy
-   TestSubCommand.test_args
-   TestSubCommand.test_status
-   TestSubCommand.test_security
-
-<<name='test_imports', echo=False>>=
 # python standard library
 import unittest
 # third-party
 from mock import MagicMock, patch
-@
-<<name='TestSubCommand', echo=False>>=
+
+
 class TestSubCommand(unittest.TestCase):
     def setUp(self):
         self.logger = MagicMock()
@@ -355,11 +293,3 @@ class TestSubCommand(unittest.TestCase):
             self.sub_command.security(args)
             ap_instance.set_security.assert_called_with(security_type=args.type)
         return
-@
-<%
-for case in (TestSubCommand,):
-    suite = unittest.TestLoader().loadTestsFromTestCase(case)    
-    unittest.TextTestRunner(verbosity=2).run(suite)
-%>
-
-
