@@ -33,14 +33,48 @@ The BroadcomBCM94718NR
    BroadcomBCM94718NR -|> BaseClass
    BroadcomBCM94718NR o- HTTPConnection
    BroadcomBCM94718NR o- BroadcomRadioSoup
-   BroadcomBCM94718NR : enable_24_ghz
-   BroadcomBCM94718NR : enable_5_ghz
+   BroadcomBCM94718NR o- BroadcomChannelChanger
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomBCM94718NR
+   BroadcomBCM94718NR.enable_24_ghz
+   BroadcomBCM94718NR.enable_5_ghz
+   BroadcomBCM94718NR.disable_24_ghz
+   BroadcomBCM94718NR.disable_5_ghz
+   BroadcomBCM94718NR.set_sideband_lower
+   BroadcomBCM94718NR.set_channel
+   BroadcomBCM94718NR.set_5_ssid
+   BroadcomBCM94718NR.set_24_ssid
+   
+
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomError
+
+
+
+.. uml::
+
+   BroadcomChannelChanger -|> BaseClass
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomChannelChanger
+   
+
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomChannelReader
 
 
 []
 []
-
-
-
 
 

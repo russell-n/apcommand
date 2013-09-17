@@ -1,6 +1,8 @@
 
 # python standard library
 import urlparse
+import threading
+
 # this package
 from apcommand.baseclass import BaseClass
 
@@ -18,7 +20,8 @@ class HTTPConnection(BaseClass):
     Acts as a client connection to an HTTP server
     """
     def __init__(self, hostname, username=EMPTY_STRING, password=EMPTY_STRING,
-                 path=EMPTY_STRING, data=None, protocol=PROTOCOL):
+                 path=EMPTY_STRING, data=None, protocol=PROTOCOL,
+                 lock=None):
         """
         HTTPConnection constructor
 
@@ -30,6 +33,7 @@ class HTTPConnection(BaseClass):
          - `path`: optional path to add to URL
          - `protocol`: transport protocol (most likely 'http')
          - `data`: dictionary of data for the page
+         - `lock`: A re-entrant lock for users of the connection to share
         """
         self._hostname = None
         self.hostname = hostname
@@ -41,6 +45,18 @@ class HTTPConnection(BaseClass):
         self.path = path
         self.data = data
         self._url = None
+        self._lock = lock
+        return
+
+    @property
+    def lock(self):
+        """
+        A re-entrant lock for clients to share
+
+        :rtype: RLock
+        """
+        if self._lock is None:
+            self._lock = threading.RLock()
         return
 
     @property

@@ -1,6 +1,6 @@
 The Argument Parser
 ===================
-.. currentmodule:: apcommand.argumentparser
+.. currentmodule:: apcommand.Broadcom.argumentparser
 A map from command-line-arguments to a namespace.
 
 .. uml::
@@ -77,9 +77,9 @@ class Arguments(object):
         :return: ArgumentParser subparsers
         """
         if self._subparsers is None:
-            self._subparsers = self.parser.add_subparsers(title="APCommand subcommands",
+            self._subparsers = self.parser.add_subparsers(title="Broadcom subcommands",
                                                           description="Available Sub-Commands",
-                                                          help="APCommand sub-commands")
+                                                          help="Broadcom sub-commands")
         return self._subparsers
 
     def add_arguments(self):
@@ -122,47 +122,19 @@ class Arguments(object):
         """
         Add the subparsers to the parser
         """
-        # ap up
-        up = self.subparsers.add_parser('up', help="Bring the AP up")
-        up.set_defaults(function=self.subcommands.up)
-
-        # ap down
-        down = self.subparsers.add_parser('down', help="Take the AP down")
-        down.set_defaults(function=self.subcommands.down)
-
-        # vap destroy
-        destroy = self.subparsers.add_parser('destroy',
-                                             help="Destroy a specific virtual AP")
-        destroy.add_argument('interface',
-                             help='The VAP name (e.g. ath0)')
-        destroy.set_defaults(function=self.subcommands.destroy)
-
         # query the interface status
         status = self.subparsers.add_parser('status',
                                             help='Get some information for an interface')
         status.add_argument('interface',
-                            help="the name of the interface to query (default=%(default)s) (use 'all' for all interfaces)",
-                            default='ath0',
+                            help="the band of the interface to query (default=%(default)s) (use 'all' for all interfaces)",
+                            default='all',
                             nargs="?")
         status.set_defaults(function=self.subcommands.status)
-
-        # reset the AP
-        reset = self.subparsers.add_parser('reset',
-                                           help='Reset to factory defaults')
-        reset.add_argument('band',
-                           help='2.4 or 5 (default=%(default)s)',
-                           default='2.4',
-                           nargs='?')
-        reset.set_defaults(function=self.subcommands.reset)
 
         # change the channel
         channel = self.subparsers.add_parser('channel',
                                              help='Change the AP channel')
         channel.add_argument('channel', help='Channel to set')
-        channel.add_argument('--mode', help='Mode (e.g. 11NG)',
-                             default=None)
-        channel.add_argument('--bandwidth', help='Bandwidth (e.g. HT40PLUS)',
-                             default=None)
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
