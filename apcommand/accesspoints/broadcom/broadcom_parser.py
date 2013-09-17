@@ -1,11 +1,4 @@
 
-wl_unit = """<select name="wl_unit" onchange="submit();">
-<option selected value="0">(00:90:4C:09:11:03)</option>
-<option value="1">(00:90:4C:13:11:03)</option>
-</select>"""
-print wl_unit
-
-
 class SoupError(RuntimeError):
     """
     Raise if something is detected at run-time.
@@ -39,6 +32,7 @@ GENERIC_SELECTED_EXPRESSION = SELECTED_EXPRESSION.format(SELECTED)
 BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
 SIDEBAND = 'wl_nctrlsb'
 SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
+SSID = 'wl_ssid'
 
 
 class BroadcomRadioSoup(BaseClass):
@@ -68,6 +62,7 @@ class BroadcomRadioSoup(BaseClass):
         self._channel = None
         self._bandwidth = None
         self._sideband = None
+        self._ssid = None
 
         # regular expressions
         self._selected_expression = None
@@ -212,6 +207,13 @@ class BroadcomRadioSoup(BaseClass):
             match = self.selected_expression.search(str(line))
             if match:
                 return match.group(SELECTED).rstrip()
+            
+    @property
+    def ssid(self):
+        """
+        Gets the SSID for the currently selected interface
+        """
+        return self.soup.find(attrs={NAME:SSID})['value']
         
 
 
@@ -222,6 +224,12 @@ choose = random.choice
 
 # third-party
 from mock import MagicMock, patch
+
+
+wl_unit = """<select name="wl_unit" onchange="submit();">
+<option selected value="0">(00:90:4C:09:11:03)</option>
+<option value="1">(00:90:4C:13:11:03)</option>
+</select>"""
 
 
 class TestBroadcomRadioSoup(unittest.TestCase):
@@ -334,3 +342,13 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         """
         self.assertIsNone(self.soup.sideband)
         self.assertEqual(self.soup_5.sideband, 'Lower')
+        return
+
+    def test_ssid(self):
+        """
+        Does it get the SSID?
+        """
+        # change the page
+        text = open('ssid_asp.html').read()
+        self.soup.html = text
+        self.assertEqual('hownowbrowndog', self.soup.ssid)

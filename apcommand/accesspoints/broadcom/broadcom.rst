@@ -37,6 +37,8 @@ The BroadcomBCM94718NR
    BroadcomBCM94718NR : enable_5_ghz
 
 
+[]
+[]
 
 
 

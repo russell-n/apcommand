@@ -1,7 +1,7 @@
 Arens Atheros Code
 ==================
 
-.. currentmodule:: apcommand.arensatheros
+.. currentmodule:: apcommand.arenscode.arensatheros
 
 .. _arens-atheros:
 

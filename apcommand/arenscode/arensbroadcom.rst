@@ -1,6 +1,6 @@
 Aren's Broadcom Code
 ====================
-.. currentmodule:: apcommand.arensbroadcom
+.. currentmodule:: apcommand.arenscode.arensbroadcom
 This is Aren's code written to match the Lab126 code. 
 
 ::
@@ -16,7 +16,7 @@ This is Aren's code written to match the Lab126 code.
     
 
 
-
+.. _arens-broadcom:
 The Broadcom Class
 ------------------
 
