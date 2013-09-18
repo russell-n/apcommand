@@ -29,19 +29,30 @@ class BroadcomError(RuntimeError):
 
 # a decorator to set the page to 'radio.asp'
 def radio_page(method):
+    """
+    Decorator: sets connection.path to radio.asp before, sleeps after
+    """
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
         self.connection.path = RADIO_PAGE
-        method(self, *args, **kwargs)
+        outcome = method(self, *args, **kwargs)
         self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
         time.sleep(self.sleep)
+        return outcome
     return _method
 
 # a decorator to set the page to 'ssid.asp'
 def ssid_page(method):
+    """
+    Decorator: sets connection.path to ssid.page before, sleeps after
+    """
     def _method(self, *args, **kwargs):
+        self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
         self.connection.path = SSID_PAGE
-        method(self, *args, **kwargs)
+        outcome = method(self, *args, **kwargs)
+        self.logger.debug("Sleeping for {0} seconds".format(self.sleep))
+        time.sleep(self.sleep)
+        return outcome
     return _method
 
 
@@ -50,7 +61,7 @@ action_dict = lambda: {'action':'Apply'}
 
 def set_24_data():
     """
-    A data dictionary to set the 2.4 GHz channel (missing actual setting)
+    return data dictionary to set 2.4 GHz channel
     """
     set_data = action_dict()
     set_data[WIRELESS_INTERFACE] = UNIT_24_GHZ
@@ -58,7 +69,7 @@ def set_24_data():
 
 def set_5_data():
     """
-    A data dictionary to set the 5 GHz channel (missing actual setting)
+    return data dictionary to set 5 GHz channel
     """
     set_data = action_dict()
     set_data[WIRELESS_INTERFACE] = UNIT_5_GHZ
@@ -95,7 +106,7 @@ class RadioPageConnection(BaseClass):
         self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
         time.sleep(self.sleep)
         return
-# end RadioPageConfigure    
+# end RadioPageConnection
 
 
 class BroadcomBCM94718NR(BaseClass):
@@ -114,6 +125,7 @@ class BroadcomBCM94718NR(BaseClass):
          - `password`: login password (use empty string if none)
          - `sleep`: seconds to sleep after a call to the web server
         """
+        super(BroadcomBCM94718NR, self).__init__()
         self.hostname = hostname
         self.username = username
         self.password = password
@@ -127,7 +139,10 @@ class BroadcomBCM94718NR(BaseClass):
         self._set_5_data = None
         self._set_sideband_lower_data = None        
         self._channel_map = None
+
+        # aggregated classes
         self._channel_changer = None
+        self._channel_reader = None
         return
 
     @property
@@ -140,6 +155,15 @@ class BroadcomBCM94718NR(BaseClass):
                                                            sleep=self.sleep)
         return self._channel_changer
 
+    @property
+    def channel_reader(self):
+        """
+        A Broadcom Channel Reader
+        """
+        if self._channel_reader is None:
+            self._channel_reader = BroadcomChannelReader(connection=self.connection,
+                                                         sleep=self.sleep)
+        return self._channel_reader
 
     @property
     def connection(self):
@@ -185,7 +209,13 @@ class BroadcomBCM94718NR(BaseClass):
         """
         self.channel_changer(channel)
         return
-# end Classs BroadcomBCM94718NR        
+
+    def get_channel(self, band):
+        """
+        Returns the channel for the given band
+        """
+        return self.channel_reader(band)
+# end Class BroadcomBCM94718NR        
 
 
 class BroadcomChannelChanger(BaseClass):
@@ -385,9 +415,10 @@ class BroadcomChannelChanger(BaseClass):
                 self.logger.error("Valid 2.4 GHz Channels: {0}".format(','.join(CHANNELS_24GHZ)))                
                 raise BroadcomError("Unknown Channel: {0}".format(channel))
             self.set_channel(channel)
-            if self.reader(band) != channel:
+            channel_prime = self.reader(band)
+            if channel_prime != channel:
                 raise BroadcomError("Channel set failure (expected:{0} actual:{1})".format(channel,
-                                                                                             self.reader(band)))
+                                                                                           channel_prime))
 
         return
 
@@ -422,6 +453,7 @@ class BroadcomChannelReader(BaseClass):
             self._soup = BroadcomRadioSoup()
         return self._soup
 
+    @radio_page
     def __call__(self, band):
         """
         Get the current channel for the band
@@ -440,8 +472,8 @@ class BroadcomChannelReader(BaseClass):
             text = self.connection(data={WIRELESS_INTERFACE:UNIT_5_GHZ}).text
             self.soup.html = text
         else:
+            self.logger.error('Valid Bands: 2.4, 5')
             raise BroadcomError("unrecognized band: {0}".format(band))
-        time.sleep(self.sleep)
         return self.soup.channel
 # end class BroadcomChannelReader    
 
@@ -505,18 +537,20 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
             #control.connection.assert_called_with(hostname='192.168.1.1')
             self.assertIsInstance(control.connection, MagicMock)
         return
-    
+
     def test_set_ssid(self):
         """
         Does the connection get the right data to set the ssid?
         """
         ssid = random_letters()
-        self.control.set_5_ssid(ssid)
+        with patch('time.sleep'):
+            self.control.set_5_ssid(ssid)
         self.assertEqual(self.connection.path, SSID_PAGE)
         calls = [call(data={'wl_unit':'1', 'wl_ssid':ssid, 'action':'Apply'})]
         self.assertEqual(self.connection.mock_calls, calls)
-                
-        self.control.set_24_ssid(ssid)
+
+        with patch('time.sleep'):
+            self.control.set_24_ssid(ssid)
         calls += [call(data={'wl_unit':'0', 'wl_ssid':ssid, 'action':'Apply'})]
         self.assertEqual(self.connection.mock_calls, calls)
         return
@@ -529,7 +563,8 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         self.control._lock = MagicMock()
         changer = MagicMock()
         self.control._channel_changer = changer
-        self.control.set_channel(channel)
+        with patch('time.sleep'):
+            self.control.set_channel(channel)
         changer.assert_called_with(channel)
         return
 # end class TestBroadcom            
@@ -559,14 +594,16 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         Does it send the right channel (and sideband if appropriate)
         """
         channel_24 = str(random.randrange(1,12))
-        self.changer.set_channel(channel_24)
+        with patch('time.sleep'):
+            self.changer.set_channel(channel_24)
         first_call = [call(data={'wl_unit':'0',
                                 'wl_channel':channel_24,
                                 'action':'Apply'}) ]
         self.assertEqual(self.connection.mock_calls, first_call)
 
         channel_5 = random.choice('36 44 149 157'.split())
-        self.changer.set_channel(channel_5)
+        with patch('time.sleep'):
+            self.changer.set_channel(channel_5)
         calls = first_call + [call(data={'wl_unit':'1','wl_channel': channel_5,'action':'Apply'}),
                  call(data={'wl_unit':'1', 'wl_nctrlsb':'lower', 'action':'Apply'})]
         self.assertEqual(self.connection.mock_calls, calls)
@@ -579,7 +616,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         """
         channel = str(random.randint(1,11))
         self.changer.reader.return_value = channel
-        self.changer(channel)
+        with patch('time.sleep'):
+            self.changer(channel)
         calls = [call.lock.__enter__(),
                  call(data={'wl_unit':'0', 'wl_radio':'1', 'action':"Apply"}),
                  call(data={'wl_unit':'1','wl_radio':'0','action':'Apply'}),
@@ -597,7 +635,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         self.changer._reader = reader
         channel = random.choice(CHANNELS_24GHZ)
         reader.channel = random_letters()
-        self.changer(channel)
+        with patch('time.sleep'):
+            self.changer(channel)
         return
 
     def test_5_call(self):
@@ -607,8 +646,9 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         channel = random.choice(CHANNELS_5GHZ)
 
         self.changer.reader.return_value = channel
-        
-        self.changer(channel)
+
+        with patch('time.sleep'):
+            self.changer(channel)
         # enable 5, disable 2.4, set channel
         calls = [call.lock.__enter__(),
                  call(data={'wl_unit':'1', 'wl_radio':'1', 'action':'Apply'}),                 
@@ -627,7 +667,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         Does it call the connection with the right data?
         """
         self.connection.path = None
-        self.changer.enable_5_ghz()
+        with patch('time.sleep'):
+            self.changer.enable_5_ghz()
         self.connection.assert_called_with(data={'wl_unit':'1', 'wl_radio':'1', 'action':'Apply'})
         self.assertEqual(RADIO_PAGE, self.connection.path)
         return
@@ -638,7 +679,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         Does the connection get the data to disable the 5 GHz data?
         """
         self.connection.path = None
-        self.changer.disable_5_ghz()
+        with patch('time.sleep'):
+            self.changer.disable_5_ghz()
         self.connection.assert_called_with(data={'wl_unit':'1',
                                                  'wl_radio':'0',
                                                  'action':'Apply'})
@@ -650,7 +692,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         Does it enable the 2.4 GHz interface?
         """
         self.connection.path = None
-        self.changer.enable_24_ghz()
+        with patch('time.sleep'):
+            self.changer.enable_24_ghz()
         self.connection.assert_called_with(data={'wl_unit':'0', 'wl_radio':'1', 'action':"Apply"})
         self.assertEqual(RADIO_PAGE, self.connection.path )
         return
@@ -660,7 +703,8 @@ class TestBroadcomChannelChanger(unittest.TestCase):
         Is the right data sent to disable the 2.4 GHz interface?
         """
         self.connection.path = None
-        self.changer.disable_24_ghz()
+        with patch('time.sleep'):
+            self.changer.disable_24_ghz()
         self.connection.assert_called_with(data={'wl_unit':'0',
                                                  'wl_radio':'0',
                                                  'action':"Apply"})
@@ -693,7 +737,9 @@ class TestBroadcomChannelReader(unittest.TestCase):
 
         channel = random.choice(CHANNELS_24GHZ)
         self.soup.channel = channel
-        read_value = self.reader(band)
+
+        with patch('time.sleep'):
+            read_value = self.reader(band)
         calls = [call(data={'wl_unit':'0'})]
         self.assertEqual(self.connection.mock_calls, calls)
         self.assertEqual(channel, read_value)
@@ -701,7 +747,9 @@ class TestBroadcomChannelReader(unittest.TestCase):
         band = 5
         channel = random.choice(CHANNELS_5GHZ)
         self.soup.channel = channel
-        read_value = self.reader(band)
+
+        with patch('time.sleep'):
+            read_value = self.reader(band)
         calls += [call(data={'wl_unit':'1'})]
         self.assertEqual(self.connection.mock_calls, calls)
         self.assertEqual(channel, read_value)

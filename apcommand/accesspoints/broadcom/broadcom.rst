@@ -25,6 +25,8 @@ Still, the use of `curl` seems inelegant, so I will attempt to do it with the py
 
 .. note:: Right now I am trying out `requests <http://docs.python-requests.org/en/latest/>`_ (a replacement for `urllib2`) and `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ with regular expressions to read the html output.
 
+.. note:: The broadcom needs time between calls -- if you try to access the web server too soon after a previous call to it might not respond or not respond correctly.
+
 The BroadcomBCM94718NR
 ----------------------
 
@@ -39,12 +41,8 @@ The BroadcomBCM94718NR
    :toctree: api
 
    BroadcomBCM94718NR
-   BroadcomBCM94718NR.enable_24_ghz
-   BroadcomBCM94718NR.enable_5_ghz
-   BroadcomBCM94718NR.disable_24_ghz
-   BroadcomBCM94718NR.disable_5_ghz
-   BroadcomBCM94718NR.set_sideband_lower
    BroadcomBCM94718NR.set_channel
+   BroadcomBCM94718NR.get_channel
    BroadcomBCM94718NR.set_5_ssid
    BroadcomBCM94718NR.set_24_ssid
    
@@ -54,6 +52,25 @@ The BroadcomBCM94718NR
    :toctree: api
 
    BroadcomError
+
+
+
+.. autosummary::
+   :toctree: api
+
+   radio_page
+   ssid_page
+   action_dict
+   set_24_data
+   set_5_data
+   
+
+
+.. autosummary::
+   :toctree: api
+
+   RadioPageConnection
+
 
 
 

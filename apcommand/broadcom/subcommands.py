@@ -68,14 +68,18 @@ class SubCommand(BaseClass):
     @try_except
     def channel(self, args):
         """
-        Calls the access point's set_channel method
+        Calls the access point's set_channel method (unless channel not set, then get_channel)
 
         :param:
 
-         - `args`: namespace with `channel`, `mode`, and `bandwidth` attributes
+         - `args`: namespace with `channel` attribute
         """
         ap = self.access_point(args)
-        ap.set_channel(channel=args.channel)
+        if args.channel is None:
+            self.logger.info("2.4 GHz Channel: {0}".format(ap.get_channel('2')))
+            self.logger.info('5 GHz Channel: {0}'.format(ap.get_channel('5')))
+        else:
+            ap.set_channel(channel=args.channel)
         return
 
     @try_except

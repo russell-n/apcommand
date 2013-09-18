@@ -122,7 +122,8 @@ class Arguments(object):
         # change the channel
         channel = self.subparsers.add_parser('channel',
                                              help='Change the AP channel')
-        channel.add_argument('channel', help='Channel to set')
+        channel.add_argument('channel', help='Channel to set',
+                             nargs='?', default=None)
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
