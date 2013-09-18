@@ -120,18 +120,19 @@ class SubCommand(BaseClass):
         if args.channel is None:
             out_string = "{0} GHz Channel: {1} {3} ({2})"
             for band in '2.4 5'.split():
-                print "{0} GHz:".format(band)
+                print "{0} GHz:".format(band),
                 key = band[0]
                 # because there's a sleep between the web-calls this is slow
                 # so it prints after every line to give some feedback
                 channel = ap.query[key].channel
-                print "   Channel: {0}".format(channel)
-                state = ap.query[key].state
-                print "   {0}".format(state)
+                print "   Channel: {0}".format(channel),
                 sideband = ap.query[key].sideband
                 if sideband is None:
                     sideband = ''
-                print '   {0}'.format(sideband)
+                print ' {0}'.format(sideband),
+
+                state = ap.query[key].state
+                print "  ({0})".format(state)
                 self.logger.debug(out_string.format(band, channel, state, sideband))
         else:
             ap.set_channel(channel=args.channel)
