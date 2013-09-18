@@ -1,0 +1,50 @@
+{
+
+
+
+
+
+
+    "creator": "necromuralist <necromuralist@google.com>", 
+
+
+
+
+
+
+    "reporter": "necromuralist <necromuralist@google.com>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Broadcom channel query doesn't indicate which interface is enabled (if any)", 
+
+
+
+
+
+
+    "time": "Wed, 18 Sep 2013 18:45:42 +0000"
+
+
+
+
+
+
+}

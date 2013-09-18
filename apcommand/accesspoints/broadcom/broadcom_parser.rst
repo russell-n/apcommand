@@ -162,6 +162,7 @@ This is the interface for those who want to use this to get text from an html in
    BroadcomRadioSoup.channel
    BroadcomRadioSoup.bandwidth
    BroadcomRadioSoup.sideband
+   BroadcomRadioSoup.ssid
 
 Developer API
 +++++++++++++

@@ -34,7 +34,6 @@ The BroadcomBCM94718NR
 
    BroadcomBCM94718NR -|> BaseClass
    BroadcomBCM94718NR o- HTTPConnection
-   BroadcomBCM94718NR o- BroadcomRadioSoup
    BroadcomBCM94718NR o- BroadcomChannelChanger
 
 .. autosummary::
@@ -82,6 +81,73 @@ The BroadcomBCM94718NR
    :toctree: api
 
    BroadcomChannelChanger
+   
+
+
+The Broadcom Queriers
+---------------------
+
+In order to trim down the class-explosion that seems to be going on, all the querys to the Broadcom are combined into two classes :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>` and :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`. Because I am using a decorator to 
+
+.. uml::
+
+   BroadcomBaseQuerier -|> BaseClass
+   BroadcomBaseQuerier o-- HTTPConnection
+   BroadcomBaseQuerier o-- BroadcomRadioSoup
+   BroadcomBaseQuerier : sleep
+   BroadcomBaseQuerier : band   
+   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
+   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
+
+.. _broadcom-base-querier:
+BroadcomBaseQuerier
+~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomBaseQuerier
+   BroadcomBaseQuerier.channel
+   BroadcomBaseQuerier.state
+   BroadcomBaseQuerier.sideband
+   BroadcomBaseQuerier.mac_address
+
+
+
+.. _broadcom-24-ghz-querier:
+Broadcom24GHzQuerier
+~~~~~~~~~~~~~~~~~~~~
+
+A 2.4 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
+
+.. uml::
+
+   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
+   
+.. autosummary::
+   :toctree: api
+
+   Broadcom24GHzQuerier
+   Broadcom24GHzQuerier.band
+   
+
+
+
+.. _broadcom-5-ghz-querier:
+Broadcom5GHzQuerier
+~~~~~~~~~~~~~~~~~~~
+
+A 5 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
+
+.. uml::
+
+   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
+   
+.. autosummary::
+   :toctree: api
+
+   Broadcom5GHzQuerier
+   Broadcom5GHzQuerier.band
    
 
 

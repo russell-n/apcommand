@@ -1,6 +1,7 @@
 
 # python standard library
 import time
+from abc import ABCMeta, abstractproperty
 
 # this package
 from apcommand.baseclass import BaseClass
@@ -142,7 +143,7 @@ class BroadcomBCM94718NR(BaseClass):
 
         # aggregated classes
         self._channel_changer = None
-        self._channel_reader = None
+        self._querier = None
         return
 
     @property
@@ -156,14 +157,16 @@ class BroadcomBCM94718NR(BaseClass):
         return self._channel_changer
 
     @property
-    def channel_reader(self):
+    def querier(self):
         """
-        A Broadcom Channel Reader
+        A Broadcom Querier band:reader dictionary
         """
-        if self._channel_reader is None:
-            self._channel_reader = BroadcomChannelReader(connection=self.connection,
-                                                         sleep=self.sleep)
-        return self._channel_reader
+        if self._querier is None:
+            self._querier = {'2':Broadcom24GHzQuerier(connection=self.connection,
+                                                      sleep=self.sleep),
+                             '5':Broadcom5GHzQuerier(connection=self.connection,
+                                                     sleep=self.sleep)}
+        return self._querier
 
     @property
     def connection(self):
@@ -212,9 +215,9 @@ class BroadcomBCM94718NR(BaseClass):
 
     def get_channel(self, band):
         """
-        Returns the channel for the given band
+        Returns the channel for the given band (uses only first character)
         """
-        return self.channel_reader(band)
+        return self.querier[band[0]].channel
 # end Class BroadcomBCM94718NR        
 
 
@@ -423,6 +426,163 @@ class BroadcomChannelChanger(BaseClass):
         return
 
 # end class BroadcomChannelChanger
+
+
+class BroadcomBaseQuerier(BaseClass):
+    """
+    A querier for the Broadcom
+    """
+    __metaclass__ = ABCMeta
+    def __init__(self, connection, sleep=0.5):
+        """
+        BroadcomBaseQuerier Constructor
+
+        :param:
+
+         - `connection`: Connection to the Broadcom AP
+         - `sleep`: Seconds to sleep after calling the AP's server
+        """
+        super(BroadcomBaseQuerier, self).__init__()
+        self._logger = None
+        self.connection = connection
+        self.sleep=sleep
+        self._band = None
+        self._soup = None
+        return
+
+    @abstractproperty
+    def band(self):
+        """
+        Returns the proper setting for the band (UNIT_24_GHZ | UNIT_5_GHZ)
+        """
+        return
+
+    @abstractproperty
+    def mac_address(self):
+        """
+        Gets the MAC address for this interface
+        """
+        return
+    
+    @property
+    def soup(self):
+        """
+        A BroadcomRadioSoup to parse the html
+        """
+        if self._soup is None:
+            self._soup = BroadcomRadioSoup()
+        return self._soup
+
+    @radio_page
+    def set_radio_soup(self):
+        """
+        Sets the soup.html to the radio page
+        """
+        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
+        self.soup.html = text        
+        return
+
+    @ssid_page
+    def set_ssid_soup(self):
+        """
+        sets soup.html to the ssid page
+        """
+        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
+        self.soup.html = text
+        return
+    
+    @property
+    def sideband(self):
+        """
+        The sideband setting (Upper or Lower), empty for 2.4 GHz
+        """
+        self.set_radio_soup()
+        return self.soup.sideband
+    
+    @property
+    def channel(self):
+        """
+        Get the current channel for the band
+        """
+        self.set_radio_soup()
+        return self.soup.channel
+
+    @property
+    def state(self):
+        """
+        Get the interface state
+        """
+        self.set_radio_soup()
+        return self.soup.interface_state
+
+    @property
+    def ssid(self):
+        """
+        Get the interface SSID
+        """
+        self.set_ssid_soup()
+        return self.soup.ssid
+# end class BroadcomBaseQuerier
+
+
+class Broadcom24GHzQuerier(BroadcomBaseQuerier):
+    """
+    A 24Ghz interface querier
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Broadcom24GHzQuerier constructor
+        """
+        super(Broadcom24GHzQuerier, self).__init__(*args, **kwargs)
+        return
+
+    @property
+    def band(self):
+        """
+        The (Wireless Interface menu) index for 5GHz
+        """
+        if self._band is None:
+            self._band = UNIT_24_GHZ
+        return self._band
+
+    @property
+    def mac_address(self):
+        '''
+        Gets the mac_address for this interface
+        '''
+        self.set_radio_soup()
+        return self.soup.mac_24_ghz
+# end class Broadcom24GHzQuerier
+
+
+class Broadcom5GHzQuerier(BroadcomBaseQuerier):
+    """
+    A 5Ghz interface querier
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Broadcom5GHzQuerier constructor
+        """
+        super(Broadcom5GHzQuerier, self).__init__(*args, **kwargs)
+        return
+
+    @property
+    def band(self):
+        """
+        The (Wireless Interface menu) index for 5GHz
+        """
+        if self._band is None:
+            self._band = UNIT_5_GHZ
+        return self._band
+
+    @property
+    def mac_address(self):
+        """
+        The Mac Address for the 5GHz interface
+        """
+        self.set_radio_soup()
+        return self.soup.mac_5_ghz
+# end class Broadcom5GHzQuerier
 
 
 class BroadcomChannelReader(BaseClass):
@@ -754,3 +914,88 @@ class TestBroadcomChannelReader(unittest.TestCase):
         self.assertEqual(self.connection.mock_calls, calls)
         self.assertEqual(channel, read_value)
         return
+
+
+class TestBroadcomQueriers(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        self.html = MagicMock()
+        self.connection.return_value = self.html
+        self.html.text = open('radio_5_asp.html').read()
+        self.sleep = MagicMock()
+        self.querier_5 = Broadcom5GHzQuerier(connection=self.connection)
+        self.querier_24 = Broadcom24GHzQuerier(connection=self.connection)
+        return
+
+    def test_5_ghz(self):
+        """
+        Is the band set-up correctly?
+        """
+        self.assertEqual('1', self.querier_5.band)
+        return
+
+    def test_24_ghz(self):
+        """
+        Does it set the band correctly?
+        """
+        self.assertEqual('0', self.querier_24.band)
+        return
+
+    def test_sideband(self):
+        """
+        Does the 5ghz querier get the sideband for you?
+        """
+        with patch('time.sleep'):
+            sideband = self.querier_5.sideband
+        self.assertEqual('Lower', sideband)
+        return
+    
+    def test_channel(self):
+        """
+        Does it get the channel correctily?
+        """
+        with patch('time.sleep'):
+            channel =  self.querier_5.channel
+        self.connection.assert_called_with(data={'wl_unit':'1'})
+        self.assertEqual(channel, '44')
+        return
+
+    def test_state(self):
+        """
+        Does it get the interface state?
+        """
+        with patch('time.sleep'):
+            state = self.querier_5.state
+        self.connection.assert_called_with(data={'wl_unit':'1'})
+        self.assertEqual('Enabled', state)
+        return
+
+    def test_24_mac_address(self):
+        """
+        Does it get the MAC address for the 2.4 GHz interface?
+        """
+        with patch('time.sleep'):
+            mac = self.querier_24.mac_address
+        self.assertEqual('(00:90:4C:09:11:03)', mac)
+        return
+
+    def test_5_mac_address(self):
+        """
+        Does it get the MAC address for the 5 GHz interface?
+        """
+        with patch('time.sleep'):
+            mac = self.querier_5.mac_address
+        self.assertEqual('(00:90:4C:13:11:03)', mac)
+        return
+
+    def test_5_ssid(self):
+        """
+        Does it get the right SSID?
+        """
+        self.html.text = open('ssid_asp.html').read()
+        with patch('time.sleep'):            
+            ssid = self.querier_5.ssid
+        self.assertEqual('hownowbrowndog', ssid)
+        return
+
+# end class TestBroadcomBaseQuerier    

@@ -57,8 +57,6 @@ class BroadcomRadioSoup(BaseClass):
         self._mac_24_ghz = None
         self._mac_5_ghz = None
         self._country = None
-        self._interface_24_state = None
-        self._interface_5_state = None
         self._channel = None
         self._bandwidth = None
         self._sideband = None
