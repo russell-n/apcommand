@@ -75,14 +75,21 @@ class SubCommand(BaseClass):
          - `args`: namespace with `channel` attribute
         """
         ap = self.access_point(args)
-        if args.channel is None:
-            out_string = "{0} GHz Channel: {1} {3} ({2})"
+        if args.channel is None:        
             for band in '2.4 5'.split():
+                print "{0} GHz:".format(band)
                 key = band[0]
+                # because there's a sleep between the web-calls this is slow
+                # so it prints after every line to give some feedback
                 channel = ap.query[key].channel
+                print "Channel: {0}".format(channel)
                 state = ap.query[key].state
+                print state
                 sideband = ap.query[key].sideband
-                self.logger.info(out_string.format(band, channel, state, sideband))
+                if sideband is None:
+                    sideband = ''
+                print sideband
+                self.logger.debug(out_string.format(band, channel, state, sideband))
         else:
             ap.set_channel(channel=args.channel)
         return
