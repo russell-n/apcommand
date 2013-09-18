@@ -111,6 +111,7 @@ BroadcomBaseQuerier
    BroadcomBaseQuerier.state
    BroadcomBaseQuerier.sideband
    BroadcomBaseQuerier.mac_address
+   BroadcomBaseQuerier.ssid
 
 
 

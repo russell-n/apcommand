@@ -214,7 +214,7 @@ class BroadcomBCM94718NR(BaseClass):
 
         # aggregated classes
         self._channel_changer = None
-        self._querier = None
+        self._query = None
         return
 
     @property
@@ -228,16 +228,16 @@ class BroadcomBCM94718NR(BaseClass):
         return self._channel_changer
 
     @property
-    def querier(self):
+    def query(self):
         """
         A Broadcom Querier band:reader dictionary
         """
-        if self._querier is None:
-            self._querier = {'2':Broadcom24GHzQuerier(connection=self.connection,
+        if self._query is None:
+            self._query = {'2':Broadcom24GHzQuerier(connection=self.connection,
                                                       sleep=self.sleep),
                              '5':Broadcom5GHzQuerier(connection=self.connection,
                                                      sleep=self.sleep)}
-        return self._querier
+        return self._query
 
     @property
     def connection(self):
@@ -288,7 +288,7 @@ class BroadcomBCM94718NR(BaseClass):
         """
         Returns the channel for the given band (uses only first character)
         """
-        return self.querier[band[0]].channel
+        return self.query[band[0]].channel
 # end Class BroadcomBCM94718NR        
 @
 
@@ -536,6 +536,7 @@ BroadcomBaseQuerier
    BroadcomBaseQuerier.state
    BroadcomBaseQuerier.sideband
    BroadcomBaseQuerier.mac_address
+   BroadcomBaseQuerier.ssid
 
 <<name='BroadcomBaseQuerier', echo=False>>=
 class BroadcomBaseQuerier(BaseClass):

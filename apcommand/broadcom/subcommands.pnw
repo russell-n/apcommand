@@ -118,8 +118,13 @@ class SubCommand(BaseClass):
         """
         ap = self.access_point(args)
         if args.channel is None:
-            self.logger.info("2.4 GHz Channel: {0}".format(ap.get_channel('2')))
-            self.logger.info('5 GHz Channel: {0}'.format(ap.get_channel('5')))
+            out_string = "{0} GHz Channel: {1} {3} ({2})"
+            for band in '2.4 5'.split():
+                key = band[0]
+                channel = ap.query[key].channel
+                state = ap.query[key].state
+                sideband = ap.query[key].sideband
+                self.logger.info(out_string.format(band, channel, state, sideband))
         else:
             ap.set_channel(channel=args.channel)
         return
