@@ -73,6 +73,25 @@ The BroadcomBCM94718NR
 
 
 
+The Broadcom Commands
+---------------------
+
+From what I can tell, the individual commands are pretty much all the same expect with one data-dict setting, so I am going to create two base-commands to hold the base data dictionary (one for 2.4 GHz and one for 5GHz) and then others can just add the extra data-dictionary entry to make a specific command.
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomBaseCommand
+
+
+
+.. autosummary::
+   :toctree: api
+
+   Base5GHzCommand
+
+
+
 .. uml::
 
    BroadcomChannelChanger -|> BaseClass

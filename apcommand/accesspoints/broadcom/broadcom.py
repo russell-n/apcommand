@@ -221,6 +221,73 @@ class BroadcomBCM94718NR(BaseClass):
 # end Class BroadcomBCM94718NR        
 
 
+class BroadcomBaseCommand(BaseClass):
+    """
+    The base-command to hold the data-dict
+    """
+    __metaclass__ = ABCMeta
+    def __init__(self, connection, sleep=0.5):
+        """
+        Base Command constructor
+
+        :param:
+
+         - `connection`: Connection to the AP
+         - `sleep`: seconds to sleep after talking to the AP
+        """
+        super(BroadcomBaseCommand, self).__init__()
+        self._logger = None
+        self.connection = connection
+        self.sleep = sleep
+        self._base_data = None
+        self._query = None
+        return
+
+    @abstractproperty
+    def base_data(self):
+        """
+        the data-dictionary without the command-specific data
+        """
+        return
+
+    @abstractproperty
+    def query(self):
+        """
+        A Broadcom Querier
+        """
+        return
+
+
+class Base5GHzCommand(BroadcomBaseCommand):
+    """
+    A base for 5Ghz commands
+    """
+    def __init__(self, *args, **kwargs):
+        super(Base5GHzCommand, self).__init__(*args, **kwargs)
+        self._logger = None
+        return
+
+    @property
+    def base_data(self):
+        """
+        The data-dict to set the 5ghz interface
+        """
+        if self._base_data is None:
+            self._base_data = action_dict()
+            self._base_data[WIRELESS_INTERFACE] = UNIT_5_GHZ
+        return self._base_data
+
+    @property
+    def query(self):
+        """
+        a Broadcom5GHz Querier
+        """
+        if self._query is None:
+            self._query = Broadcom5GHzQuerier(connection=self.connection)            
+        return self._query
+# end class Base5GHzCommand
+
+
 class BroadcomChannelChanger(BaseClass):
     """
     A channel changer for the broadcom 
@@ -999,3 +1066,44 @@ class TestBroadcomQueriers(unittest.TestCase):
         return
 
 # end class TestBroadcomBaseQuerier    
+
+
+class BadChild(BroadcomBaseCommand):
+    def query(self):
+        return
+
+class BadChild2(BroadcomBaseCommand):
+    def base_data(self):
+        return
+
+class EvilChild(BroadcomBaseCommand):
+    def base_data(self):
+        return
+    def query(self):
+        return
+    
+class TestBroadcomCommands(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        return
+
+    def test_abstract_property(self):
+        """
+        Does a class without the properties defined crash on creation?
+        """
+        self.assertRaises(TypeError, BroadcomBaseCommand, args=(self.connection,))
+        self.assertRaises(TypeError, BadChild, args=(self.connection,))
+        self.assertRaises(TypeError, BadChild2, args=(self.connection,))
+        EvilChild(self.connection)
+        return
+
+    def test_base_commands(self):
+        """
+        Do the band-specific base-commands build the right data and queries?
+        """
+        base_5 = Base5GHzCommand(connection=self.connection)
+        data_dict = action_dict()
+        data_dict['wl_unit'] = '1'
+        self.assertEqual(data_dict, base_5.base_data)
+        self.assertEqual(Broadcom5GHzQuerier, type(base_5.query))
+        return
