@@ -14,6 +14,7 @@ from commons import WIRELESS_INTERFACE, CONTROL_CHANNEL
 from commons import RADIO_PAGE, SIDEBAND
 from commons import INTERFACE, SSID, SSID_PAGE
 from commons import RADIO_ON, RADIO_OFF
+from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
 
 
 class BroadcomError(RuntimeError):
