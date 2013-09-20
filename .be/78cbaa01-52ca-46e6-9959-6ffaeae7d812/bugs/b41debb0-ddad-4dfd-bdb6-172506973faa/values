@@ -26,21 +26,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Broadcom channel query doesn't indicate which interface is enabled (if any)", 
+    "summary": "Broadcom controller not using new-style commands", 
 
 
 
 
 
 
-    "time": "Wed, 18 Sep 2013 18:45:42 +0000"
+    "time": "Fri, 20 Sep 2013 00:51:25 +0000"
 
 
 
