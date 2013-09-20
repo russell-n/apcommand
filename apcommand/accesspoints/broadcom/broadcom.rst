@@ -1,5 +1,6 @@
 The Broadcom BCM94718NR Access Point
 ====================================
+.. currentmodule:: apcommand.accesspoints.broadcom.broadcom
 
 The Broadcom advertises a telnet connection but it will not let you log in. To control it you will need to send commands to its web-page. Although something like `Selenium <http://docs.seleniumhq.org/>`_ should work, to simplify the control for the command line, a more containde method will be used. Aren used `curl <http://en.wikipedia.org/wiki/CURL>`_ to send commands to the Access Point.
 
@@ -45,6 +46,7 @@ The BroadcomBCM94718NR
    BroadcomBCM94718NR.set_5_ssid
    BroadcomBCM94718NR.set_24_ssid
    
+* See the :ref:`HTTPConnection <http-connection>` page for more on what it is about.
 
 
 .. autosummary::
@@ -76,7 +78,17 @@ The BroadcomBCM94718NR
 The Broadcom Commands
 ---------------------
 
-From what I can tell, the individual commands are pretty much all the same expect with one data-dict setting, so I am going to create two base-commands to hold the base data dictionary (one for 2.4 GHz and one for 5GHz) and then others can just add the extra data-dictionary entry to make a specific command.
+I have decided to break the commands sent to the Broadcom into atomic actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a long while and like most things here this will turn into a code-maintenance nightmare. To ameliorate the knowledge-gain, knowledge-lost cycle that is common to projects here I am trying to make the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not clarify anything but I am hopeful that once the pattern is recognized only the relevant classes need be found and examined and so smaller will be better.
+
+To allow for the aggregation of commands each command class has an `add` method which will allow other commands to be added to their data-dictionary. This way the `Apply` action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.
+
+A hypothetical example::
+
+   connection = HTTPConnection('192.168.1.1', password='admin', path='radio.asp')
+   command = Set24GHzChannel(connection)
+   other_command = Disable5GHz(connection)
+   command += other_command
+   command('11')
 
 .. autosummary::
    :toctree: api
@@ -102,73 +114,6 @@ From what I can tell, the individual commands are pretty much all the same expec
    BroadcomChannelChanger
    
 
-
-The Broadcom Queriers
----------------------
-
-In order to trim down the class-explosion that seems to be going on, all the querys to the Broadcom are combined into two classes :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>` and :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`. Because I am using a decorator to 
-
-.. uml::
-
-   BroadcomBaseQuerier -|> BaseClass
-   BroadcomBaseQuerier o-- HTTPConnection
-   BroadcomBaseQuerier o-- BroadcomRadioSoup
-   BroadcomBaseQuerier : sleep
-   BroadcomBaseQuerier : band   
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
-
-.. _broadcom-base-querier:
-BroadcomBaseQuerier
-~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomBaseQuerier
-   BroadcomBaseQuerier.channel
-   BroadcomBaseQuerier.state
-   BroadcomBaseQuerier.sideband
-   BroadcomBaseQuerier.mac_address
-   BroadcomBaseQuerier.ssid
-
-
-
-.. _broadcom-24-ghz-querier:
-Broadcom24GHzQuerier
-~~~~~~~~~~~~~~~~~~~~
-
-A 2.4 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
-
-.. uml::
-
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom24GHzQuerier
-   Broadcom24GHzQuerier.band
-   
-
-
-
-.. _broadcom-5-ghz-querier:
-Broadcom5GHzQuerier
-~~~~~~~~~~~~~~~~~~~
-
-A 5 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
-
-.. uml::
-
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom5GHzQuerier
-   Broadcom5GHzQuerier.band
-   
 
 
 .. autosummary::

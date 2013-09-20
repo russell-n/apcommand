@@ -535,6 +535,7 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         text = open('ssid_asp.html').read()
         self.soup.html = text
         self.assertEqual('hownowbrowndog', self.soup.ssid)
+        return
 @
 <%
 for case in (TestBroadcomRadioSoup,):

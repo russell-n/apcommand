@@ -1,6 +1,9 @@
 HTTP Connection
 ===============
 .. currentmodule:: apcommand.connections.httpconnection
+
+
+.. _http-connection:
 This is a client-connection to communicate with HTTP-servers. Since some of the parameters are reminiscent of telnet and SSH sessions I will model it somewhat after the SSHConnection, but it will primarily act as an interface to the `requests <http://docs.python-requests.org/en/latest/>`_ package.
 
 Example Get
@@ -23,7 +26,7 @@ Setting parts of the URL in the HTTPConnection will re-build the URL so you coul
     response = connection.get(data={'wl_unit':'0'})
     print response.text
 
-The use of `connection.get` is not a typo, the call is just a 'GET' call, since I figured it is the most common thing to do. The `repsonse` returned is a `requests.Response <http://docs.python-requests.org/en/latest/user/quickstart/#response-content>`_ object so the HTTPConnection doesn't act exactly like the other connections (which return standard-out and standard error in a tuple). There's more information here so I figured it would be better to return the whole thing rather than throw away stuff.
+The use of `connection.get` is not a typo, the ``__call__`` is just a 'GET' call, since I figured it is the most common thing to do, so using it is the same as using ``.get``. The `response` returned is a `requests.Response <http://docs.python-requests.org/en/latest/user/quickstart/#response-content>`_ object so the HTTPConnection doesn't act exactly like the other connections (which return standard-out and standard error in a tuple). There's more information there so I figured it would be better to return the whole thing rather than throw away stuff.
 
 Persistence of Data
 -------------------
@@ -34,7 +37,7 @@ Since I tested this a lot using `ipython` I made it so that it will store the `d
     response = connection()
     print response.text
 
-Should work the same as the first example. If you want to temporarily use a different data-set, pass in the dictionary (using the parameter name explicitly)::
+This should work the same as the first example. If you want to temporarily use a different data-set, pass in the dictionary (using the parameter name explicitly)::
 
     response = connection(data={'wl_unit':'1'})
 
@@ -46,6 +49,8 @@ If you want to get rid of the data set it to None, if you want to change it just
     # new default data
     connection.data = {'wl_unit':'1'}
 
+In practice I think setting and resetting the ``data`` parameter is probably not a good idea, either you should pass in the data or set it once and leave it, otherwise it gets confusing, but it is there if needed.
+
 In this initial use I don't use parameters so I didn't do the same thing for them or any other settings that can be passed in --
 
    * The URL and authentication are always taken from the HTTPConnection properties
@@ -53,7 +58,60 @@ In this initial use I don't use parameters so I didn't do the same thing for the
    * The data will be taken from the HTTPConnection properties if set or from the arguments if passed in
 
    * Everything else needs to be passed in when the connection is called
-    
+
+EventTimer
+----------
+
+If you hit the Broadcom web-server too soon after a previous call to it'll return an error or erroneous page. To prevent this I was having the users of this sleep between calls, but that seems to inelegant and causes unnecessary waiting sometimes (it's like it works for Tri-Met, or something).
+
+Instead the HTTPConnection will maintain and EventTimer and block if you try to make a new request too soon (too soon being something that needs to be empirically determined by the user, right now it seems to be a half second).
+
+.. uml::
+
+   EventTimer o- threading.Event
+   EventTimer o- threading.Timer
+   EventTimer -|> BaseClass
+   EventTimer : __init__(event, seconds)   
+
+.. autosummary::
+   :toctree: api
+
+   EventTimer
+   EventTimer.set_event
+   EventTimer.start
+   EventTimer.clear
+   EventTimer.wait
+
+
+
+The ``wait`` Decorator
+----------------------
+
+To make using the ``EventTimer`` easier, a ``wait`` decorator can be used. The procedure:
+
+    #. Call event.wait in case a previous timer is still running
+
+    #. Clear the event
+
+    #. Call the decorated method
+
+    #. Start the timer
+
+Basic Use::
+
+   @wait
+   def do_something(self):
+       # do something here
+       return
+
+.. warning:: This is a method decorator -- it assumes the object it belongs to has a ``timer`` properties (``EventTimer``).
+   
+
+
+   
+The HTTPConnection
+------------------
+
 .. uml::
 
    HTTPConnection o- requests.Request
@@ -76,6 +134,11 @@ The URL is being put together with the python `urlparse.urlunparse <http://docs.
    query, 4, Query component, empty string
    fragment, 5, Fragment identifier, empty string
 
+
+
+.. uml::
+
+   HTTPConnectionError -|> RuntimeError
 
 
 

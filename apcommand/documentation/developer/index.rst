@@ -7,7 +7,7 @@ Access Points:
    :maxdepth: 2
 
    Atheros <../../accesspoints/atheros>
-   Broadcom <../../accesspoints/broadcom/broadcom>
+   Broadcom <../../accesspoints/broadcom/index>
    
 Parsers:
 

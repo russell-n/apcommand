@@ -1,5 +1,6 @@
 The Broadcom BCM94718NR Access Point
 ====================================
+.. currentmodule:: apcommand.accesspoints.broadcom.broadcom
 
 The Broadcom advertises a telnet connection but it will not let you log in. To control it you will need to send commands to its web-page. Although something like `Selenium <http://docs.seleniumhq.org/>`_ should work, to simplify the control for the command line, a more containde method will be used. Aren used `curl <http://en.wikipedia.org/wiki/CURL>`_ to send commands to the Access Point.
 
@@ -45,6 +46,7 @@ The BroadcomBCM94718NR
    BroadcomBCM94718NR.set_5_ssid
    BroadcomBCM94718NR.set_24_ssid
    
+* See the :ref:`HTTPConnection <http-connection>` page for more on what it is about.
 
 <<name='imports', echo=False>>=
 # python standard library
@@ -55,21 +57,13 @@ from abc import ABCMeta, abstractproperty
 from apcommand.baseclass import BaseClass
 import apcommand.connections.httpconnection as httpconnection
 from apcommand.accesspoints.broadcom.broadcom_parser import BroadcomRadioSoup
-@
-<<name='constants', echo=False>>=
-ZERO = '0'
-ONE = '1'
-UNIT_24_GHZ, UNIT_5_GHZ = ZERO, ONE
-RADIO_OFF, RADIO_ON = ZERO, ONE
-RADIO_PAGE = 'radio.asp'
-SSID_PAGE = 'ssid.asp'
-WIRELESS_INTERFACE = 'wl_unit'
-INTERFACE = 'wl_radio'
-CONTROL_CHANNEL = 'wl_channel'
-SIDEBAND = 'wl_nctrlsb'
-CHANNELS_5GHZ = '36 44 149 157'.split()
-CHANNELS_24GHZ = [str(channel) for channel in xrange(1,12)]
-SSID = 'wl_ssid'
+from commons import ssid_page, radio_page
+from commons import CHANNELS_24GHZ, UNIT_24_GHZ
+from commons import CHANNELS_5GHZ, UNIT_5_GHZ
+from commons import WIRELESS_INTERFACE, CONTROL_CHANNEL
+from commons import RADIO_PAGE, SIDEBAND
+from commons import INTERFACE, SSID, SSID_PAGE
+from commons import RADIO_ON, RADIO_OFF
 @
 .. autosummary::
    :toctree: api
@@ -90,36 +84,6 @@ class BroadcomError(RuntimeError):
    set_24_data
    set_5_data
    
-<<name='decorators', echo=False>>=
-# a decorator to set the page to 'radio.asp'
-def radio_page(method):
-    """
-    Decorator: sets connection.path to radio.asp before, sleeps after
-    """
-    def _method(self, *args, **kwargs):
-        self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
-        self.connection.path = RADIO_PAGE
-        outcome = method(self, *args, **kwargs)
-        self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
-        time.sleep(self.sleep)
-        return outcome
-    return _method
-
-# a decorator to set the page to 'ssid.asp'
-def ssid_page(method):
-    """
-    Decorator: sets connection.path to ssid.page before, sleeps after
-    """
-    def _method(self, *args, **kwargs):
-        self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
-        self.connection.path = SSID_PAGE
-        outcome = method(self, *args, **kwargs)
-        self.logger.debug("Sleeping for {0} seconds".format(self.sleep))
-        time.sleep(self.sleep)
-        return outcome
-    return _method
-@
-
 <<name='dictionary_creators', echo=False>>=
 # a dictionary for data that changes the state of the broadcom
 action_dict = lambda: {'action':'Apply'}
@@ -233,10 +197,8 @@ class BroadcomBCM94718NR(BaseClass):
         A Broadcom Querier band:reader dictionary
         """
         if self._query is None:
-            self._query = {'2':Broadcom24GHzQuerier(connection=self.connection,
-                                                      sleep=self.sleep),
-                             '5':Broadcom5GHzQuerier(connection=self.connection,
-                                                     sleep=self.sleep)}
+            self._query = {'2':Broadcom24GHzQuerier(connection=self.connection),
+                             '5':Broadcom5GHzQuerier(connection=self.connection)}
         return self._query
 
     @property
@@ -250,6 +212,7 @@ class BroadcomBCM94718NR(BaseClass):
             self._connection = httpconnection.HTTPConnection(hostname=self.hostname,
                                                              username=self.username,
                                                              password=self.password,
+                                                             rest=self.sleep,
                                                              path=RADIO_PAGE)
         return self._connection
 
@@ -295,7 +258,17 @@ class BroadcomBCM94718NR(BaseClass):
 The Broadcom Commands
 ---------------------
 
-From what I can tell, the individual commands are pretty much all the same expect with one data-dict setting, so I am going to create two base-commands to hold the base data dictionary (one for 2.4 GHz and one for 5GHz) and then others can just add the extra data-dictionary entry to make a specific command.
+I have decided to break the commands sent to the Broadcom into atomic actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a long while and like most things here this will turn into a code-maintenance nightmare. To ameliorate the knowledge-gain, knowledge-lost cycle that is common to projects here I am trying to make the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not clarify anything but I am hopeful that once the pattern is recognized only the relevant classes need be found and examined and so smaller will be better.
+
+To allow for the aggregation of commands each command class has an `add` method which will allow other commands to be added to their data-dictionary. This way the `Apply` action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.
+
+A hypothetical example::
+
+   connection = HTTPConnection('192.168.1.1', password='admin', path='radio.asp')
+   command = Set24GHzChannel(connection)
+   other_command = Disable5GHz(connection)
+   command += other_command
+   command('11')
 
 .. autosummary::
    :toctree: api
@@ -593,227 +566,6 @@ class BroadcomChannelChanger(BaseClass):
 # end class BroadcomChannelChanger
 @
 
-The Broadcom Queriers
----------------------
-
-In order to trim down the class-explosion that seems to be going on, all the querys to the Broadcom are combined into two classes :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>` and :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`. Because I am using a decorator to 
-
-.. uml::
-
-   BroadcomBaseQuerier -|> BaseClass
-   BroadcomBaseQuerier o-- HTTPConnection
-   BroadcomBaseQuerier o-- BroadcomRadioSoup
-   BroadcomBaseQuerier : sleep
-   BroadcomBaseQuerier : band   
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
-
-.. _broadcom-base-querier:
-BroadcomBaseQuerier
-~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomBaseQuerier
-   BroadcomBaseQuerier.channel
-   BroadcomBaseQuerier.state
-   BroadcomBaseQuerier.sideband
-   BroadcomBaseQuerier.mac_address
-   BroadcomBaseQuerier.ssid
-
-<<name='BroadcomBaseQuerier', echo=False>>=
-class BroadcomBaseQuerier(BaseClass):
-    """
-    A querier for the Broadcom
-    """
-    __metaclass__ = ABCMeta
-    def __init__(self, connection, sleep=0.5):
-        """
-        BroadcomBaseQuerier Constructor
-
-        :param:
-
-         - `connection`: Connection to the Broadcom AP
-         - `sleep`: Seconds to sleep after calling the AP's server
-        """
-        super(BroadcomBaseQuerier, self).__init__()
-        self._logger = None
-        self.connection = connection
-        self.sleep=sleep
-        self._band = None
-        self._soup = None
-        return
-
-    @abstractproperty
-    def band(self):
-        """
-        Returns the proper setting for the band (UNIT_24_GHZ | UNIT_5_GHZ)
-        """
-        return
-
-    @abstractproperty
-    def mac_address(self):
-        """
-        Gets the MAC address for this interface
-        """
-        return
-    
-    @property
-    def soup(self):
-        """
-        A BroadcomRadioSoup to parse the html
-        """
-        if self._soup is None:
-            self._soup = BroadcomRadioSoup()
-        return self._soup
-
-    @radio_page
-    def set_radio_soup(self):
-        """
-        Sets the soup.html to the radio page
-        """
-        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
-        self.soup.html = text        
-        return
-
-    @ssid_page
-    def set_ssid_soup(self):
-        """
-        sets soup.html to the ssid page
-        """
-        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
-        self.soup.html = text
-        return
-    
-    @property
-    def sideband(self):
-        """
-        The sideband setting (Upper or Lower), empty for 2.4 GHz
-        """
-        self.set_radio_soup()
-        return self.soup.sideband
-    
-    @property
-    def channel(self):
-        """
-        Get the current channel for the band
-        """
-        self.set_radio_soup()
-        return self.soup.channel
-
-    @property
-    def state(self):
-        """
-        Get the interface state
-        """
-        self.set_radio_soup()
-        return self.soup.interface_state
-
-    @property
-    def ssid(self):
-        """
-        Get the interface SSID
-        """
-        self.set_ssid_soup()
-        return self.soup.ssid
-# end class BroadcomBaseQuerier
-@
-
-.. _broadcom-24-ghz-querier:
-Broadcom24GHzQuerier
-~~~~~~~~~~~~~~~~~~~~
-
-A 2.4 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
-
-.. uml::
-
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom24GHzQuerier
-   Broadcom24GHzQuerier.band
-   
-<<name='Broadcom24GHzQuerier', echo=False>>=
-class Broadcom24GHzQuerier(BroadcomBaseQuerier):
-    """
-    A 24Ghz interface querier
-    """
-    def __init__(self, *args, **kwargs):
-        """
-        Broadcom24GHzQuerier constructor
-        """
-        super(Broadcom24GHzQuerier, self).__init__(*args, **kwargs)
-        return
-
-    @property
-    def band(self):
-        """
-        The (Wireless Interface menu) index for 5GHz
-        """
-        if self._band is None:
-            self._band = UNIT_24_GHZ
-        return self._band
-
-    @property
-    def mac_address(self):
-        '''
-        Gets the mac_address for this interface
-        '''
-        self.set_radio_soup()
-        return self.soup.mac_24_ghz
-# end class Broadcom24GHzQuerier
-@
-
-
-.. _broadcom-5-ghz-querier:
-Broadcom5GHzQuerier
-~~~~~~~~~~~~~~~~~~~
-
-A 5 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
-
-.. uml::
-
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom5GHzQuerier
-   Broadcom5GHzQuerier.band
-   
-<<name='Broadcom5GHzQuerier', echo=False>>=
-class Broadcom5GHzQuerier(BroadcomBaseQuerier):
-    """
-    A 5Ghz interface querier
-    """
-    def __init__(self, *args, **kwargs):
-        """
-        Broadcom5GHzQuerier constructor
-        """
-        super(Broadcom5GHzQuerier, self).__init__(*args, **kwargs)
-        return
-
-    @property
-    def band(self):
-        """
-        The (Wireless Interface menu) index for 5GHz
-        """
-        if self._band is None:
-            self._band = UNIT_5_GHZ
-        return self._band
-
-    @property
-    def mac_address(self):
-        """
-        The Mac Address for the 5GHz interface
-        """
-        self.set_radio_soup()
-        return self.soup.mac_5_ghz
-# end class Broadcom5GHzQuerier
-@
 
 .. autosummary::
    :toctree: api
@@ -883,6 +635,9 @@ import string
 # third party
 from mock import MagicMock, patch, call
 from nose.tools import raises
+
+# this package
+from querier import Broadcom5GHzQuerier
 @
 <<name='test_helpers', echo=False>>=
 EMPTY_STRING = ''
@@ -1152,91 +907,7 @@ class TestBroadcomChannelReader(unittest.TestCase):
         self.assertEqual(channel, read_value)
         return
 @
-<<name='TestBroadcomQueriers', echo=False>>=
-class TestBroadcomQueriers(unittest.TestCase):
-    def setUp(self):
-        self.connection = MagicMock()
-        self.html = MagicMock()
-        self.connection.return_value = self.html
-        self.html.text = open('radio_5_asp.html').read()
-        self.sleep = MagicMock()
-        self.querier_5 = Broadcom5GHzQuerier(connection=self.connection)
-        self.querier_24 = Broadcom24GHzQuerier(connection=self.connection)
-        return
 
-    def test_5_ghz(self):
-        """
-        Is the band set-up correctly?
-        """
-        self.assertEqual('1', self.querier_5.band)
-        return
-
-    def test_24_ghz(self):
-        """
-        Does it set the band correctly?
-        """
-        self.assertEqual('0', self.querier_24.band)
-        return
-
-    def test_sideband(self):
-        """
-        Does the 5ghz querier get the sideband for you?
-        """
-        with patch('time.sleep'):
-            sideband = self.querier_5.sideband
-        self.assertEqual('Lower', sideband)
-        return
-    
-    def test_channel(self):
-        """
-        Does it get the channel correctily?
-        """
-        with patch('time.sleep'):
-            channel =  self.querier_5.channel
-        self.connection.assert_called_with(data={'wl_unit':'1'})
-        self.assertEqual(channel, '44')
-        return
-
-    def test_state(self):
-        """
-        Does it get the interface state?
-        """
-        with patch('time.sleep'):
-            state = self.querier_5.state
-        self.connection.assert_called_with(data={'wl_unit':'1'})
-        self.assertEqual('Enabled', state)
-        return
-
-    def test_24_mac_address(self):
-        """
-        Does it get the MAC address for the 2.4 GHz interface?
-        """
-        with patch('time.sleep'):
-            mac = self.querier_24.mac_address
-        self.assertEqual('(00:90:4C:09:11:03)', mac)
-        return
-
-    def test_5_mac_address(self):
-        """
-        Does it get the MAC address for the 5 GHz interface?
-        """
-        with patch('time.sleep'):
-            mac = self.querier_5.mac_address
-        self.assertEqual('(00:90:4C:13:11:03)', mac)
-        return
-
-    def test_5_ssid(self):
-        """
-        Does it get the right SSID?
-        """
-        self.html.text = open('ssid_asp.html').read()
-        with patch('time.sleep'):            
-            ssid = self.querier_5.ssid
-        self.assertEqual('hownowbrowndog', ssid)
-        return
-
-# end class TestBroadcomBaseQuerier    
-@
 <<name='TestBroadcomCommands', echo=False>>=
 class BadChild(BroadcomBaseCommand):
     def query(self):
@@ -1280,7 +951,6 @@ class TestBroadcomCommands(unittest.TestCase):
 @
 <%
 for case in (TestBroadcomBCM94718NR, TestBroadcomChannelChanger,
-             TestBroadcomQueriers,
              TestBroadcomCommands,
              TestBroadcomChannelReader):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
