@@ -9,8 +9,6 @@ Contents:
    * :ref:`BroadcomBaseData <broadcom-base-data>`
 
    * :ref:`BroadcomBaseCommand <broadcom-base-command>`
-   * :ref:`Base5GHzCommand <base-5ghz-command>`
-   
 
 
 .. _broadcom-commands-introduction:
@@ -54,6 +52,7 @@ A *command* is data sent to the server. At a minimum the server is sent the inte
    :toctree: api
 
    BroadcomBaseData
+   BroadcomBaseData.base_data
    BroadcomBaseData.base_24_ghz_data
    BroadcomBaseData.base_5_ghz_data
 
@@ -64,26 +63,48 @@ A *command* is data sent to the server. At a minimum the server is sent the inte
 The Broadcom Base Command
 -------------------------
 
-As mentioned above, a `command` is a bundle of data to send to the web-server and the connection to send it over. The base-command is abstract as the `base_data` attribute it has needs to be specific to the wireless interface being used (it holds either a :ref:`Base5GHzData <base-5ghz-data>` or :ref:`Base24GHzData <base-24ghz-data>` object).
+As mentioned above, a `command` is a bundle of data to send to the web-server and the connection to send it over. The assumption is that there will be 6 cases to build the BaseCommand -- cases where no data is sent, cases where an interface has to be chosen but no action, cases with an interface and an action, and cases with an action but no interface. An action has to be sent if something is being changed, but should not be sent just to read the html. An interface needs to be chosen for pages dealing with wireless, but not for some of the pages not specific to wireless (e.g. the `LAN` page).
+
+The data-dictionaries that need to be built will then meet the following cases (0 mean does not have this data, 1 mean has this data):
+
+.. csv-table:: Base Data Dictionaries
+   :header: Action,2.4 GHz,5 GHz
+
+   0,0,0
+   0,0,1
+   0,1,0
+   1,0,0
+   1,0,1
+   1,1,0
+
+There are six rather than eight cases because you can only choose one Interface from the drop-down menu, not both.   
 
 .. uml::
 
    BroadcomBaseCommand -|> BaseClass
-   BroadcomBaseCommand <|- Base5GHzCommand
-   BroadcomBaseCommand <|- Base24GHzCommand
    BroadcomBaseCommand o- HTTPConnection
 
 .. autosummary::
    :toctree: api
 
    BroadcomBaseCommand
+   BroadcomBaseData.base_data
+   BroadcomBaseData.singular_data
+   BroadcomBaseData.added_data
+   BroadcomBaseData.non_base_data
+   BroadcomBaseData.data
+   BroadcomBaseData.__add__
+   BroadcomBaseData.__sub__
 
+This is getting a little convoluted so I will try and explain the data-dictionaries:
 
+   * ``base_data``: this is set based on the band and action parameters and never changes
+   * ``singular_data``: This is data added for a specific command to change settings
+   * ``added_data``: this will be changed by the add and subtract operators
+   * ``non_base_data``: this is ``singular_data`` updated by ``added_data``
+   * ``data``: this is ``base_data`` updated by ``non_base_data``
 
-.. _base-5ghz-command:
-
-Base5GHzCommand
-~~~~~~~~~~~~~~~
+The reason for all these data-dictionaries is so that commands can be composed from other commands. ``base_data`` and ``singular_data`` are part of the command-definition and so never change. ``non_base_data`` and ``data`` are generated every time ``added_data`` is changed (using the operators, if the ``added_data`` is changed directly then ``data`` and ``non_base_data`` will need to be reset). Only ``added_data`` is intended to change, and it is only changed using the other command's ``non_base_data`` so it will not change the original's Wireless Interface.
 
 
 

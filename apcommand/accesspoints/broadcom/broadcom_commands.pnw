@@ -185,52 +185,6 @@ This is getting a little convoluted so I will try and explain the data-dictionar
 
 The reason for all these data-dictionaries is so that commands can be composed from other commands. ``base_data`` and ``singular_data`` are part of the command-definition and so never change. ``non_base_data`` and ``data`` are generated every time ``added_data`` is changed (using the operators, if the ``added_data`` is changed directly then ``data`` and ``non_base_data`` will need to be reset). Only ``added_data`` is intended to change, and it is only changed using the other command's ``non_base_data`` so it will not change the original's Wireless Interface.
 
-<<name='BroadcomBaseQuery', echo=False>>=
-class BroadcomBaseQuery(BaseClass):
-    """
-    A base to query the server
-    """
-    __metaclass__ = ABCMeta
-    def __init__(self, connection, band=None):        
-        """
-        BroadcomBaseQuery constructor
-
-        :param:
-
-         - `connection` : a connection to the AP
-         - `band`: 2.4, 5 or None (depending on the page)
-        """
-        self.connection = connection
-        self.band = band
-        self._data = None
-        self._query = None
-        return
-
-    @property
-    def data(self):
-        """
-        Data dictionary to give to the server
-        """
-        if self._data is None:
-            self._data = BroadcomBaseData(action=False,
-                                          band=self.band)
-        return self._data
-
-    @abstractproperty
-    def query(self):
-        """
-        A querier to interpret the output of the connection
-        """
-        return
-
-    @abstractmethod
-    def __call__(self):
-        """
-        The main method to query the server
-        """
-        return    
-@
-
 <<name='BroadcomBaseCommand', echo=False>>=
 class BroadcomBaseCommand(BaseClass):
     """
@@ -349,6 +303,13 @@ class EvilChild(BroadcomBaseCommand):
         return
     def query(self):
         return
+
+    @property
+    def singular_data(self):
+        return
+    
+    def __call__(self):
+        return
     
 class TestBroadcomCommands(unittest.TestCase):
     def setUp(self):
@@ -365,19 +326,19 @@ class TestBroadcomCommands(unittest.TestCase):
         EvilChild(self.connection)
         return
 
-    def test_base_commands(self):
-        """
-        Do the band-specific base-commands build the right data and queries?
-        """
-        base_5 = Base5GHzCommand(connection=self.connection)
-        data_dict = action_dict()
-        data_dict['wl_unit'] = '1'
-        self.assertEqual(data_dict, base_5.base_data)
-
-        base_24 = Base24GHzCommand(connection=self.connection)
-        data_dict['wl_unit'] = '0'
-        self.assertEqual(data_dict, base_24.base_data)
-        return
+    #def test_base_commands(self):
+    #    """
+    #    Do the band-specific base-commands build the right data and queries?
+    #    """
+    #    base_5 = Base5GHzCommand(connection=self.connection)
+    #    data_dict = action_dict()
+    #    data_dict['wl_unit'] = '1'
+    #    self.assertEqual(data_dict, base_5.base_data)
+    #
+    #    base_24 = Base24GHzCommand(connection=self.connection)
+    #    data_dict['wl_unit'] = '0'
+    #    self.assertEqual(data_dict, base_24.base_data)
+    #    return
 
     def test_add(self):
         return
