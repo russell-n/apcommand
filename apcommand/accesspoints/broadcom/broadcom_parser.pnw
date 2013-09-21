@@ -85,6 +85,7 @@ class SoupError(RuntimeError):
     """
 @
 
+.. _broadcom-radio-soup:
 The BroadcomRadioSoup
 ---------------------
 

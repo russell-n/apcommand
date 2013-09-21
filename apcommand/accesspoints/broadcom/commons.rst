@@ -8,15 +8,17 @@ To prevent circular imports common methods, functions, and constants are put in 
 Constants
 ---------
 
+Some of the constants are gathered into a class in order to try and make it easier to understand what they refer to. In particular the data names and values (e.g. 'wl_unit' and '0') are grouped by page.
+
 ::
 
     ZERO = '0'
     ONE = '1'
-    UNIT_24_GHZ, UNIT_5_GHZ = ZERO, ONE
+    
     RADIO_OFF, RADIO_ON = ZERO, ONE
     RADIO_PAGE = 'radio.asp'
     SSID_PAGE = 'ssid.asp'
-    WIRELESS_INTERFACE = 'wl_unit'
+    
     INTERFACE = 'wl_radio'
     CONTROL_CHANNEL = 'wl_channel'
     SIDEBAND = 'wl_nctrlsb'
@@ -24,6 +26,19 @@ Constants
     CHANNELS_24GHZ = [str(channel) for channel in xrange(1,12)]
     SSID = 'wl_ssid'
     
+
+
+
+BroadcomWirelessData
+~~~~~~~~~~~~~~~~~~~~
+
+This holds settings for the `Wireless Interface` drop-down which decides which interface will be affected by changed settings. It is used on several pages so I pulled it out by itself.
+
+.. uml::
+
+    BroadcomWirelessData : wireless_interface
+    BroadcomWirelessData : interface_5_ghz
+    BroadcomWirelessData : interface_24_ghz
 
 
 
@@ -49,8 +64,6 @@ These are decorators to do the repetetive calls common to many methods.
             self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
             self.connection.path = RADIO_PAGE
             outcome = method(self, *args, **kwargs)
-            self.logger.debug('Sleeping for {0} seconds'.format(self.sleep))
-            time.sleep(self.sleep)
             return outcome
         return _method
     
@@ -63,9 +76,12 @@ These are decorators to do the repetetive calls common to many methods.
             self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
             self.connection.path = SSID_PAGE
             outcome = method(self, *args, **kwargs)
-            self.logger.debug("Sleeping for {0} seconds".format(self.sleep))
-            time.sleep(self.sleep)
             return outcome
         return _method
     
+
+
+
+Data
+----
 

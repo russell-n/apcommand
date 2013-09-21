@@ -46,7 +46,7 @@ from abc import ABCMeta, abstractproperty
 
 # this package
 from apcommand.baseclass import BaseClass
-from commons import UNIT_5_GHZ, UNIT_24_GHZ, WIRELESS_INTERFACE
+from commons import BroadcomWirelessData
 from commons import RADIO_PAGE
 from commons import SSID_PAGE
 from broadcom_parser import BroadcomRadioSoup
@@ -195,7 +195,7 @@ class BroadcomBaseQuerier(BaseClass):
         """
         Sets the soup.html to the radio page
         """
-        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
+        text = self.connection(data={BroadcomWirelessData.wireless_interface:self.band}).text
         self.soup.html = text        
         return
 
@@ -204,7 +204,7 @@ class BroadcomBaseQuerier(BaseClass):
         """
         sets soup.html to the ssid page
         """
-        text = self.connection(data={WIRELESS_INTERFACE:self.band}).text
+        text = self.connection(data={BroadcomWirelessData.wireless_interface:self.band}).text
         self.soup.html = text
         return
     
@@ -276,7 +276,7 @@ class Broadcom24GHzQuerier(BroadcomBaseQuerier):
         The (Wireless Interface menu) index for 5GHz
         """
         if self._band is None:
-            self._band = UNIT_24_GHZ
+            self._band = BroadcomWirelessData.interface_24_ghz
         return self._band
 
     @property
@@ -323,7 +323,7 @@ class Broadcom5GHzQuerier(BroadcomBaseQuerier):
         The (Wireless Interface menu) index for 5GHz
         """
         if self._band is None:
-            self._band = UNIT_5_GHZ
+            self._band = BroadcomWirelessData.interface_5_ghz
         return self._band
 
     @property

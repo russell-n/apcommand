@@ -11,20 +11,44 @@ import time
 Constants
 ---------
 
+Some of the constants are gathered into a class in order to try and make it easier to understand what they refer to. In particular the data names and values (e.g. 'wl_unit' and '0') are grouped by page.
+
 <<name='constants', wrap=False>>=
 ZERO = '0'
 ONE = '1'
-UNIT_24_GHZ, UNIT_5_GHZ = ZERO, ONE
+
 RADIO_OFF, RADIO_ON = ZERO, ONE
 RADIO_PAGE = 'radio.asp'
 SSID_PAGE = 'ssid.asp'
-WIRELESS_INTERFACE = 'wl_unit'
+
 INTERFACE = 'wl_radio'
 CONTROL_CHANNEL = 'wl_channel'
 SIDEBAND = 'wl_nctrlsb'
 CHANNELS_5GHZ = '36 44 149 157'.split()
 CHANNELS_24GHZ = [str(channel) for channel in xrange(1,12)]
 SSID = 'wl_ssid'
+@
+
+BroadcomWirelessData
+~~~~~~~~~~~~~~~~~~~~
+
+This holds settings for the `Wireless Interface` drop-down which decides which interface will be affected by changed settings. It is used on several pages so I pulled it out by itself.
+
+.. uml::
+
+    BroadcomWirelessData : wireless_interface
+    BroadcomWirelessData : interface_5_ghz
+    BroadcomWirelessData : interface_24_ghz
+
+<<name='BroadcomWirelessData', echo=False>>=
+class BroadcomWirelessData(object):
+    """
+    A holder of data for the `Wireless Interface`
+    """
+    __slots__ = ()
+    wireless_interface = 'wl_unit'
+    interface_5_ghz = ONE
+    interface_24_ghz = ZERO
 @
 
 Decorators
@@ -64,5 +88,26 @@ def ssid_page(method):
     return _method
 @
 
+Data
+----
 
+<<name='dictionary_creators', echo=False>>=
+# a dictionary for data that changes the state of the broadcom
+action_dict = lambda: {'action':'Apply'}
 
+def set_24_data():
+    """
+    return data dictionary to set 2.4 GHz channel
+    """
+    set_data = action_dict()
+    set_data[WIRELESS_INTERFACE] = UNIT_24_GHZ
+    return set_data
+
+def set_5_data():
+    """
+    return data dictionary to set 5 GHz channel
+    """
+    set_data = action_dict()
+    set_data[WIRELESS_INTERFACE] = UNIT_5_GHZ
+    return set_data
+@
