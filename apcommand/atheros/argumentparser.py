@@ -187,10 +187,3 @@ class Arguments(object):
         command.set_defaults(function=self.subcommands.command)
         return
 # end class Arguments
-
-
-if __name__ == "__main__":
-    arguments = Arguments()
-    arguments.add_arguments()
-    arguments.add_subparsers()
-    arguments.parser.print_help()

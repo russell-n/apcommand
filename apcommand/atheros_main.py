@@ -1,25 +1,9 @@
-The Main Atheros Module
-=======================
 
-This is the `main` module, it provides the entry-point for controlling the atheros AP when it is run at the command-line.
-
-Use Case 1
-----------
-
-.. uml::
-
-   User -> (Brings AP Up)
-
-In the first case the user brings the Access Point up. For the default case (|atheros|) the command-line interface::
-
-   apcontrol up
-
-<<name='imports', echo=False>>=
 # this package
-from argumentparser import Arguments
+from atheros.argumentparser import Arguments
 from log_setter import set_logger
-@
-<<name='enable_debugger', echo=False>>=
+
+
 def enable_debugger(args):
     """
     Enables interactive debugger (pudb takes precedence over pdb)
@@ -36,8 +20,8 @@ def enable_debugger(args):
         import pdb
         pdb.set_trace()
     return
-@
-<<name="main", echo=False>>=
+
+
 def main():
     """
     Runs the command-line interface
@@ -49,9 +33,7 @@ def main():
         enable_debugger(args)
     args.function(args)
     return
-@
-<<name='__main__', echo=False>>=
+
+
 if __name__ == "__main__":
     main()
-@
-

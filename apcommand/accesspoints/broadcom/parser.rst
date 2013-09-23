@@ -80,6 +80,7 @@ Right now I am not sure what kind of errors are going to come up, but for runtim
 
 
 
+.. _broadcom-radio-soup:
 The BroadcomRadioSoup
 ---------------------
 

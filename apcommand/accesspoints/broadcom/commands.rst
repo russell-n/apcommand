@@ -109,3 +109,20 @@ The reason for all these data-dictionaries is so that commands can be composed f
 
 
 
+Enable Interface
+----------------
+
+This is a command implementation to enable the wireless interface.
+
+.. uml::
+
+   EnableInterface -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   EnableInterface
+
+
+
+
