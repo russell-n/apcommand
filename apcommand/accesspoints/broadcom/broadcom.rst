@@ -66,41 +66,12 @@ The BroadcomBCM94718NR
    set_5_data
    
 
-
 .. autosummary::
    :toctree: api
 
    RadioPageConnection
 
 
-
-
-The Broadcom Commands
----------------------
-
-I have decided to break the commands sent to the Broadcom into atomic actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a long while and like most things here this will turn into a code-maintenance nightmare. To ameliorate the knowledge-gain, knowledge-lost cycle that is common to projects here I am trying to make the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not clarify anything but I am hopeful that once the pattern is recognized only the relevant classes need be found and examined and so smaller will be better.
-
-To allow for the aggregation of commands each command class has an `add` method which will allow other commands to be added to their data-dictionary. This way the `Apply` action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.
-
-A hypothetical example::
-
-   connection = HTTPConnection('192.168.1.1', password='admin', path='radio.asp')
-   command = Set24GHzChannel(connection)
-   other_command = Disable5GHz(connection)
-   command += other_command
-   command('11')
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomBaseCommand
-
-
-
-.. autosummary::
-   :toctree: api
-
-   Base5GHzCommand
 
 
 
@@ -120,6 +91,8 @@ A hypothetical example::
    :toctree: api
 
    BroadcomChannelReader
+
+
 
 
 []

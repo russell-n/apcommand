@@ -15,17 +15,28 @@ Some of the constants are gathered into a class in order to try and make it easi
     ZERO = '0'
     ONE = '1'
     
-    RADIO_OFF, RADIO_ON = ZERO, ONE
-    RADIO_PAGE = 'radio.asp'
     SSID_PAGE = 'ssid.asp'
     
-    INTERFACE = 'wl_radio'
     CONTROL_CHANNEL = 'wl_channel'
     SIDEBAND = 'wl_nctrlsb'
-    CHANNELS_5GHZ = '36 44 149 157'.split()
-    CHANNELS_24GHZ = [str(channel) for channel in xrange(1,12)]
     SSID = 'wl_ssid'
     
+
+
+
+BroadcomRadioData
+~~~~~~~~~~~~~~~~~
+
+This holds constants for the radio.asp page.
+
+.. uml::
+
+   BroadcomRadioData : channels_24ghz
+   BroadcomRadioData : channels_5ghz
+   BroadcomRadioData : interface
+   BroadcomRadioData : radio_page
+   BroadcomRadioData : radio_on
+   BroadcomRadioData : radio_off
 
 
 
@@ -45,7 +56,7 @@ This holds settings for the `Wireless Interface` drop-down which decides which i
 Decorators
 ----------
 
-These are decorators to do the repetetive calls common to many methods.
+These are decorators to do the repetitive calls common to many methods.
 
 .. autosummary::
    :toctree: api
@@ -61,8 +72,8 @@ These are decorators to do the repetetive calls common to many methods.
         Decorator: sets connection.path to radio.asp before, sleeps after
         """
         def _method(self, *args, **kwargs):
-            self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
-            self.connection.path = RADIO_PAGE
+            self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
+            self.connection.path = BroadcomRadioData.radio_page
             outcome = method(self, *args, **kwargs)
             return outcome
         return _method

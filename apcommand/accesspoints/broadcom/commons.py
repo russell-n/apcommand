@@ -6,16 +6,26 @@ import time
 ZERO = '0'
 ONE = '1'
 
-RADIO_OFF, RADIO_ON = ZERO, ONE
-RADIO_PAGE = 'radio.asp'
 SSID_PAGE = 'ssid.asp'
 
-INTERFACE = 'wl_radio'
 CONTROL_CHANNEL = 'wl_channel'
 SIDEBAND = 'wl_nctrlsb'
-CHANNELS_5GHZ = '36 44 149 157'.split()
-CHANNELS_24GHZ = [str(channel) for channel in xrange(1,12)]
 SSID = 'wl_ssid'
+
+
+class BroadcomRadioData(object):
+    """
+    A holder of constants for setting or checking the channel
+    """
+    __slots__ = ()
+    channels_5ghz =  '36 44 149 157'.split()
+    channels_24ghz = [str(channel) for channel in xrange(1,12)]
+    radio_page = 'radio.asp'
+    interface = 'wl_radio'
+    radio_off = ZERO
+    radio_on = ONE
+    
+# end BroadcomRadioData
 
 
 class BroadcomWirelessData(object):
@@ -34,8 +44,8 @@ def radio_page(method):
     Decorator: sets connection.path to radio.asp before, sleeps after
     """
     def _method(self, *args, **kwargs):
-        self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
-        self.connection.path = RADIO_PAGE
+        self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
+        self.connection.path = BroadcomRadioData.radio_page
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
@@ -60,14 +70,16 @@ def set_24_data():
     """
     return data dictionary to set 2.4 GHz channel
     """
+    data = BroadcomWirelessData
     set_data = action_dict()
-    set_data[WIRELESS_INTERFACE] = UNIT_24_GHZ
+    set_data[data.wireless_interface] = data.interface_24_ghz
     return set_data
 
 def set_5_data():
     """
     return data dictionary to set 5 GHz channel
     """
+    data = BroadcomWirelessData
     set_data = action_dict()
-    set_data[WIRELESS_INTERFACE] = UNIT_5_GHZ
+    set_data[data.wireless_interface] = data.interface_5_ghz
     return set_data

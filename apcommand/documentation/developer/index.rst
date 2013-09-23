@@ -1,22 +1,47 @@
 Developer Documentation
 =======================
 
-Access Points:
+Access Points
+-------------
+
+This is code specific to the particular access-point.
+
+Controllers
+~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 2
 
    Atheros <../../accesspoints/atheros>
    Broadcom <../../accesspoints/broadcom/index>
-   
-Parsers:
+
+Command-Line Interface
+~~~~~~~~~~~~~~~~~~~~~~
+
+Atheros:
 
 .. toctree::
    :maxdepth: 1
 
-   Broadcom Radio Soup <../../accesspoints/broadcom/broadcom_parser>
+   The Main Module <../../atheros_main>
+   The arguments <../../atheros/argumentparser>
+   The sub-commands <../../atheros/subcommands>
 
-Miscellany:
+Broadcom:
+
+.. toctree::
+   :maxdepth: 1
+
+   The Main Module <../../broadcom_main>
+   The arguments <../../broadcom/argumentparser>
+   The sub-commands <../../broadcom/subcommands>
+
+Infrastructure
+--------------
+
+This is code that supports the execution of the commands
+
+Logging:
 
 .. toctree::
    :maxdepth: 1
@@ -24,14 +49,6 @@ Miscellany:
    The Base Class <../../baseclass>
    The Log Setter <../../log_setter>
 
-Command-Line Interface:
-
-.. toctree::
-   :maxdepth: 2
-
-   The arguments <../../argumentparser>
-   The sub-commands <../../subcommands>
-   The Atheros Main Module <../../atheros>
 
 Helper Commands:
 
@@ -43,7 +60,7 @@ Helper Commands:
    Iwlist <../../commands/iwlist>
    Settings Validator <../../commands/settingsvalidator>
 
-Common Modules:
+Shared Modules:
 
 .. toctree::
    :maxdepth: 1
@@ -56,7 +73,7 @@ Common Modules:
 Connections:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    Enumerations <../../connections/enumerations>
    Local Connection <../../connections/localconnection>
@@ -65,6 +82,14 @@ Connections:
    Shared Counter <../../connections/sharedcounter>
    Telnect Connection <../../connections/telnetconnection>
    HTTP Connection <../../connections/httpconnection>
+
+
+Appendices
+----------
+
+This is reference information to help understand what's going on.
+   
+
    
 Arens Code:
 

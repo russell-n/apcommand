@@ -85,7 +85,7 @@ class SubCommand(BaseClass):
                 channel = ap.query[key].channel
                 print "   Channel: {0}".format(channel)
                 state = ap.query[key].state
-                print "  ({0})".format(state)
+                print "  {0}".format(state)
                 sideband = ap.query[key].sideband
                 if sideband is None:
                     sideband = ''
@@ -106,6 +106,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `band` and `ssid` attributes
         """
         ap = self.access_point(args)
+
         ap.set_ssid(ssid=args.ssid, band=args.band)
         return
 
@@ -148,6 +149,20 @@ class SubCommand(BaseClass):
         ap.set_ip(address=args.ipaddress,
                   mask=args.subnetmask)
         return
+
+    @try_except
+    def enable(self, args):
+        """
+        Enables an AP interface
+
+        :param:
+
+         - `args`: namespace with `interface` attribute
+        """
+        ap = self.access_point(args)
+        ap.enable(interface=interface)
+        return
+        
 
 
 # python standard library

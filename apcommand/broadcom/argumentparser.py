@@ -122,7 +122,7 @@ class Arguments(object):
         # change the channel
         channel = self.subparsers.add_parser('channel',
                                              help='Change the AP channel')
-        channel.add_argument('channel', help='Channel to set',
+        channel.add_argument('channel', help='Channel to set (none to get current channels)',
                              nargs='?', default=None)
         channel.set_defaults(function=self.subcommands.channel)
 
@@ -157,10 +157,10 @@ class Arguments(object):
         security.add_argument('-c', '--cipher')
         security.set_defaults(function=self.subcommands.security)
 
-        # send an arbitrary command
-        command = self.subparsers.add_parser('command',
-                                             help='Execute an arbitrary command.')
-        command.add_argument('command')
-        command.set_defaults(function=self.subcommands.command)
+        # enable an interface
+        command = self.subparsers.add_parser('enable',
+                                             help='Enable an interface.')
+        command.add_argument('interface', help='Interface to enable (use band -- 2.4 or 5)')
+        command.set_defaults(function=self.subcommands.enable)
         return
 # end class Arguments

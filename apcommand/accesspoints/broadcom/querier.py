@@ -5,9 +5,9 @@ from abc import ABCMeta, abstractproperty
 # this package
 from apcommand.baseclass import BaseClass
 from commons import BroadcomWirelessData
-from commons import RADIO_PAGE
+from commons import BroadcomRadioData
 from commons import SSID_PAGE
-from broadcom_parser import BroadcomRadioSoup
+from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
 
 
 class PageEnumeration(object):
@@ -33,8 +33,8 @@ def radio_page(method):
         self.logger.debug('Setting current_page to {0}'.format(enumeration))
         self.current_page = enumeration
 
-        self.logger.debug("Setting connection.path to '{0}'".format(RADIO_PAGE))
-        self.connection.path = RADIO_PAGE
+        self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
+        self.connection.path = BroadcomRadioData.radio_page
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
