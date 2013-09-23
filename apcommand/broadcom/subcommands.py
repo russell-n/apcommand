@@ -160,7 +160,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` attribute
         """
         ap = self.access_point(args)
-        ap.enable(interface=interface)
+        ap.enable(interface=args.interface)
         return
         
 
@@ -176,120 +176,6 @@ class TestSubCommand(unittest.TestCase):
         self.logger = MagicMock()
         self.sub_command = SubCommand()
         self.sub_command._logger = self.logger
-        return
-
-    def test_args(self):
-        """
-        Does the correct set of arguments get passed to the ap
-        """
-        args = MagicMock()
-        del args.channel
-        args.hostname = 'mike'
-        args.username = 'bob'
-        args.password = 'me'
-        ap = MagicMock()
-        with patch('apcommand.accesspoints.atheros', ap):
-            # 000
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with(hostname=args.hostname,
-                                                username=args.username,
-                                                password=args.password)
-            args.password = None
-            # 001
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with(hostname=args.hostname,
-                                                username=args.username)
-            args.username = None
-            # 011
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with(hostname=args.hostname)
-            
-            args.password = 'cow'
-            # 010
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with(hostname=args.hostname,
-                                                password=args.password)
-            args.hostname=None
-            # 110
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with(password=args.password)
-            args.password = None
-            # 111
-            access_point = self.sub_command.access_point(args)
-            ap.AtherosAR5KAP.assert_called_with()            
-        return
-        
-
-    def test_up(self):
-        """
-        Does it have the up-method and will it catch exception?
-        """
-        args = MagicMock()
-        del args.channel
-        self.assertTrue(hasattr(self.sub_command, 'up'))
-        ap_up = MagicMock()
-        ap_instance = MagicMock()
-        ap_up.AtherosAR5KAP.return_value = ap_instance
-        error_message = "this is an error"
-        ap_instance.up.side_effect = Exception(error_message)
-        base = MagicMock()
-        with patch('apcommand.accesspoints.atheros', ap_up):
-            self.sub_command.up(args)
-            ap_instance.up.assert_called_with()
-        return
-
-    def test_down(self):
-        """
-        Does it have the down-method and will it catch exception?
-        """
-        args = MagicMock()
-        del args.channel
-        self.assertTrue(hasattr(self.sub_command, 'down'))
-        ap_down = MagicMock()
-        ap_instance = MagicMock()
-        ap_down.AtherosAR5KAP.return_value = ap_instance
-        error_message = "this is an error"
-        ap_instance.down.side_effect = Exception(error_message)
-        with patch('apcommand.accesspoints.atheros', ap_down):
-            self.sub_command.down(args)
-            ap_instance.down.assert_called_with()
-        return
-
-    def test_destroy(self):
-        """
-        Does it have a method to destroy a (virtual) interface?
-        """
-        self.assertTrue(hasattr(self.sub_command, 'destroy'))
-        args = MagicMock()
-        # args.channel has to be deleted or hasattr will return True
-        del args.channel
-        args.interface = 'ath0'
-        ap_destroy = MagicMock()
-        ap_instance = MagicMock()
-        ap_destroy.AtherosAR5KAP.return_value = ap_instance
-        error_message = "this is an error"
-        ap_instance.destroy.side_effect = Exception(error_message)
-        with patch('apcommand.accesspoints.atheros', ap_destroy):
-            self.sub_command.destroy(args)
-            ap_instance.destroy.assert_called_with('ath0')
-        return
-
-    def test_status(self):
-        """
-        Does the sub-command call the ap's status method?
-        """
-        self.assertTrue(hasattr(self.sub_command, 'status'))
-        args = MagicMock()
-        del args.channel
-        args.interface = 'ath0'
-        ap_status = MagicMock()
-        ap_instance = MagicMock()
-        ap_status.AtherosAR5KAP.return_value = ap_instance
-        error_message = "this is an error"
-        ap_instance.status.side_effect = Exception(error_message)
-        with patch('apcommand.accesspoints.atheros', ap_status):
-            self.sub_command.status(args)
-            ap_instance.status.assert_called_with('ath0')
         return
 
     def test_channel(self):
@@ -311,18 +197,3 @@ class TestSubCommand(unittest.TestCase):
                                                        bandwidth=args.bandwidth)
         return
 
-    def test_security(self):
-        """
-        Does the set_security method get called correctly?
-        """
-        args = MagicMock()
-        args.type = 'open'
-        ap_module = MagicMock()
-        ap_instance = MagicMock(spec=apcommand.accesspoints.atheros.AtherosAR5KAP)
-        ap_module.AtherosAR5KAP.return_value = ap_instance
-        error_message = 'security setting error'
-        ap_instance.set_security.side_effect = Exception(error_message)
-        with patch('apcommand.accesspoints.atheros', ap_module):
-            self.sub_command.security(args)
-            ap_instance.set_security.assert_called_with(security_type=args.type)
-        return

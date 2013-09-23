@@ -202,7 +202,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with `interface` attribute
         """
         ap = self.access_point(args)
-        ap.enable(interface=interface)
+        ap.enable(interface=args.interface)
         return
         
 @
