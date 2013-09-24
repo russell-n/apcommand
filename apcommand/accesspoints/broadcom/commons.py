@@ -81,3 +81,7 @@ def set_5_data():
     set_data = action_dict()
     set_data[data.wireless_interface] = data.interface_5_ghz
     return set_data
+
+
+class BroadcomError(RuntimeError):
+    "An Error to raise by broadcom classes"

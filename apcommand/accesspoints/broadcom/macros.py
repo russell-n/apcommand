@@ -4,7 +4,7 @@ from apcommand.baseclass import BaseClass
 from apcommand.accesspoints.broadcom.commons import BroadcomRadioData
 from apcommand.accesspoints.broadcom.commands import DisableInterface, EnableInterface
 from apcommand.accesspoints.broadcom.commands import SetChannel, SetSideband
-from apcommand.accesspoints.broadcom.broadcom import BroadcomError
+from apcommand.accesspoints.broadcom.commons import BroadcomError
 
 
 class ChannelChanger(BaseClass):

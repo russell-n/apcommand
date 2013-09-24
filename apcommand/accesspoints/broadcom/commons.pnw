@@ -137,3 +137,18 @@ def set_5_data():
     set_data[data.wireless_interface] = data.interface_5_ghz
     return set_data
 @
+
+Errors
+------
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomError
+
+<<name='BroadcomError', echo=False>>=
+class BroadcomError(RuntimeError):
+    "An Error to raise by broadcom classes"
+@
+
+

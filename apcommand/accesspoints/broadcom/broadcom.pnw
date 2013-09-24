@@ -62,15 +62,6 @@ from commons import set_24_data, set_5_data, ssid_page
 from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
 from macros import ChannelChanger
 @
-.. autosummary::
-   :toctree: api
-
-   BroadcomError
-
-<<name='BroadcomError', echo=False>>=
-class BroadcomError(RuntimeError):
-    "An Error to raise by broadcom classes"
-@
 
 .. autosummary::
    :toctree: api
