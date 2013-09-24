@@ -7,7 +7,9 @@ Since the :ref:`commands <broadcom-commands>` have been broken down to do only o
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.accesspoints.broadcom.commons import BroadcomRadioData
-from apcommand.accesspoints.broadcom.commands import DisableInterface
+from apcommand.accesspoints.broadcom.commands import DisableInterface, EnableInterface
+from apcommand.accesspoints.broadcom.commands import SetChannel, SetSideband
+from apcommand.accesspoints.broadcom.broadcom import BroadcomError
 @
 
 The ChannelChanger
@@ -135,7 +137,6 @@ class ChannelChanger(BaseClass):
 <<name='test_imports', echo=False>>=
 # python standard library
 import unittest
-import random
 
 # third-party
 from mock import MagicMock, patch

@@ -2,7 +2,9 @@
 # this package
 from apcommand.baseclass import BaseClass
 from apcommand.accesspoints.broadcom.commons import BroadcomRadioData
-from apcommand.accesspoints.broadcom.commands import DisableInterface
+from apcommand.accesspoints.broadcom.commands import DisableInterface, EnableInterface
+from apcommand.accesspoints.broadcom.commands import SetChannel, SetSideband
+from apcommand.accesspoints.broadcom.broadcom import BroadcomError
 
 
 class ChannelChanger(BaseClass):
@@ -117,7 +119,6 @@ class ChannelChanger(BaseClass):
 
 # python standard library
 import unittest
-import random
 
 # third-party
 from mock import MagicMock, patch

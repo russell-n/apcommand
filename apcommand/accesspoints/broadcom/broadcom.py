@@ -5,12 +5,10 @@ import time
 # this package
 from apcommand.baseclass import BaseClass
 import apcommand.connections.httpconnection as httpconnection
-from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
+
 from commons import BroadcomRadioData
-from commons import ssid_page, radio_page
-from commons import BroadcomWirelessData
 from commons import SSID, SSID_PAGE
-from commons import set_24_data, set_5_data, action_dict
+from commons import set_24_data, set_5_data, ssid_page
 from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
 from macros import ChannelChanger
 
@@ -90,26 +88,6 @@ class BroadcomBCM94718NR(BaseClass):
             self._channel_changer = ChannelChanger(connection=self.connection)
         return self._channel_changer
 
-    @property
-    def enable_command(self):
-        """
-        An interface enable command
-        """
-        if self._enable_command is None:
-            self._enable_command = EnableInterface(connection=self.connection)
-        return self._enable_command
-
-    def enable(self, interface):
-        """
-        Enables the interface on the AP
-
-        :param:
-
-         - `interface`: '2.4' or '5'
-        """
-        self.enable.band = interface
-        self.enable()
-        return
 
     @property
     def query(self):
@@ -182,7 +160,6 @@ import string
 
 # third party
 from mock import MagicMock, patch, call
-from nose.tools import raises
 
 
 EMPTY_STRING = ''
