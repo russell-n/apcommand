@@ -41,25 +41,3 @@ Collaborators:
    SubCommand.command
    SubCommand.ipaddress
 
-
-
-
-Testing The SubCommand
-----------------------
-
-The sub-command is largely ignorant of what the objects it holds does so this is mainly to check that the methods exist and if called will catch exceptions.
-
-.. autosummary::
-   :toctree: api
-
-   TestSubCommand.test_up
-   TestSubCommand.test_down
-   TestSubCommand.test_destroy
-   TestSubCommand.test_args
-   TestSubCommand.test_status
-   TestSubCommand.test_security
-
-
-
-
-

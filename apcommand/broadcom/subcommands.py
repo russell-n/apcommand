@@ -80,8 +80,6 @@ class SubCommand(BaseClass):
             for band in '2.4 5'.split():
                 print "{0} GHz:".format(band)
                 key = band[0]
-                # because there's a sleep between the web-calls this is slow
-                # so it prints after every line to give some feedback
                 channel = ap.query[key].channel
                 print "   Channel: {0}".format(channel)
                 state = ap.query[key].state
@@ -106,8 +104,18 @@ class SubCommand(BaseClass):
          - `args`: namespace with `band` and `ssid` attributes
         """
         ap = self.access_point(args)
-
-        ap.set_ssid(ssid=args.ssid, band=args.band)
+        if args.ssid is None:
+            indent = ' ' * 3
+            if args.band is None:
+                print "2.4 GHz:"
+                print indent + ap.get_ssid('2.4')
+                print "5 GHz:"
+                print indent + ap.get_ssid('5')
+            else:
+                "{0} GHz:".format(args.band)
+                print indent + ap.get_ssid(args.band)
+        else:
+            ap.set_ssid(ssid=args.ssid, band=args.band)
         return
 
     @try_except
@@ -163,37 +171,3 @@ class SubCommand(BaseClass):
         ap.enable(interface=args.interface)
         return
         
-
-
-# python standard library
-import unittest
-# third-party
-from mock import MagicMock, patch
-
-
-class TestSubCommand(unittest.TestCase):
-    def setUp(self):
-        self.logger = MagicMock()
-        self.sub_command = SubCommand()
-        self.sub_command._logger = self.logger
-        return
-
-    def test_channel(self):
-        """
-        Does the set_channel method get called correctly?
-        """
-        args = MagicMock()
-        args.channel = '1'
-        args.mode = '11NG'
-        args.bandwidth='HT20'
-        ap_channel = MagicMock()
-        ap_instance = MagicMock()
-        ap_channel.AtherosAR5KAP.return_value = ap_instance
-        error_message = 'channel setting error'
-        ap_instance.set_channel.side_effect = Exception(error_message)
-        with patch('apcommand.accesspoints.atheros', ap_channel):
-            self.sub_command.channel(args)
-            ap_instance.set_channel.assert_called_with(channel=args.channel, mode=args.mode,
-                                                       bandwidth=args.bandwidth)
-        return
-

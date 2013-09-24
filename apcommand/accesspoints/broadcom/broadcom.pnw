@@ -28,8 +28,8 @@ Still, the use of `curl` seems inelegant, so I will attempt to do it with the py
 
 .. note:: The broadcom needs time between calls -- if you try to access the web server too soon after a previous call to it might not respond or not respond correctly.
 
-The BroadcomBCM94718NR
-----------------------
+The BroadcomBCM94718NR (Henceforth to be known as 'George')
+-----------------------------------------------------------
 
 .. uml::
 
@@ -197,6 +197,12 @@ class BroadcomBCM94718NR(BaseClass):
         self.connection(data=data)
         return
 
+    def get_ssid(self, band):
+        """
+        Gets the ssid for the interface matching the band
+        """
+        return self.query[band[0]].ssid
+
     def set_channel(self, channel):
         """
         Sets the wifi channel
@@ -215,9 +221,6 @@ class BroadcomBCM94718NR(BaseClass):
         return self.query[band[0]].channel
 # end Class BroadcomBCM94718NR        
 @
-
-
-
 
 <<name='test_imports', echo=False>>=
 # python standard library
