@@ -136,5 +136,16 @@ This is an aggregating class to try and make it easier to use the queriers witho
 
    BroadcomQuerier
 
+The BroadcomQuerier is acting as a pass-through to the aggregated classes -- whatever property they have that you can pull from them will be pulled, if they don't have an attribute you want you'll get an error. Such is life.
+
+Example to get the channel for each band::
+
+    q = BroadcomQuerier(connection=connection, band='2.4')
+    channel_24 = q.channel
+
+    q.band = 5
+    channel_5 = q.channel
+    
+
 
 

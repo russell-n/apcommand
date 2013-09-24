@@ -2,12 +2,11 @@ The Broadcom Commands
 =====================
 
 .. currentmodule: apcommand.accesspoints.broadcom.broadcom_commands
-
+.. _broadcom-commands:
 Contents:
 
    * :ref:`Introduction <broadcom-commands-introduction>`
    * :ref:`BroadcomBaseData <broadcom-base-data>`
-
    * :ref:`BroadcomBaseCommand <broadcom-base-command>`
 
 
@@ -64,6 +63,8 @@ The Broadcom Base Command
 -------------------------
 
 As mentioned above, a `command` is a bundle of data to send to the web-server and the connection to send it over. The assumption is that there will be 6 cases to build the BaseCommand -- cases where no data is sent, cases where an interface has to be chosen but no action, cases with an interface and an action, and cases with an action but no interface. An action has to be sent if something is being changed, but should not be sent just to read the html. An interface needs to be chosen for pages dealing with wireless, but not for some of the pages not specific to wireless (e.g. the `LAN` page).
+
+To make this closer to a *Command* in the Design Patterns sense, each command also needs a Querier so that it can check the state prior to making a change. I still need to figure out how an undo would work if the data was aggregated... maybe have an undo flag that changes the behavior of the operators... but for now calls to a command will only undo its action (and calling a command will only get it's previous state, not the states of all the other commands whose data has been added to it). I don't know if this makes sense yet, but since this is meant to be used at the command-line it will probably never get used, it is an exercise as much as anything else.
 
 The data-dictionaries that need to be built will then meet the following cases (0 mean does not have this data, 1 mean has this data):
 

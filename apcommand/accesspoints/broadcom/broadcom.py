@@ -13,10 +13,6 @@ from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
 from macros import ChannelChanger
 
 
-class BroadcomError(RuntimeError):
-    "An Error to raise by broadcom classes"
-
-
 class RadioPageConnection(BaseClass):
     """
     A context manager for connecting to the radio.asp page
@@ -133,6 +129,12 @@ class BroadcomBCM94718NR(BaseClass):
         data[SSID] = ssid
         self.connection(data=data)
         return
+
+    def get_ssid(self, band):
+        """
+        Gets the ssid for the interface matching the band
+        """
+        return self.query[band[0]].ssid
 
     def set_channel(self, channel):
         """

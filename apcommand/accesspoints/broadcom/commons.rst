@@ -94,3 +94,13 @@ These are decorators to do the repetitive calls common to many methods.
 Data
 ----
 
+
+
+Errors
+------
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomError
+

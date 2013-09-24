@@ -28,8 +28,8 @@ Still, the use of `curl` seems inelegant, so I will attempt to do it with the py
 
 .. note:: The broadcom needs time between calls -- if you try to access the web server too soon after a previous call to it might not respond or not respond correctly.
 
-The BroadcomBCM94718NR
-----------------------
+The BroadcomBCM94718NR (Henceforth to be known as 'George')
+-----------------------------------------------------------
 
 .. uml::
 
@@ -47,12 +47,6 @@ The BroadcomBCM94718NR
    BroadcomBCM94718NR.set_24_ssid
    
 * See the :ref:`HTTPConnection <http-connection>` page for more on what it is about.
-
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomError
 
 
 
