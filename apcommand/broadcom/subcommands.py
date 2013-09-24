@@ -104,16 +104,15 @@ class SubCommand(BaseClass):
          - `args`: namespace with `band` and `ssid` attributes
         """
         ap = self.access_point(args)
-        if args.ssid is None:
-            indent = ' ' * 3
-            if args.band is None:
-                print "2.4 GHz:"
-                print indent + ap.get_ssid('2.4')
-                print "5 GHz:"
-                print indent + ap.get_ssid('5')
-            else:
-                "{0} GHz:".format(args.band)
-                print indent + ap.get_ssid(args.band)
+        indent = ' ' * 3
+        if args.band is None:
+            print "2.4 GHz:"
+            print indent + ap.get_ssid('2.4')
+            print "5 GHz:"
+            print indent + ap.get_ssid('5')
+        elif args.ssid is None:
+            "{0} GHz:".format(args.band)
+            print indent + ap.get_ssid(args.band)
         else:
             ap.set_ssid(ssid=args.ssid, band=args.band)
         return

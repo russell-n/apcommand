@@ -132,9 +132,8 @@ class Arguments(object):
         ssid.add_argument('ssid',
                           help='The SSID to use', nargs='?',
                           default=None)
-        ssid.add_argument('band', help='2.4 or 5 (default=%(default)s)',
-                          default=None,
-                          nargs='?')
+        ssid.add_argument('-b', '--band', help='2.4 or 5 (default=%(default)s)',
+                          default=None)
         ssid.set_defaults(function=self.subcommands.ssid)
 
         # change the IP address
