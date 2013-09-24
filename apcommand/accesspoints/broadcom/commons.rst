@@ -16,9 +16,6 @@ Some of the constants are gathered into a class in order to try and make it easi
     ONE = '1'
     
     SSID_PAGE = 'ssid.asp'
-    
-    CONTROL_CHANNEL = 'wl_channel'
-    SIDEBAND = 'wl_nctrlsb'
     SSID = 'wl_ssid'
     
 
@@ -37,6 +34,7 @@ This holds constants for the radio.asp page.
    BroadcomRadioData : radio_page
    BroadcomRadioData : radio_on
    BroadcomRadioData : radio_off
+   BroadcomRadioData : control_channel
 
 
 

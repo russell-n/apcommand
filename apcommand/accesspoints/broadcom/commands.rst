@@ -122,6 +122,62 @@ This is a command implementation to enable the wireless interface.
    :toctree: api
 
    EnableInterface
+   EnableInterface.__call__
+   EnableInterface.singular_data
+   EnableInterface.enable_5_data
+   EnableInterface.enable_24_data
+
+
+
+Disable Interface
+~~~~~~~~~~~~~~~~~
+
+This is a command implementation to disable a wireless interface.
+
+.. uml::
+
+   DisableInterface -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   DisableInterface
+   DisableInterface.__call__
+   DisableInterface.singular_data
+   DisableInterface.enable_5_data
+   DisableInterface.enable_24_data
+
+
+
+The Channel Setter
+------------------
+
+This is an implementation of a channel setter for the AP.
+
+.. uml::
+
+   SetChannel -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   SetChannel
+
+
+
+Set Sideband
+------------
+
+Sets the sideband -- assumes that it has to be 5GHz.
+
+.. uml::
+
+   SetSideband -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   SetSideband
 
 
 
