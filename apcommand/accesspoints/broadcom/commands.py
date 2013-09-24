@@ -7,7 +7,7 @@ from apcommand.baseclass import BaseClass
 # this package
 from commons import action_dict, radio_page
 from commons import BroadcomWirelessData, BroadcomRadioData
-from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
+from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier, BroadcomQuerier
 
 
 class BroadcomBaseData(object):
@@ -97,12 +97,41 @@ class BroadcomBaseCommand(BaseClass):
         super(BroadcomBaseCommand, self).__init__()
         self._logger = None
         self.connection = connection
-        self.band = band
+        self._band = band
         self._base_data = None
         self._singular_data = None
         self._added_data = None
         self._non_base_data = None
         self._data = None
+        self.previous_state = None
+        self._querier = None
+        return
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state for the undo.
+        """
+        raise NotImplemented("This property hasn't been defined")
+        return
+
+    @property
+    def band(self):
+        """
+        the band (2.4, 5, or None)
+        """
+        return self._band
+
+    @band.setter
+    def band(self, new_band):
+        """
+        sets the band and sets base_data, non_base_data to None
+        """
+        self.logger.debug('Setting to band: {0}'.format(new_band))
+        self._band = str(new_band)
+        self._data = None
+        self._base_data = self._non_base_data = None
+        self._querier = None
         return
 
     @property
@@ -111,7 +140,9 @@ class BroadcomBaseCommand(BaseClass):
         A data-dictionary to add commands to
         """
         if self._base_data is None:
+            self.logger.debug("setting the base-data using band {0}".format(self.band))
             self._base_data = BroadcomBaseData.data(band=self.band)
+            self.logger.debug('base-data: {0}'.format(self._base_data))
         return self._base_data
 
     @abstractproperty
@@ -193,6 +224,15 @@ class BroadcomBaseCommand(BaseClass):
         The main method to change settings (probably needs arguments)
         """
         return
+
+    def undo(self):
+        """
+        This is an attempt to start bringing this into line with the Command Pattern
+
+        But it isn't clear that it will be easy (or possible) in every case -
+        so it isn't made a requirement        
+        """
+        raise NotImplemented("undo not supported for this command")
 # end class BroadcomBaseCommand
 
 
@@ -204,28 +244,61 @@ class EnableInterface(BroadcomBaseCommand):
         super(EnableInterface, self).__init__(*args, **kwargs)
         self._enable_24_data = None
         self._enable_5_data = None
+        self._disable = None
         return
+
+    @property
+    def disable(self):
+        """
+        An interface disabler
+        """
+        if self._disable is None:
+            self._disable = DisableInterface(connection=self.connection,
+                                             band=self.band)
+        return self._disable
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state
+        """
+        if self._querier is None:
+            self._querier = BroadcomQuerier(connection=self.connection,
+                                            refresh=True,
+                                            band=self.band)
+        return self._querier                                            
 
     @radio_page
     def __call__(self):
         """
         Sends the data to the connection 
         """
-        self.connection(data=self.data)
+        self.previous_state = self.querier.state
+        self.logger.debug("previous state: {0}".format(self.previous_state))
+        if self.previous_state != "Enabled":
+            self.logger.debug("enabling interface")
+            self.connection(data=self.data)
+        return
+
+    def undo(self):
+        """
+        Disable the interface if the previous state was Disabled
+        """
+        if self.previous_state == 'Disabled':
+            self.previous_state = self.querier.state
+            self.disable()
         return
 
     @property
     def singular_data(self):
         """
-        The data to enable the 2.4 Ghz interface
+        The data to enable the interface
         """
-        if self._singular_data is None:
-            band = str(self.band)
-            if band.startswith('2'):
-                self._singular_data = self.enable_24_data
-            elif band.startswith('5'):
-                self._singular_data = self.enable_5_data
-        return self._singular_data
+        band = str(self.band)
+        if band.startswith('2'):
+            return self.enable_24_data
+        elif band.startswith('5'):
+            return self.enable_5_data
 
     @property
     def enable_5_data(self):
@@ -235,11 +308,8 @@ class EnableInterface(BroadcomBaseCommand):
         :return: dict of data-values for the connection
         """
         if self._enable_5_data is None:
-            data = BroadcomWirelessData
             radio_data = BroadcomRadioData
-            self._enable_5_data = action_dict()
-            self._enable_5_data[data.wireless_interface] = data.interface_5_ghz
-            self._enable_5_data[radio_data.interface] = radio_data.radio_on
+            self._enable_5_data = {radio_data.interface :radio_data.radio_on}
         return self._enable_5_data
 
 
@@ -251,12 +321,206 @@ class EnableInterface(BroadcomBaseCommand):
         :return: dict of data-values for the connection
         """
         if self._enable_24_data is None:
-            data = BroadcomWirelessData
             radio_data = BroadcomRadioData
-            self._enable_24_data = action_dict()
-            self._enable_24_data[data.wireless_interface] = data.interface_24_ghz
-            self._enable_24_data[radio_data.interface] = radio_data.radio_on
+            self._enable_24_data = {radio_data.interface:radio_data.radio_on}
         return self._enable_24_data
+
+
+class DisableInterface(BroadcomBaseCommand):
+    """
+    An interface enabler
+    """
+    def __init__(self, *args, **kwargs):
+        super(DisableInterface, self).__init__(*args, **kwargs)
+        self._disable_24_data = None
+        self._disable_5_data = None
+        self._enable = None
+        return
+
+    @property
+    def enable(self):
+        """
+        An interface enabler for the undo
+        """
+        if self._enable == None:
+            self._enable = EnableInterface(connection=self.connection,
+                                           band=self.band)
+        return self._enable                                           
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state
+        """
+        if self._querier is None:
+            self._querier = BroadcomQuerier(connection=self.connection,
+                                            refresh=True,
+                                            band=self.band)
+        return self._querier
+
+    def undo(self):
+        """
+        enable the interface if the previous state was enabled
+        """
+        if self.previous_state == 'enabled':        
+            self.previous_state = self.querier.state
+            self.enable()
+        return
+
+    @radio_page
+    def __call__(self):
+        """
+        Sends the data to the connection 
+        """
+        self.previous_state = self.querier.state
+        self.logger.debug("Previous State: {0}".format(self.previous_state))
+        if self.previous_state != "Disabled":
+            self.logger.debug("Disabling the Interface")
+            self.connection(data=self.data)
+        return
+
+    @property
+    def singular_data(self):
+        """
+        The data to enable the interface
+
+        This isn't persistent, as changing the band changes the data
+        """
+        band = str(self.band)
+        if band.startswith('2'):
+            return self.disable_24_data
+        elif band.startswith('5'):
+            return self.disable_5_data
+
+    @property
+    def disable_5_data(self):
+        """
+        The data to send to the connection to disable 5 GHz
+
+        :return: dict of data-values for the connection
+        """
+        if self._disable_5_data is None:
+            radio_data = BroadcomRadioData
+            self._disable_5_data = {radio_data.interface: radio_data.radio_off}
+        return self._disable_5_data
+
+    @property
+    def disable_24_data(self):
+        """
+        The data to send to the connection to enable 2.4 GHz
+
+        :return: dict of data-values for the connection
+        """
+        if self._disable_24_data is None:
+            radio_data = BroadcomRadioData
+            self._disable_24_data = {radio_data.interface: radio_data.radio_off}
+        return self._disable_24_data
+
+
+class SetChannel(BroadcomBaseCommand):
+    """
+    A channel setter for the AP
+    """
+    def __init__(self, *args, **kwargs):
+        super(SetChannel, self).__init__(*args, **kwargs)
+        self._channel_map = None
+        self._channel = None
+        return
+
+    @property
+    def channel(self):
+        """
+        returns the channel
+        """
+        return self._channel
+
+    @channel.setter
+    def channel(self, new_channel):
+        """
+        Sets the channel, the band, and singular_data based on the channel.
+        """
+        channel = str(new_channel)
+        self.band = self.channel_map[channel]
+        self._singular_data = {BroadcomRadioData.control_channel:channel}
+        return
+
+    @property
+    def channel_map(self):
+        """
+        Map of channel to data-dictionary
+        """
+        if self._channel_map is None:
+            channel_24 = [str(channel) for channel in range(1,12)]
+            channel_24_data = ['2.4'] * len(channel_24)
+            # these are the only channels that match the Atheros channels we chose
+            channel_5 = BroadcomRadioData.channels_5ghz
+            channel_5_data = ['5'] * len(channel_5)
+            channels = channel_24 + channel_5
+            data = channel_24_data + channel_5_data         
+            self._channel_map = dict(zip(channels, data))
+        return self._channel_map
+
+    @property
+    def singular_data(self):
+        """
+        This is a pass-through (it has to be set when given a channel)
+        """
+        return self._singular_data
+
+    @radio_page
+    def __call__(self):
+        """
+        Sets the channel to the channel
+        """
+        self.connection(data=self.data)
+        return
+
+
+class SetSideband(BroadcomBaseCommand):
+    """
+    A side-band ('upper' or 'lower') setter
+    """
+    def __init__(self, *args, **kwargs):
+        super(SetSideband, self).__init__(*args, **kwargs)
+        self.band = '5'
+        self._direction = None
+        return
+
+    @property
+    def singular_data(self):
+        """
+        This has to be set in the call when you know what the direction is
+        """
+        return self._singular_data
+
+    @property
+    def direction(self):
+        """
+        upper or lower
+        """
+        return self._direction
+
+    @direction.setter
+    def direction(self, new_direction):
+        """
+        sets the direction, band, and singular_data
+        """
+        direction = new_direction.lower()
+        if direction.startswith('l'):
+            self._direction = 'lower'
+        elif direction.startswith('u'):
+            self._direction = 'upper'
+        #else raise some kind of error
+        self._singular_data = {BroadcomRadioData.sideband:self._direction}
+        return
+    
+    def __call__(self):
+        """
+        Sets the sideband ('upper' or 'lower') for 5GHz
+        """
+        self.connection(data=self.data)
+        return
+# end SetSideband    
 
 
 # python standard library
@@ -265,7 +529,7 @@ import random
 import string
 
 # third-party
-from mock import MagicMock
+from mock import MagicMock, call
 
 
 random_letters = lambda: ",".join((random.choice(string.letters) for char in xrange(random.randint(1,5))))
@@ -435,12 +699,30 @@ class TestBroadcomCommands(unittest.TestCase):
 
 class TestEnableInterface(unittest.TestCase):
     def setUp(self):
-        self.connection = MagicMock()
+        self.connection = MagicMock(name='connection')
+        self.html = MagicMock(name='html')
+        self.connection.return_value = self.html
+        self.html.text = open('radio_asp.html').read()
+        self.command = EnableInterface(connection=self.connection)        
+        return
+
+    def test_previous_state(self):
+        """
+        Does it get the previous state correctly?
+        """
+        command = EnableInterface(connection=self.connection,
+                                  band='2')
+        command()
+        self.assertEqual(type(command.querier.querier), Broadcom24GHzQuerier)
+        self.assertEqual(command.previous_state, 'Disabled')
+        command.band = '5'
+        command()    
+        self.assertEqual(type(command.querier.querier), Broadcom5GHzQuerier)
         return
 
     def test_24ghz(self):
         """
-        Does it construct the right set of data to disable the interface?
+        Does it construct the right set of data to Enable the interface?
         """
         command = EnableInterface(connection=self.connection,
                                   band='2.4')
@@ -448,7 +730,7 @@ class TestEnableInterface(unittest.TestCase):
                           'action':'Apply',
                           'wl_radio':'1'}
 
-        self.assertEqual(command.singular_data, expected_data)
+        self.assertEqual(command.data, expected_data)
         command()
         self.assertEqual(self.connection.path, 'radio.asp')
         self.connection.assert_called_with(data=expected_data)
@@ -463,5 +745,137 @@ class TestEnableInterface(unittest.TestCase):
         expected_data ={'action':'Apply',
                         'wl_unit':'1',
                         'wl_radio':'1'}
-        self.assertEqual(command.singular_data, expected_data)
+        self.assertEqual(command.data, expected_data)
+
+        # what happens if you change it to 2.4?
+        command.band = '2.4'
+        expected_data ={'action':'Apply',
+                        'wl_unit':'0',
+                        'wl_radio':'1'}
+        self.assertEqual(command.data, expected_data)
+        return
+
+    def test_undo(self):
+        """
+        Does the undo disable the interface?
+        """
+        connection = MagicMock(name='connection')
+        html = MagicMock(name='html')
+        connection.return_value = html
+        html.text = open('radio_asp.html').read()
+        command = EnableInterface(connection=connection)        
+
+        command.band = 5
+        command()
+        self.assertEqual('Disabled', command.previous_state)
+        html.text = open('radio_5_asp.html').read()
+
+        command.undo()
+        query_call = call(data={'wl_unit':'1'})
+        calls = [query_call,
+                 call(data={'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_radio':'1'}),
+                        query_call,
+                        query_call,
+                        call(data ={'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_radio':'0'})]
+        self.assertEqual(connection.mock_calls, calls)
+        self.command.previous_state = 'Enabled'
+
+        # the disable checks the state so we need to change the html so it is Disabled
+        #self.html.text = open('radio_5_asp.html').read()
+        #self.command.undo()
+        #self.assertEqual(self.connection.mock_calls, calls)
+        return
+
+
+class TestDisableInterface(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock(name='connection')
+        self.html = MagicMock(name='html')
+        self.connection.return_value = self.html
+        self.html.text = open('radio_5_asp.html').read()
+        return
+
+    def test_24_ghz(self):
+        """
+        Does it setup the right data dictionary and make the right call?
+        """
+        command = DisableInterface(connection=self.connection,
+                                   band='2.4')
+        expected_data = {'action':'Apply',
+                        'wl_unit':'0',
+                        'wl_radio':'0'}
+        self.assertEqual(command.data, expected_data)
+        command()
+        self.connection.assert_called_with(data=expected_data)
+        self.assertEqual(self.connection.path, 'radio.asp')
+        return
+
+    def test_5_ghz(self):
+        """
+        Does it set up the right data dictionary to disable the 5 Ghz interface?
+        """
+        command = DisableInterface(connection=self.connection,
+                                   band='5')
+        expected_data = {'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_radio':'0'}
+        self.assertEqual(command.data, expected_data)
+        
+
+
+class TestSetChannel(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        return
+
+    def test_24_ghz(self):
+        """
+        Does it pass in the correct data to set the channel?
+        """
+        channel = random.choice(BroadcomRadioData.channels_24ghz)
+        command = SetChannel(connection=self.connection)
+        command.channel = channel
+        expected_data = {'action':'Apply',
+                        'wl_unit':'0',
+                        'wl_channel':str(channel)}
+        command()
+        self.connection.assert_called_with(data=expected_data)
+        return
+
+    def test_5_ghz(self):
+        """
+        Does it pass in the correct data to set the channel?
+        """
+        channel = random.choice(BroadcomRadioData.channels_5ghz)
+        command = SetChannel(connection=self.connection)
+        command.channel = channel
+        expected_data = {'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_channel':str(channel)}
+        command()
+        self.connection.assert_called_with(data=expected_data)
+        return
+# end class TestSetChannel        
+
+
+class TestSetSideband(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        return
+
+    def test_set_sideband(self):
+        """
+        Does it set the sideband correctly?
+        """
+        command = SetSideband(connection=self.connection)
+        command.direction = 'lower'
+        expected_data = {'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_nctrlsb':'lower'}
+        command()
+        self.connection.assert_called_with(data=expected_data)
         return

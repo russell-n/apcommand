@@ -26,21 +26,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Broadcom Commands don't allow subtraction", 
+    "summary": "Broadcom commands don't add/subtract when used as properties", 
 
 
 
 
 
 
-    "time": "Fri, 20 Sep 2013 00:51:05 +0000"
+    "time": "Tue, 24 Sep 2013 17:23:11 +0000"
 
 
 

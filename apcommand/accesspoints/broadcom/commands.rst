@@ -15,9 +15,9 @@ Contents:
 Introduction
 ------------
 
-I have decided to break the commands sent to the Broadcom into atomic actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a long while and like most things here this will turn into a code-maintenance nightmare. To ameliorate the knowledge-gain, knowledge-lost cycle  I am trying to make the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not simplify anything but I am hopeful that once the pattern of implementation is recognized only the relevant classes need be found and examined and so smaller will be better.
+I have decided to break the commands sent to the Broadcom into smaller actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a long while and like most things here this will turn into a code-maintenance nightmare. To ameliorate the knowledge-gain, knowledge-lost cycle I am trying to make the broadcom-specific part of the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not simplify anything but I am hopeful that once the pattern of implementation is recognized only the relevant classes need be found and examined and so smaller will be better.
 
-To allow for the aggregation of commands each command class has an `add` method which will allow other commands to be added to their data-dictionary. This way the `Apply` action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.
+To allow for the aggregation of commands each command class implements the ``+`` operation which will allow other commands to be added to their data-dictionary. This way the `Apply` action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.
 
 A hypothetical example::
 
@@ -77,7 +77,7 @@ The data-dictionaries that need to be built will then meet the following cases (
    1,0,1
    1,1,0
 
-There are six rather than eight cases because you can only choose one Interface from the drop-down menu, not both.   
+There are six rather than eight cases because you can only choose one Interface from the drop-down menu, not both. Also, on reflection I realized that the ``action=False`` case is actually covered by the :ref:`Broadcom Queriers <broadcom-queriers>` so there really is only three cases. 
 
 .. uml::
 
@@ -95,6 +95,7 @@ There are six rather than eight cases because you can only choose one Interface 
    BroadcomBaseData.data
    BroadcomBaseData.__add__
    BroadcomBaseData.__sub__
+   BroadcomBaseData.undo()
 
 This is getting a little convoluted so I will try and explain the data-dictionaries:
 
@@ -105,7 +106,6 @@ This is getting a little convoluted so I will try and explain the data-dictionar
    * ``data``: this is ``base_data`` updated by ``non_base_data``
 
 The reason for all these data-dictionaries is so that commands can be composed from other commands. ``base_data`` and ``singular_data`` are part of the command-definition and so never change. ``non_base_data`` and ``data`` are generated every time ``added_data`` is changed (using the operators, if the ``added_data`` is changed directly then ``data`` and ``non_base_data`` will need to be reset). Only ``added_data`` is intended to change, and it is only changed using the other command's ``non_base_data`` so it will not change the original's Wireless Interface.
-
 
 
 
@@ -122,6 +122,62 @@ This is a command implementation to enable the wireless interface.
    :toctree: api
 
    EnableInterface
+   EnableInterface.__call__
+   EnableInterface.singular_data
+   EnableInterface.enable_5_data
+   EnableInterface.enable_24_data
+
+
+
+Disable Interface
+~~~~~~~~~~~~~~~~~
+
+This is a command implementation to disable a wireless interface.
+
+.. uml::
+
+   DisableInterface -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   DisableInterface
+   DisableInterface.__call__
+   DisableInterface.singular_data
+   DisableInterface.enable_5_data
+   DisableInterface.enable_24_data
+
+
+
+The Channel Setter
+------------------
+
+This is an implementation of a channel setter for the AP.
+
+.. uml::
+
+   SetChannel -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   SetChannel
+
+
+
+Set Sideband
+------------
+
+Sets the sideband -- assumes that it has to be 5GHz.
+
+.. uml::
+
+   SetSideband -|> BroadcomBaseCommand
+
+.. autosummary::
+   :toctree: api
+
+   SetSideband
 
 
 

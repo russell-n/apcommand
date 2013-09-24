@@ -75,24 +75,6 @@ The BroadcomBCM94718NR
 
 
 
-.. uml::
-
-   BroadcomChannelChanger -|> BaseClass
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomChannelChanger
-   
-
-
-
-.. autosummary::
-   :toctree: api
-
-   BroadcomChannelReader
-
-
 
 
 []

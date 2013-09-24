@@ -7,9 +7,6 @@ ZERO = '0'
 ONE = '1'
 
 SSID_PAGE = 'ssid.asp'
-
-CONTROL_CHANNEL = 'wl_channel'
-SIDEBAND = 'wl_nctrlsb'
 SSID = 'wl_ssid'
 
 
@@ -24,7 +21,8 @@ class BroadcomRadioData(object):
     interface = 'wl_radio'
     radio_off = ZERO
     radio_on = ONE
-    
+    control_channel = 'wl_channel'
+    sideband = 'wl_nctrlsb'
 # end BroadcomRadioData
 
 

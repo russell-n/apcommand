@@ -18,9 +18,6 @@ ZERO = '0'
 ONE = '1'
 
 SSID_PAGE = 'ssid.asp'
-
-CONTROL_CHANNEL = 'wl_channel'
-SIDEBAND = 'wl_nctrlsb'
 SSID = 'wl_ssid'
 @
 
@@ -37,6 +34,7 @@ This holds constants for the radio.asp page.
    BroadcomRadioData : radio_page
    BroadcomRadioData : radio_on
    BroadcomRadioData : radio_off
+   BroadcomRadioData : control_channel
 
 <<name='BroadcomRadioData', echo=False>>=
 class BroadcomRadioData(object):
@@ -50,7 +48,8 @@ class BroadcomRadioData(object):
     interface = 'wl_radio'
     radio_off = ZERO
     radio_on = ONE
-    
+    control_channel = 'wl_channel'
+    sideband = 'wl_nctrlsb'
 # end BroadcomRadioData
 @
 

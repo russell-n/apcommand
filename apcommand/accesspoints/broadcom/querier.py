@@ -145,6 +145,8 @@ class BroadcomBaseQuerier(BaseClass):
     def state(self):
         """
         Get the interface state
+
+        :return: ``Disabled`` or ``Enabled``
         """
         self.set_radio_soup()
         return self.soup.interface_state
@@ -153,6 +155,8 @@ class BroadcomBaseQuerier(BaseClass):
     def ssid(self):
         """
         Get the interface SSID
+
+        :return: 
         """
         self.set_ssid_soup()
         return self.soup.ssid
@@ -217,6 +221,73 @@ class Broadcom5GHzQuerier(BroadcomBaseQuerier):
         self.set_radio_soup()
         return self.soup.mac_5_ghz
 # end class Broadcom5GHzQuerier
+
+
+class BroadcomQuerier(BaseClass):
+    """
+    An aggregator for the two band-queriers    
+    """
+    def __init__(self, connection, refresh=False, band=None):
+        """
+        BroadcomQuerier constructor
+
+        :param:
+
+         - `connection`: HTTPConnection to the AP
+         - `refresh`: if True, load the html on each call
+         - `band`: 2.4 or 5 (this has to be set before using or it will crash)
+        """
+        self.connection = connection
+        self.refresh = refresh
+        self._querier = None
+        self._band = band
+        return
+
+    @property
+    def band(self):
+        """
+        The wifi band (e.g. 2.4)
+        """
+        return self._band
+
+    @band.setter
+    def band(self, new_band):
+        """
+        sets the band, resets the querier
+
+        :param:
+
+         - `new_band`: string or number starting with '2' or '5'
+        """
+        self._band = str(new_band)
+        self._querier = None
+        return
+
+    @property
+    def querier(self):
+        """
+        A wireless querier
+        """
+        if self._querier is None:
+            if self.band is None:
+                raise RuntimeError("BroadcomQuerier.band cannot be None")
+            if self.band.startswith('5'):
+                self._querier = Broadcom5GHzQuerier(connection=self.connection,
+                                                    refresh=self.refresh)
+            elif self.band.startswith('2'):
+                self._querier = Broadcom24GHzQuerier(connection=self.connection,
+                                                     refresh=self.refresh)
+        return self._querier
+
+    def __getattr__(self, attribute):
+        """
+        This is naively pulling the querier properties
+
+        :param:
+
+         - `attribute`: an attribute of the querier (e.g. `channel`)
+        """
+        return getattr(self.querier, attribute)
 
 
 # python standard library
@@ -328,3 +399,54 @@ class TestBroadcomQueriers(unittest.TestCase):
         return
             
 # end class TestBroadcomBaseQuerier    
+
+
+class TestBroadcomQuerier(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        self.html = MagicMock()
+        self.connection.return_value = self.html
+        self.html.text = open('radio_5_asp.html').read()
+        self.sleep = MagicMock()
+    
+        self.querier = BroadcomQuerier(connection=self.connection)
+
+        # without the patch the calls will sleep and this will take longer
+        self.patcher = patch('time.sleep')
+        self.mock_sleep = self.patcher.start()
+        return
+
+    def tearDown(self):
+        self.patcher.stop()
+        return
+
+
+    def test_5_ghz(self):
+        """
+        Does it use the 5GHz querier if the band is set to 5?
+        """
+        self.querier.band = '5'
+        self.assertEqual('1', self.querier.querier.band)
+        return
+
+    def test_24_ghz(self):
+        """
+        Does it use the 2.4 Ghz querier if the band is set to 2.4?
+        """
+        self.querier.band = '2'
+        self.assertEqual('0', self.querier.querier.band)
+
+        # what if you change?
+        self.querier.band = 5
+        self.assertEqual('1', self.querier.querier.band)
+        return
+
+    def test_mac_address(self):
+        """
+        Does the getattr work?
+        """
+        self.querier.band = 5
+        mac = self.querier.mac_address
+        self.assertEqual('(00:90:4C:13:11:03)', mac)
+        return
+
