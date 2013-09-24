@@ -26,21 +26,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Broadcom Commands don't allow subtraction", 
+    "summary": "Changing the band on the commands doesn't update the interface data", 
 
 
 
 
 
 
-    "time": "Fri, 20 Sep 2013 00:51:05 +0000"
+    "time": "Tue, 24 Sep 2013 17:23:34 +0000"
 
 
 

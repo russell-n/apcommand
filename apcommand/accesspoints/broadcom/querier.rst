@@ -1,7 +1,7 @@
 The Broadcom Queriers
 =====================
 .. currentmodule:: apcommand.accesspoints.broadcom.querier
-
+.. _broadcom-queriers:
 In order to trim down the class-explosion that seems to be going on, all the querys to the Broadcom are combined into two classes :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>` and :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`.
 
 Contents:
@@ -118,6 +118,23 @@ A 5 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`
    Broadcom5GHzQuerier
    Broadcom5GHzQuerier.band
    
+
+
+The BroadcomQuerier
+-------------------
+
+This is an aggregating class to try and make it easier to use the queriers without having to build them separately for the different bands.
+
+.. uml::
+
+   BroadcomQuerier -|> BaseClass
+   BroadcomQuerier o- Broadcom5GHzQuerier
+   BroadcomQuerier o- Broadcom24GHzQuerier
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomQuerier
 
 
 

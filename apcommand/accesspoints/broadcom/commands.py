@@ -7,7 +7,7 @@ from apcommand.baseclass import BaseClass
 # this package
 from commons import action_dict, radio_page
 from commons import BroadcomWirelessData, BroadcomRadioData
-from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
+from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier, BroadcomQuerier
 
 
 class BroadcomBaseData(object):
@@ -103,6 +103,16 @@ class BroadcomBaseCommand(BaseClass):
         self._added_data = None
         self._non_base_data = None
         self._data = None
+        self.previous_state = None
+        self._querier = None
+        return
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state for the undo.
+        """
+        raise NotImplemented("This property hasn't been defined")
         return
 
     @property
@@ -117,8 +127,11 @@ class BroadcomBaseCommand(BaseClass):
         """
         sets the band and sets base_data, non_base_data to None
         """
-        self._band = new_band
+        self.logger.debug('Setting to band: {0}'.format(new_band))
+        self._band = str(new_band)
+        self._data = None
         self._base_data = self._non_base_data = None
+        self._querier = None
         return
 
     @property
@@ -211,6 +224,15 @@ class BroadcomBaseCommand(BaseClass):
         The main method to change settings (probably needs arguments)
         """
         return
+
+    def undo(self):
+        """
+        This is an attempt to start bringing this into line with the Command Pattern
+
+        But it isn't clear that it will be easy (or possible) in every case -
+        so it isn't made a requirement        
+        """
+        raise NotImplemented("undo not supported for this command")
 # end class BroadcomBaseCommand
 
 
@@ -222,14 +244,49 @@ class EnableInterface(BroadcomBaseCommand):
         super(EnableInterface, self).__init__(*args, **kwargs)
         self._enable_24_data = None
         self._enable_5_data = None
+        self._disable = None
         return
+
+    @property
+    def disable(self):
+        """
+        An interface disabler
+        """
+        if self._disable is None:
+            self._disable = DisableInterface(connection=self.connection,
+                                             band=self.band)
+        return self._disable
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state
+        """
+        if self._querier is None:
+            self._querier = BroadcomQuerier(connection=self.connection,
+                                            refresh=True,
+                                            band=self.band)
+        return self._querier                                            
 
     @radio_page
     def __call__(self):
         """
         Sends the data to the connection 
         """
-        self.connection(data=self.data)
+        self.previous_state = self.querier.state
+        self.logger.debug("previous state: {0}".format(self.previous_state))
+        if self.previous_state != "Enabled":
+            self.logger.debug("enabling interface")
+            self.connection(data=self.data)
+        return
+
+    def undo(self):
+        """
+        Disable the interface if the previous state was Disabled
+        """
+        if self.previous_state == 'Disabled':
+            self.previous_state = self.querier.state
+            self.disable()
         return
 
     @property
@@ -277,6 +334,37 @@ class DisableInterface(BroadcomBaseCommand):
         super(DisableInterface, self).__init__(*args, **kwargs)
         self._disable_24_data = None
         self._disable_5_data = None
+        self._enable = None
+        return
+
+    @property
+    def enable(self):
+        """
+        An interface enabler for the undo
+        """
+        if self._enable == None:
+            self._enable = EnableInterface(connection=self.connection,
+                                           band=self.band)
+        return self._enable                                           
+
+    @property
+    def querier(self):
+        """
+        A querier to get the previous state
+        """
+        if self._querier is None:
+            self._querier = BroadcomQuerier(connection=self.connection,
+                                            refresh=True,
+                                            band=self.band)
+        return self._querier
+
+    def undo(self):
+        """
+        enable the interface if the previous state was enabled
+        """
+        if self.previous_state == 'enabled':        
+            self.previous_state = self.querier.state
+            self.enable()
         return
 
     @radio_page
@@ -284,9 +372,11 @@ class DisableInterface(BroadcomBaseCommand):
         """
         Sends the data to the connection 
         """
-        self.logger.debug('Disabling {0}'.format(self.band))
-        self.logger.debug('data: {0}'.format(self.data))
-        self.connection(data=self.data)
+        self.previous_state = self.querier.state
+        self.logger.debug("Previous State: {0}".format(self.previous_state))
+        if self.previous_state != "Disabled":
+            self.logger.debug("Disabling the Interface")
+            self.connection(data=self.data)
         return
 
     @property
@@ -305,7 +395,7 @@ class DisableInterface(BroadcomBaseCommand):
     @property
     def disable_5_data(self):
         """
-        The data to send to the connection to enable 5 GHz
+        The data to send to the connection to disable 5 GHz
 
         :return: dict of data-values for the connection
         """
@@ -439,7 +529,7 @@ import random
 import string
 
 # third-party
-from mock import MagicMock
+from mock import MagicMock, call
 
 
 random_letters = lambda: ",".join((random.choice(string.letters) for char in xrange(random.randint(1,5))))
@@ -609,7 +699,25 @@ class TestBroadcomCommands(unittest.TestCase):
 
 class TestEnableInterface(unittest.TestCase):
     def setUp(self):
-        self.connection = MagicMock()
+        self.connection = MagicMock(name='connection')
+        self.html = MagicMock(name='html')
+        self.connection.return_value = self.html
+        self.html.text = open('radio_asp.html').read()
+        self.command = EnableInterface(connection=self.connection)        
+        return
+
+    def test_previous_state(self):
+        """
+        Does it get the previous state correctly?
+        """
+        command = EnableInterface(connection=self.connection,
+                                  band='2')
+        command()
+        self.assertEqual(type(command.querier.querier), Broadcom24GHzQuerier)
+        self.assertEqual(command.previous_state, 'Disabled')
+        command.band = '5'
+        command()    
+        self.assertEqual(type(command.querier.querier), Broadcom5GHzQuerier)
         return
 
     def test_24ghz(self):
@@ -638,12 +746,57 @@ class TestEnableInterface(unittest.TestCase):
                         'wl_unit':'1',
                         'wl_radio':'1'}
         self.assertEqual(command.data, expected_data)
+
+        # what happens if you change it to 2.4?
+        command.band = '2.4'
+        expected_data ={'action':'Apply',
+                        'wl_unit':'0',
+                        'wl_radio':'1'}
+        self.assertEqual(command.data, expected_data)
+        return
+
+    def test_undo(self):
+        """
+        Does the undo disable the interface?
+        """
+        connection = MagicMock(name='connection')
+        html = MagicMock(name='html')
+        connection.return_value = html
+        html.text = open('radio_asp.html').read()
+        command = EnableInterface(connection=connection)        
+
+        command.band = 5
+        command()
+        self.assertEqual('Disabled', command.previous_state)
+        html.text = open('radio_5_asp.html').read()
+
+        command.undo()
+        query_call = call(data={'wl_unit':'1'})
+        calls = [query_call,
+                 call(data={'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_radio':'1'}),
+                        query_call,
+                        query_call,
+                        call(data ={'action':'Apply',
+                        'wl_unit':'1',
+                        'wl_radio':'0'})]
+        self.assertEqual(connection.mock_calls, calls)
+        self.command.previous_state = 'Enabled'
+
+        # the disable checks the state so we need to change the html so it is Disabled
+        #self.html.text = open('radio_5_asp.html').read()
+        #self.command.undo()
+        #self.assertEqual(self.connection.mock_calls, calls)
         return
 
 
 class TestDisableInterface(unittest.TestCase):
     def setUp(self):
-        self.connection = MagicMock()
+        self.connection = MagicMock(name='connection')
+        self.html = MagicMock(name='html')
+        self.connection.return_value = self.html
+        self.html.text = open('radio_5_asp.html').read()
         return
 
     def test_24_ghz(self):
