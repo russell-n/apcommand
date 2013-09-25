@@ -87,9 +87,7 @@ Connections:
 Appendices
 ----------
 
-This is reference information to help understand what's going on.
-   
-
+This is reference information to help understand what's going on.  
    
 Arens Code:
 
@@ -98,3 +96,11 @@ Arens Code:
 
    Arens' Atheros Code <../../arenscode/arensatheros>
    Arens' BroadcomCode <../../arenscode/arensbroadcom>
+   
+Miscellaneous Coding:
+
+.. toctree::
+   :maxdepth: 2
+
+   The Command Pattern <appendices/command>
+   Shelve <appendices/shelve>

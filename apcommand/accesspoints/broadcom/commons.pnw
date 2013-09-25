@@ -21,6 +21,23 @@ SSID_PAGE = 'ssid.asp'
 SSID = 'wl_ssid'
 @
 
+BandEnum
+--------
+
+This is to try and make how 2.4 ghz is specified more consistent.
+
+.. uml::
+
+   BandEnumeration : two_point_four
+   BandEnumeration : five
+
+<<name='BandEnumeration', echo=False>>=
+class BandEnumeration(object):
+    __slots__ = ()
+    two_point_four = '2.4'
+    five = '5'
+@
+
 BroadcomRadioData
 ~~~~~~~~~~~~~~~~~
 
@@ -58,6 +75,10 @@ BroadcomLANData
 
 This is data for the ``lan.asp`` page.
 
+.. uml::
+
+   BroadcomLANData : lan_page
+
 <<name='BroadcomLANData', wrap=False>>=
 class BroadcomLANData(object):
     __slots__ = ()
@@ -84,6 +105,33 @@ class BroadcomWirelessData(object):
     wireless_interface = 'wl_unit'
     interface_5_ghz = ONE
     interface_24_ghz = ZERO
+@
+
+BroadcomPages
+-------------
+
+A holder of names of the web-pages.
+
+.. uml::
+
+   BroadcomPages : radio
+   BroadcomPages : lan
+   BroadcomPages : ssid
+   BroadcomPages : firmware
+   BroadcomPages : security
+
+<<name='BroadcomPages', echo=False>>=
+class BroadcomPages(object):
+    """
+    Holds the names of the web pages
+    """
+    __slots__ = ()
+    radio = 'radio.asp'
+    lan = 'lan.asp'
+    ssid = 'ssid.asp'
+    firmware = 'firmware.asp'
+    security = 'security.asp'
+    
 @
 
 Decorators
@@ -121,6 +169,19 @@ def ssid_page(method):
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
+
+# a decorator to set the page assuming that the object has a self.asp_page attribute
+def set_page(method):
+    """
+    Decorator: sets connection.path to self.asp_page before, sleeps after
+    """
+    def _method(self, *args, **kwargs):
+        self.logger.debug("Setting connection.path to {0}".format(self.asp_page))
+        self.connection.path = self.asp_page
+        outcome = method(self, *args, **kwargs)
+        return outcome
+    return _method
+
 @
 
 Data

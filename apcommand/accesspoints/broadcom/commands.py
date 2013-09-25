@@ -1,12 +1,17 @@
 
 # python standard library
 from abc import ABCMeta, abstractproperty, abstractmethod
+from contextlib import closing
+import shelve
+
 # this package
 from apcommand.baseclass import BaseClass
 
 # this package
 from commons import action_dict, radio_page
 from commons import BroadcomWirelessData, BroadcomRadioData
+from commons import BroadcomPages, set_page
+from commons import BandEnumeration
 from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier, BroadcomQuerier
 
 
@@ -105,15 +110,54 @@ class BroadcomBaseCommand(BaseClass):
         self._data = None
         self.previous_state = None
         self._querier = None
+        self._shelf_name = None
+        self._shelf_objects = None
+        self._shelf_key = None
+        self._asp_page = None
         return
+
+    @abstractproperty
+    def asp_page(self):
+        """
+        The page for the decorators to use (e.g. 'radio.asp')
+        """
+
+    @property
+    def shelf_key(self):
+        """
+        a key to use for the cases where there's only one object to shelve
+        """
+        if self._shelf_key is None:
+            self._shelf_key = "{0}_{1}".format(self.__module__,
+                                               self.__class__.__name__)
+
+    @property
+    def shelf_objects(self):
+        """
+        The key:object dictionary to save (defaults to current singular-data)
+        """
+        return {self.shelf_key:self.singular_data}
+
+    @property
+    def shelf_name(self):
+        """
+        A name to use for any shelves created
+        """
+        if self._shelf_name is None:
+            self._shelf_name = "{0}.shelve".format(__package__)
+        return self._shelf_name
+
 
     @property
     def querier(self):
         """
         A querier to get the previous state for the undo.
         """
-        raise NotImplemented("This property hasn't been defined")
-        return
+        if self._querier is None:
+            self._querier = BroadcomQuerier(connection=self.connection,
+                                            refresh=False,
+                                            band=self.band)
+        return self._querier
 
     @property
     def band(self):
@@ -218,11 +262,13 @@ class BroadcomBaseCommand(BaseClass):
                 del new_object.added_data[key]
         return new_object
 
-    @abstractmethod
+    @set_page
     def __call__(self):
         """
-        The main method to change settings (probably needs arguments)
+        The main method to change settings 
         """
+        self.store()
+        self.connection(data=self.data)
         return
 
     def undo(self):
@@ -233,6 +279,30 @@ class BroadcomBaseCommand(BaseClass):
         so it isn't made a requirement        
         """
         raise NotImplemented("undo not supported for this command")
+
+    def store(self):
+        """
+        shelve data from this class (use in __call__, not meant for public)
+
+        :precondition: self.shelf_objects is a dictionary of things to shelve
+        :postocondition: objects is shelf_objects is shelved
+        """
+        with closing(shelve.open(self.shelf_name, writeback=True)) as open_shelf:
+            for key, value in self.shelf_objects.iteritems():
+                open_shelf[key] = value
+        return
+
+    def load(self):
+        """
+        Loads the shelved data for the undo method
+
+        :return: dictionary of objects using shelf_objects' keys
+        :raise: KeyError if an item in shelf_objects isn't on the shelf
+        """
+        with closing(shelve.open(self.shelf_name, flag='r')) as open_shelf:
+            data = {key:open_shelf[key] for key in self.shelf_objects}
+        return data
+
 # end class BroadcomBaseCommand
 
 
@@ -248,6 +318,15 @@ class EnableInterface(BroadcomBaseCommand):
         return
 
     @property
+    def asp_page(self):
+        """
+        radio.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.radio
+        return self._asp_page
+
+    @property
     def disable(self):
         """
         An interface disabler
@@ -258,35 +337,25 @@ class EnableInterface(BroadcomBaseCommand):
         return self._disable
 
     @property
-    def querier(self):
+    def shelf_objects(self):
         """
-        A querier to get the previous state
+        A dictionary of shelf_key: previous state
         """
-        if self._querier is None:
-            self._querier = BroadcomQuerier(connection=self.connection,
-                                            refresh=True,
-                                            band=self.band)
-        return self._querier                                            
-
-    @radio_page
-    def __call__(self):
-        """
-        Sends the data to the connection 
-        """
-        self.previous_state = self.querier.state
-        self.logger.debug("previous state: {0}".format(self.previous_state))
-        if self.previous_state != "Enabled":
-            self.logger.debug("enabling interface")
-            self.connection(data=self.data)
-        return
+        previous_state = self.querier.state
+        return {self.shelf_key:previous_state}
 
     def undo(self):
         """
-        Disable the interface if the previous state was Disabled
+        Disable the interface 
+
+        This is actually just a call to DisableInterface...
         """
-        if self.previous_state == 'Disabled':
-            self.previous_state = self.querier.state
+        try:
+            data = self.load()
             self.disable()
+        except KeyError as error:
+            self.logger.debug(error)
+            self.logger.debug('No entry on the shelf for {0}'.format(self.shelf_key))
         return
 
     @property
@@ -338,6 +407,15 @@ class DisableInterface(BroadcomBaseCommand):
         return
 
     @property
+    def asp_page(self):
+        """
+        radio.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.radio
+        return self._asp_page
+
+    @property
     def enable(self):
         """
         An interface enabler for the undo
@@ -360,23 +438,14 @@ class DisableInterface(BroadcomBaseCommand):
 
     def undo(self):
         """
-        enable the interface if the previous state was enabled
+        enables the interface 
         """
-        if self.previous_state == 'enabled':        
-            self.previous_state = self.querier.state
+        try:
+            data = self.load()
             self.enable()
-        return
-
-    @radio_page
-    def __call__(self):
-        """
-        Sends the data to the connection 
-        """
-        self.previous_state = self.querier.state
-        self.logger.debug("Previous State: {0}".format(self.previous_state))
-        if self.previous_state != "Disabled":
-            self.logger.debug("Disabling the Interface")
-            self.connection(data=self.data)
+        except KeyError as error:
+            self.logger.debug(error)
+            self.logger.debug('No entry on the shelf for {0}'.format(self.shelf_key))    
         return
 
     @property
@@ -424,9 +493,27 @@ class SetChannel(BroadcomBaseCommand):
     def __init__(self, *args, **kwargs):
         super(SetChannel, self).__init__(*args, **kwargs)
         self._channel_map = None
-        self._channel = None
+        self._channel = None       
         return
 
+    @property
+    def asp_page(self):
+        """
+        radio.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.radio
+        return self._asp_page
+
+    @property
+    def shelf_objects(self):
+        """
+        A dictionary of shelf_key: channel for current band
+        """
+        self.querier.band = self.band
+        channel = self.querier.channel
+        return {self.shelf_key: channel}
+        
     @property
     def channel(self):
         """
@@ -467,12 +554,16 @@ class SetChannel(BroadcomBaseCommand):
         """
         return self._singular_data
 
-    @radio_page
-    def __call__(self):
+    def undo(self):
         """
-        Sets the channel to the channel
+        Sets the channels found on the shelve
         """
-        self.connection(data=self.data)
+        try:
+            self.channel = self.load()[self.shelf_key]
+            self()
+        except KeyError as error:
+            self.logger.debug(error)
+            self.logger.debug("No entry on shelf for {0}".format(self.shelf_key))
         return
 
 
@@ -485,6 +576,15 @@ class SetSideband(BroadcomBaseCommand):
         self.band = '5'
         self._direction = None
         return
+
+    @property
+    def asp_page(self):
+        """
+        radio.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.radio
+        return self._asp_page
 
     @property
     def singular_data(self):
@@ -529,7 +629,7 @@ import random
 import string
 
 # third-party
-from mock import MagicMock, call
+from mock import MagicMock, call, patch
 
 
 random_letters = lambda: ",".join((random.choice(string.letters) for char in xrange(random.randint(1,5))))
@@ -544,6 +644,9 @@ class BadChild2(BroadcomBaseCommand):
         return
 
 class EvilChild(BroadcomBaseCommand):
+    def asp_page(self):
+        return
+        
     def base_data(self):
         return
     
@@ -569,6 +672,9 @@ class TestChild(BroadcomBaseCommand):
     def __init__(self, *args, **kwargs):
         super(TestChild, self).__init__(*args, **kwargs)
         return
+
+    def asp_page(self):
+        return BroadcomPages.radio
 
     @property
     def singular_data(self):
@@ -714,7 +820,7 @@ class TestEnableInterface(unittest.TestCase):
                                   band='2')
         command()
         self.assertEqual(type(command.querier.querier), Broadcom24GHzQuerier)
-        self.assertEqual(command.previous_state, 'Disabled')
+
         command.band = '5'
         command()    
         self.assertEqual(type(command.querier.querier), Broadcom5GHzQuerier)
@@ -767,7 +873,7 @@ class TestEnableInterface(unittest.TestCase):
 
         command.band = 5
         command()
-        self.assertEqual('Disabled', command.previous_state)
+
         html.text = open('radio_5_asp.html').read()
 
         command.undo()
@@ -776,9 +882,7 @@ class TestEnableInterface(unittest.TestCase):
                  call(data={'action':'Apply',
                         'wl_unit':'1',
                         'wl_radio':'1'}),
-                        query_call,
-                        query_call,
-                        call(data ={'action':'Apply',
+                            call(data ={'action':'Apply',
                         'wl_unit':'1',
                         'wl_radio':'0'})]
         self.assertEqual(connection.mock_calls, calls)
@@ -829,35 +933,64 @@ class TestDisableInterface(unittest.TestCase):
 
 class TestSetChannel(unittest.TestCase):
     def setUp(self):
+        self.fake_channel = random_letters()
+        self.querier = MagicMock()
+        self.querier.channel = self.fake_channel
         self.connection = MagicMock()
+        self.command = SetChannel(connection=self.connection)
+        self.command._querier = self.querier
         return
 
     def test_24_ghz(self):
         """
-        Does it pass in the correct data to set the channel?
+        Does it pass in the correct data to set the (2.4 GHz) channel?
         """
         channel = random.choice(BroadcomRadioData.channels_24ghz)
-        command = SetChannel(connection=self.connection)
-        command.channel = channel
+        self.command.channel = channel
         expected_data = {'action':'Apply',
                         'wl_unit':'0',
                         'wl_channel':str(channel)}
-        command()
+        # setup the shelving
+        self.command._querier = self.querier
+        mock_shelf = MagicMock(spec_set=dict)
+        mock_closing = MagicMock()
+        mock_closing.return_value = mock_shelf
+        with patch('contextlib.closing', mock_closing):
+            #with patch('shelve', mock_shelf):
+            self.command()
         self.connection.assert_called_with(data=expected_data)
         return
 
     def test_5_ghz(self):
         """
-        Does it pass in the correct data to set the channel?
+        Does it pass in the correct data to set the (5GHz) channel?
         """
         channel = random.choice(BroadcomRadioData.channels_5ghz)
-        command = SetChannel(connection=self.connection)
-        command.channel = channel
+        self.command.channel = channel
         expected_data = {'action':'Apply',
                         'wl_unit':'1',
                         'wl_channel':str(channel)}
-        command()
+        # setup the shelving
+        self.command._querier = self.querier
+        mock_shelf = MagicMock(spec_set=dict)
+        mock_closing = MagicMock()
+        with patch('contextlib.closing', mock_closing):
+            #with patch('shelve', mock_shelf):
+            self.command()
         self.connection.assert_called_with(data=expected_data)
+        return
+
+    def test_shelf_objects(self):
+        """
+        Is shelf_objects a dict of shelf_key:previous-channels dict?
+        """
+        querier = MagicMock()
+        command = SetChannel(connection=self.connection)
+        command._querier = self.querier
+        shelf_objects = command.shelf_objects
+        self.assertEqual(command.shelf_key, shelf_objects.keys()[0])
+        self.assertEqual(self.fake_channel,
+                          shelf_objects[command.shelf_key])
         return
 # end class TestSetChannel        
 

@@ -10,6 +10,12 @@ SSID_PAGE = 'ssid.asp'
 SSID = 'wl_ssid'
 
 
+class BandEnumeration(object):
+    __slots__ = ()
+    two_point_four = '2.4'
+    five = '5'
+
+
 class BroadcomRadioData(object):
     """
     A holder of constants for setting or checking the channel
@@ -41,6 +47,19 @@ class BroadcomWirelessData(object):
     interface_24_ghz = ZERO
 
 
+class BroadcomPages(object):
+    """
+    Holds the names of the web pages
+    """
+    __slots__ = ()
+    radio = 'radio.asp'
+    lan = 'lan.asp'
+    ssid = 'ssid.asp'
+    firmware = 'firmware.asp'
+    security = 'security.asp'
+    
+
+
 # a decorator to set the page to 'radio.asp'
 def radio_page(method):
     """
@@ -64,6 +83,19 @@ def ssid_page(method):
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
+
+# a decorato to set the page assuming that the object has a self.asp_page attribute
+def set_page(method):
+    """
+    Decorator: sets connection.path to self.asp_page before, sleeps after
+    """
+    def _method(self, *args, **kwargs):
+        self.logger.debug("Setting connection.path to {0}".format(self.asp_page))
+        self.connection.path = self.asp_page
+        outcome = method(self, *args, **kwargs)
+        return outcome
+    return _method
+
 
 
 # a dictionary for data that changes the state of the broadcom

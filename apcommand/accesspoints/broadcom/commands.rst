@@ -108,6 +108,8 @@ This is getting a little convoluted so I will try and explain the data-dictionar
 
 The reason for all these data-dictionaries is so that commands can be composed from other commands. ``base_data`` and ``singular_data`` are part of the command-definition and so never change. ``non_base_data`` and ``data`` are generated every time ``added_data`` is changed (using the operators, if the ``added_data`` is changed directly then ``data`` and ``non_base_data`` will need to be reset). Only ``added_data`` is intended to change, and it is only changed using the other command's ``non_base_data`` so it will not change the original's Wireless Interface.
 
+.. note:: I have come to the conclusion that I have gone too far with inheritance (trying to mock these things is getting really hard) and will be trying to convert this code (and my habit of coding) from inheritance to aggregation, so this will look like an odd duck for a while.
+
 
 
 Enable Interface
