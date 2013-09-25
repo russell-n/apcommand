@@ -254,7 +254,7 @@ class BroadcomBaseCommand(BaseClass):
         A name to use for any shelves created
         """
         if self._shelf_name is None:
-            self._shelf_name = "{0}.shelve".format(__package__)
+            self._shelf_name = "{0}.shelve".format(__package__.split('.')[0])
         return self._shelf_name
 
 
