@@ -104,7 +104,11 @@ class SubCommand(BaseClass):
          - `args`: namespace with 'interface' attribute
         """
         ap = self.access_point(args)
-        ap.status(args.interface)
+        if args.band is not 'all':
+            print "{0} GHz".format(args.band)
+            print ap.get_status(args.band)
+        else:
+            print ap.get_status(args.band)
         return
 
     @try_except
@@ -148,12 +152,15 @@ class SubCommand(BaseClass):
         ap = self.access_point(args)
         indent = ' ' * 3
         if args.band is None:
+            if args.ssid is not None:
+                print "Need band to change ssid"
+                return
             print "2.4 GHz:"
             print indent + ap.get_ssid('2.4')
             print "5 GHz:"
             print indent + ap.get_ssid('5')
         elif args.ssid is None:
-            "{0} GHz:".format(args.band)
+            print "{0} GHz:".format(args.band)
             print indent + ap.get_ssid(args.band)
         else:
             ap.set_ssid(ssid=args.ssid, band=args.band)
