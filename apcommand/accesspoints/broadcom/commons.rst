@@ -38,6 +38,20 @@ This holds constants for the radio.asp page.
 
 
 
+BroadcomLANData
+~~~~~~~~~~~~~~~
+
+This is data for the ``lan.asp`` page.
+
+::
+
+    class BroadcomLANData(object):
+        __slots__ = ()
+        lan_page = 'lan.asp'
+    
+
+
+
 BroadcomWirelessData
 ~~~~~~~~~~~~~~~~~~~~
 

@@ -160,13 +160,21 @@ class BroadcomBCM94718NR(BaseClass):
         if band is not 'all':
             channel = "Channel: {0}".format(self.query[band[0]].channel)
             ssid = "SSID: {0}".format(self.query[band[0]].ssid)
-            return '\n'.join((channel, ssid))
+            state = "State: {0}".format(self.query[band[0]].state)
+            if band.startswith('5'):
+                sideband = "Sideband: {0}".format(self.query[band[0]].sideband)
+            else:
+                sideband = ''
+            return '\n'.join((channel, ssid, state, sideband))
         else:
             output = ['2.4 GHz:\n']
             output.append("\tChannel: {0}".format(self.query['2'].channel))
             output.append('\tSSID: {0}'.format(self.query['2'].ssid))
+            output.append('\tState: {0}'.format(self.query['2'].state))
             output.append('5 GHz:\n')
             output.append('\tChannel: {0}'.format(self.query['5'].channel))
+            output.append('\tState: {0}'.format(self.query['5'].state))
+            output.append('\tSideband: {0}'.format(self.query['5'].sideband))
             output.append('\tSSID: {0}'.format(self.query['5'].ssid))
             return '\n'.join(output)
         return

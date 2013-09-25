@@ -26,6 +26,11 @@ class BroadcomRadioData(object):
 # end BroadcomRadioData
 
 
+class BroadcomLANData(object):
+    __slots__ = ()
+    lan_page = 'lan.asp'
+
+
 class BroadcomWirelessData(object):
     """
     A holder of data for the `Wireless Interface`

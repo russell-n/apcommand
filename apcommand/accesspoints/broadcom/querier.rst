@@ -81,6 +81,7 @@ The decorators now do nothing if :math:`\lnot refresh \land current_page=enumera
 
    radio_page
    ssid_page
+   lan_page
 
 
 

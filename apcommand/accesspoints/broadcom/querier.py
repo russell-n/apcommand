@@ -6,14 +6,16 @@ from abc import ABCMeta, abstractproperty
 from apcommand.baseclass import BaseClass
 from commons import BroadcomWirelessData
 from commons import BroadcomRadioData
+from commons import BroadcomLANData
 from commons import SSID_PAGE
 from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
 
 
 class PageEnumeration(object):
     __slots__ = ()
-    radio = 0
-    ssid = 1
+    radio = "radio"
+    ssid = 'ssid'
+    lan = 'lan'
 
 
 # a decorator to set the page to 'radio.asp'
@@ -56,6 +58,29 @@ def ssid_page(method):
         self.current_page = enumeration
         self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
         self.connection.path = SSID_PAGE
+        outcome = method(self, *args, **kwargs)
+        return outcome
+    return _method
+
+# a decorator to set the page to 'lan.asp'
+def lan_page(method):
+    """
+    Decorator: sets connection.path to lan.asp before, sleeps after 
+    """
+    def _method(self, *args, **kwargs):
+        enumeration = PageEnumeration.lan
+        if not self.refresh and self.current_page == enumeration:
+            debug_message = ('Skipping this method (refresh={0},'
+                             'current_page={1})').format(self.refresh,
+                                                         self.current_page)
+            self.logger.debug(debug_message)
+            return _method
+
+        self.logger.debug('Setting current_page to {0}'.format(enumeration))
+        self.current_page = enumeration
+
+        self.logger.debug("Setting connection.path to '{0}'".format(BroadcomLANData.lan_page))
+        self.connection.path = BroadcomLANData.lan_page
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
@@ -122,6 +147,15 @@ class BroadcomBaseQuerier(BaseClass):
         sets soup.html to the ssid page
         """
         text = self.connection(data={BroadcomWirelessData.wireless_interface:self.band}).text
+        self.soup.html = text
+        return
+
+    @lan_page
+    def set_lan_soup(self):
+        """
+        Sets soup.html to the LAN page
+        """
+        text = self.connection(data=None).text
         self.soup.html = text
         return
     
@@ -449,4 +483,4 @@ class TestBroadcomQuerier(unittest.TestCase):
         mac = self.querier.mac_address
         self.assertEqual('(00:90:4C:13:11:03)', mac)
         return
-
+    
