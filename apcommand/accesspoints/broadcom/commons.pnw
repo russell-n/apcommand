@@ -53,6 +53,17 @@ class BroadcomRadioData(object):
 # end BroadcomRadioData
 @
 
+BroadcomLANData
+~~~~~~~~~~~~~~~
+
+This is data for the ``lan.asp`` page.
+
+<<name='BroadcomLANData', wrap=False>>=
+class BroadcomLANData(object):
+    __slots__ = ()
+    lan_page = 'lan.asp'
+@
+
 BroadcomWirelessData
 ~~~~~~~~~~~~~~~~~~~~
 
