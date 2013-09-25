@@ -173,11 +173,17 @@ class BroadcomBCM94718NR(BaseClass):
             output.append('\tState: {0}'.format(self.query['2'].state))
             output.append('5 GHz:\n')
             output.append('\tChannel: {0}'.format(self.query['5'].channel))
-            output.append('\tState: {0}'.format(self.query['5'].state))
-            output.append('\tSideband: {0}'.format(self.query['5'].sideband))
+            output.append('\tSideband: {0}'.format(self.query['5'].sideband))            
             output.append('\tSSID: {0}'.format(self.query['5'].ssid))
+            output.append('\tState: {0}'.format(self.query['5'].state))
             return '\n'.join(output)
-        return
+
+        def unset_channel(self):
+            """
+            calls an undo.
+            """
+            self.channel_changer.undo()
+            return 
 # end Class BroadcomBCM94718NR        
 
 

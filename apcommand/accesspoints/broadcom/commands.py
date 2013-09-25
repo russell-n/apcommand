@@ -306,6 +306,12 @@ class BroadcomBaseCommand(BaseClass):
 # end class BroadcomBaseCommand
 
 
+class StateData(object):
+    __slots__ = ()
+    state = 'state'
+    band = 'band'
+
+
 class EnableInterface(BroadcomBaseCommand):
     """
     An interface enabler
@@ -339,10 +345,10 @@ class EnableInterface(BroadcomBaseCommand):
     @property
     def shelf_objects(self):
         """
-        A dictionary of shelf_key: previous state
+        A dictionary of shelf_key: band
         """
         previous_state = self.querier.state
-        return {self.shelf_key:previous_state}
+        return {self.shelf_key:self.band}
 
     def undo(self):
         """
@@ -351,7 +357,7 @@ class EnableInterface(BroadcomBaseCommand):
         This is actually just a call to DisableInterface...
         """
         try:
-            data = self.load()
+            self.band = self.load()[self.shelf_key]
             self.disable()
         except KeyError as error:
             self.logger.debug(error)
@@ -436,12 +442,19 @@ class DisableInterface(BroadcomBaseCommand):
                                             band=self.band)
         return self._querier
 
+    @property
+    def shelf_objects(self):
+        """
+        dictionary of shelf_key: band
+        """
+        return {self.shelf_key: self.band}
+        
     def undo(self):
         """
         enables the interface 
         """
         try:
-            data = self.load()
+            self.band = self.load()[self.shelf_key]
             self.enable()
         except KeyError as error:
             self.logger.debug(error)

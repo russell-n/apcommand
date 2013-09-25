@@ -64,6 +64,13 @@ class ChannelChanger(BaseClass):
             self._set_sideband_command = SetSideband(connection=self.connection)
         return self._set_sideband_command
     
+    def undo(self):
+        """
+        right now just undoes the channel as disable/enable might be called elsewhere
+        """
+        self.set_channel_command.undo()
+        return
+        
     def __call__(self, channel):
         """
         The main interface -- enables the Wireless interface and sets the channel

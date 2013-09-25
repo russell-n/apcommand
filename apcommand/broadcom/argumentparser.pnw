@@ -140,6 +140,8 @@ class Arguments(object):
                                              help='Change the AP channel')
         channel.add_argument('channel', help='Channel to set (none to get current channels)',
                              nargs='?', default=None)
+        channel.add_argument('--undo', help="Undo the last channel change.",
+                             default=False, type=bool)
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
