@@ -178,12 +178,12 @@ class BroadcomBCM94718NR(BaseClass):
             output.append('\tState: {0}'.format(self.query['5'].state))
             return '\n'.join(output)
 
-        def unset_channel(self):
-            """
-            calls an undo.
-            """
-            self.channel_changer.undo()
-            return 
+    def unset_channel(self):
+        """
+        calls an undo.
+        """
+        self.channel_changer.undo()
+        return 
 # end Class BroadcomBCM94718NR        
 
 
