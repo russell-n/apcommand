@@ -105,7 +105,7 @@ class SubCommand(BaseClass):
         """
         ap = self.access_point(args)
         if args.band is not 'all':
-            print "{0} GHz".format(args.band)
+            print "{0} GHz:".format(args.band)
             print ap.get_status(args.band)
         else:
             print ap.get_status(args.band)
