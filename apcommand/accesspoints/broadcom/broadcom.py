@@ -14,6 +14,7 @@ from macros import ChannelChanger
 
 # for some reason Pweave sometimes accepts relative paths, sometimes not
 from apcommand.accesspoints.broadcom.commands import DisableInterface
+from apcommand.accesspoints.broadcom.commands import EnableInterface
 
 
 class RadioPageConnection(BaseClass):
@@ -87,7 +88,15 @@ class BroadcomBCM94718NR(BaseClass):
         if self._disable_command is None:
             self._disable_command = DisableInterface(connection=self.connection)
         return self._disable_command
-            
+
+    @property
+    def enable_command(self):
+        """
+        a commanad to enable a wireless interface
+        """
+        if self._enable_command is None:
+            self._enable_command = EnableInterface(connection=self.connection)
+        return self._enable_command
 
     @property
     def channel_changer(self):
@@ -97,7 +106,6 @@ class BroadcomBCM94718NR(BaseClass):
         if self._channel_changer is None:
             self._channel_changer = ChannelChanger(connection=self.connection)
         return self._channel_changer
-
 
     @property
     def query(self):
@@ -201,7 +209,7 @@ class BroadcomBCM94718NR(BaseClass):
 
     def disable(self, band):
         """
-        Calls the disable command
+        Sets the disable command's band and calls it.
 
         :param:
 
@@ -209,6 +217,18 @@ class BroadcomBCM94718NR(BaseClass):
         """
         self.disable_command.band = band
         self.disable_command()
+        return
+
+    def enable(self, band):
+        """
+        Sets the enable command's band and calls it
+
+        :param:
+
+         - `band`: The band of the interface to enable
+        """
+        self.enable_command.band = band
+        self.enable_command()
         return
 # end Class BroadcomBCM94718NR        
 

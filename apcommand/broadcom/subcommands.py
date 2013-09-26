@@ -132,10 +132,17 @@ class SubCommand(BaseClass):
 
         :param:
 
-         - `args`: namespace with `interface` attribute
+         - `args`: namespace with `band` attribute
         """
         ap = self.access_point(args)
-        ap.enable(interface=args.interface)
+        if args.band == BandEnumeration.both:
+            self.logger.info("Enabling 2.4 GHz")
+            ap.enable(BandEnumeration.two_point_four)
+            self.logger.info("Enabling 5GHz")
+            ap.enable(BandEnumeration.five)
+        else:
+            self.logger.info("Enabling {0} GHz".format(args.band))
+            ap.enable(args.band)        
         return
     
     @try_except

@@ -154,10 +154,10 @@ class Arguments(object):
         disable.set_defaults(function=self.subcommands.disable)
         
         # enable an interface
-        command = self.subparsers.add_parser('enable',
+        enable = self.subparsers.add_parser('enable',
                                              help='Enable an interface.')
-        command.add_argument('interface', help='Interface to enable (use band -- 2.4 or 5)')
-        command.set_defaults(function=self.subcommands.enable)
+        enable.add_argument('band', help='Band of interface to enable (use band -- 2.4 or 5)')
+        enable.set_defaults(function=self.subcommands.enable)
 
         # change the ssid
         ssid = self.subparsers.add_parser('ssid',
