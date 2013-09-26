@@ -134,7 +134,8 @@ class Arguments(object):
         disable.add_argument('band',
                              help=('Band (GHz) of the interface to disable'
                                    ' (2.4, 5 or both) default=%(default)s.'),
-                                   default='both')        
+                                   default='both',
+                                   nargs='?')
         disable.set_defaults(function=self.subcommands.disable)
         
         # enable an interface
@@ -142,7 +143,7 @@ class Arguments(object):
                                              help='Enable an interface.')
         enable.add_argument('band',
                             help='Band of interface to enable (2.4, 5 or both) default=%(default)s.',
-                            default='both')
+                            default='both', nargs='?')
         enable.set_defaults(function=self.subcommands.enable)
 
         # change the ssid
