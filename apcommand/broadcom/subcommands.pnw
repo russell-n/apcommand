@@ -160,10 +160,10 @@ class SubCommand(BaseClass):
         if args.band == BandEnumeration.both:
             self.logger.info("Disabling 2.4 GHz")
             ap.disable(BandEnumeration.two_point_four)
-            self.logged.info("Disabling 5GHz")
+            self.logger.info("Disabling 5GHz")
             ap.disable(BandEnumeration.five)
         else:
-            self.logged.info("Disabling {0} GHz".format(args.band))
+            self.logger.info("Disabling {0} GHz".format(args.band))
             ap.disable(args.band)        
         return
 
