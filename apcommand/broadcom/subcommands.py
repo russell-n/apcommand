@@ -81,6 +81,7 @@ class SubCommand(BaseClass):
         ap = self.access_point(args)
         if args.undo:
             ap.unset_channel()
+            return
         if args.channel is None:
             out_string = "{0} GHz Channel: {1} {3} ({2})"
             for band in '2.4 5'.split():

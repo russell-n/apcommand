@@ -125,7 +125,7 @@ class Arguments(object):
         channel.add_argument('channel', help='Channel to set (none to get current channels)',
                              nargs='?', default=None)
         channel.add_argument('--undo', help="Undo the last channel change.",
-                             default=False, type=bool)
+                             action='store_true')
         channel.set_defaults(function=self.subcommands.channel)
 
         # change the ssid
