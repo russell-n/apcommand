@@ -144,6 +144,21 @@ class Arguments(object):
                              action='store_true')
         channel.set_defaults(function=self.subcommands.channel)
 
+        # disable an interface
+        disable = self.subparsers.add_parser('disable',
+                                             help='Disable a wireless interface.')
+        disable.add_argument('band',
+                             help=('Band (GHz) of the interface to disable'
+                                   ' (2.4, 5 or both) default=%(default)s.'),
+                                   default='both')        
+        disable.set_defaults(function=self.subcommands.disable)
+        
+        # enable an interface
+        command = self.subparsers.add_parser('enable',
+                                             help='Enable an interface.')
+        command.add_argument('interface', help='Interface to enable (use band -- 2.4 or 5)')
+        command.set_defaults(function=self.subcommands.enable)
+
         # change the ssid
         ssid = self.subparsers.add_parser('ssid',
                                           help='Change the SSID')
@@ -154,32 +169,6 @@ class Arguments(object):
                           default=None)
         ssid.set_defaults(function=self.subcommands.ssid)
 
-        # change the IP address
-        ip_address = self.subparsers.add_parser('ip',
-                                                help='Change the IP Address')
-        ip_address.add_argument('ipaddress',
-                                help='The IP address to use (default=%(default)s)',
-                                default='10.10.10.21',
-                                nargs='?')
-        ip_address.add_argument('--subnetmask',
-                                help='The sub-net mask (default=%(default)s)',
-                                default='255.255.255.0')
-        ip_address.set_defaults(function=self.subcommands.ipaddress)
-
-        # change the security
-        security = self.subparsers.add_parser('security',
-                                              help='Change the security')
-        security.add_argument('-t', '--type',
-                              help='Security type {open, WEP, WPA, WPA2} (default=%(default)s)',
-                              default='open')
-        security.add_argument('-c', '--cipher')
-        security.set_defaults(function=self.subcommands.security)
-
-        # enable an interface
-        command = self.subparsers.add_parser('enable',
-                                             help='Enable an interface.')
-        command.add_argument('interface', help='Interface to enable (use band -- 2.4 or 5)')
-        command.set_defaults(function=self.subcommands.enable)
         return
 # end class Arguments
 @

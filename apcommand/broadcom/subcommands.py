@@ -22,6 +22,7 @@ def try_except(func):
 from apcommand.baseclass import BaseClass
 import apcommand.accesspoints.broadcom.broadcom
 from apcommand.commons.errors import ArgumentError
+from apcommand.accesspoints.broadcom.commons import BandEnumeration
 
 
 class SubCommand(BaseClass):
@@ -47,10 +48,9 @@ class SubCommand(BaseClass):
         apvalues = (getattr(args, arg) for arg in apargs if getattr(args, arg) is not None)
         apkeys = (arg for arg in apargs if getattr(args, arg) is not None)
         apkwargs = dict(zip(apkeys, apvalues))
-        
+        self.logger.debug("Creating BroadcomBCM94718NR with: {0}".format(apkwargs))
         ap = apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR(**apkwargs)
         return ap
-
 
     @try_except
     def status(self, args):
@@ -62,6 +62,7 @@ class SubCommand(BaseClass):
          - `args`: namespace with 'interface' attribute
         """
         ap = self.access_point(args)
+        self.logger.debug("getting status for band: {0}".format(args.band))
         if args.band is not 'all':
             print "{0} GHz:".format(args.band)
             print ap.get_status(args.band)
@@ -78,11 +79,13 @@ class SubCommand(BaseClass):
 
          - `args`: namespace with `channel` attribute
         """
-        ap = self.access_point(args)
+        ap = self.access_point(args)        
         if args.undo:
+            self.logger.debug('Calling undo')
             ap.unset_channel()
             return
         if args.channel is None:
+            self.logger.debug("Getting channel info")
             out_string = "{0} GHz Channel: {1} {3} ({2})"
             for band in '2.4 5'.split():
                 print "{0} GHz:".format(band)
@@ -98,9 +101,43 @@ class SubCommand(BaseClass):
 
                 self.logger.debug(out_string.format(band, channel, state, sideband))
         else:
+            self.logger.debug('Setting Channel: {0}'.format(args.channel))
             ap.set_channel(channel=args.channel)
         return
 
+    @try_except
+    def disable(self, args):
+        """
+        Disables the wireless interface
+
+        :param:
+
+         - `args`: namespace with 'band' property
+        """
+        ap = self.access_point(args)
+        if args.band == BandEnumeration.both:
+            self.logger.info("Disabling 2.4 GHz")
+            ap.disable(BandEnumeration.two_point_four)
+            self.logged.info("Disabling 5GHz")
+            ap.disable(BandEnumeration.five)
+        else:
+            self.logged.info("Disabling {0} GHz".format(args.band))
+            ap.disable(args.band)        
+        return
+
+    @try_except
+    def enable(self, args):
+        """
+        Enables an AP interface
+
+        :param:
+
+         - `args`: namespace with `interface` attribute
+        """
+        ap = self.access_point(args)
+        ap.enable(interface=args.interface)
+        return
+    
     @try_except
     def ssid(self, args):
         """
@@ -125,58 +162,5 @@ class SubCommand(BaseClass):
             print indent + ap.get_ssid(args.band)
         else:
             ap.set_ssid(ssid=args.ssid, band=args.band)
-        return
-
-    @try_except
-    def security(self, args):
-        """
-        calls the AP's set_security method
-
-        :param:
-
-         - `args`: namespace with `type` attribute
-        """
-        ap = self.access_point(args)
-        ap.set_security(security_type=args.type)
-        return
-
-    @try_except
-    def command(self, args):
-        """
-        Calls the AP's exec_command method
-
-        :param:
-
-         - `args`: namespace with `command` attribute
-        """
-        ap = self.access_point(args)
-        ap.exec_command(args.command)
-        return
-
-    @try_except
-    def ipaddress(self, args):
-        """
-        Sets the AP's ip address
-
-        :param:
-
-         - `args`: namespace with `ipaddress`, `subnetmask` attributes
-        """
-        ap = self.access_point(args)
-        ap.set_ip(address=args.ipaddress,
-                  mask=args.subnetmask)
-        return
-
-    @try_except
-    def enable(self, args):
-        """
-        Enables an AP interface
-
-        :param:
-
-         - `args`: namespace with `interface` attribute
-        """
-        ap = self.access_point(args)
-        ap.enable(interface=args.interface)
         return
         

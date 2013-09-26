@@ -133,7 +133,7 @@ These are decorators to do the repetitive calls common to many methods.
             return outcome
         return _method
     
-    # a decorato to set the page assuming that the object has a self.asp_page attribute
+    # a decorator to set the page assuming that the object has a self.asp_page attribute
     def set_page(method):
         """
         Decorator: sets connection.path to self.asp_page before, sleeps after

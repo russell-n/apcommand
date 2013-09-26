@@ -14,6 +14,7 @@ class BandEnumeration(object):
     __slots__ = ()
     two_point_four = '2.4'
     five = '5'
+    both = 'both'
 
 
 class BroadcomRadioData(object):

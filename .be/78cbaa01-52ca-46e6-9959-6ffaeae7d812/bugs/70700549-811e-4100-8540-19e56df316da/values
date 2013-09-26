@@ -26,21 +26,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Broadcom commands don't add/subtract when used as properties", 
+    "summary": "broadcom commands can pass nosetests but not when Pweaved", 
 
 
 
 
 
 
-    "time": "Tue, 24 Sep 2013 17:23:11 +0000"
+    "time": "Thu, 26 Sep 2013 19:32:19 +0000"
 
 
 

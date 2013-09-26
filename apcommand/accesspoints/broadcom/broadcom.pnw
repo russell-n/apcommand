@@ -61,6 +61,9 @@ from commons import SSID, SSID_PAGE
 from commons import set_24_data, set_5_data, ssid_page
 from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
 from macros import ChannelChanger
+
+# for some reason Pweave sometimes accepts relative paths, sometimes not
+from apcommand.accesspoints.broadcom.commands import DisableInterface
 @
 
 .. autosummary::
@@ -136,11 +139,22 @@ class BroadcomBCM94718NR(BaseClass):
         self.sleep = sleep
         self._connection = None
         self._enable_command = None
+        self._disable_command = None
 
         # aggregated classes
         self._channel_changer = None
         self._query = None
         return
+
+    @property
+    def disable_command(self):
+        """
+        A command to disable a wireless interface
+        """
+        if self._disable_command is None:
+            self._disable_command = DisableInterface(connection=self.connection)
+        return self._disable_command
+            
 
     @property
     def channel_changer(self):
@@ -250,7 +264,19 @@ class BroadcomBCM94718NR(BaseClass):
         calls an undo.
         """
         self.channel_changer.undo()
-        return 
+        return
+
+    def disable(self, band):
+        """
+        Calls the disable command
+
+        :param:
+
+         - `band`: a wireless band (2.4 or 5)
+        """
+        self.disable_command.band = band
+        self.disable_command()
+        return
 # end Class BroadcomBCM94718NR        
 @
 

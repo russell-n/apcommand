@@ -112,6 +112,13 @@ The reason for all these data-dictionaries is so that commands can be composed f
 
 
 
+StateData
+---------
+
+Since the EnableInterface and DisableInterface have to undo what they did, I created a class to hold the keys for their shelving dictionary. I was going to use named-tuples but they are not pickleable.
+
+
+
 Enable Interface
 ----------------
 
