@@ -144,9 +144,8 @@ class BroadcomBaseCommand(BaseClass):
         A name to use for any shelves created
         """
         if self._shelf_name is None:
-            self._shelf_name = "{0}.shelve".format(__package__)
+            self._shelf_name = "{0}.shelve".format(__package__.split('.')[0])
         return self._shelf_name
-
 
     @property
     def querier(self):
@@ -293,14 +292,15 @@ class BroadcomBaseCommand(BaseClass):
         return
 
     def load(self):
-        """
+        """ 
         Loads the shelved data for the undo method
+        (to prevent circular calls using shelf_objects' keys, just uses shelf_key)
 
         :return: dictionary of objects using shelf_objects' keys
         :raise: KeyError if an item in shelf_objects isn't on the shelf
         """
         with closing(shelve.open(self.shelf_name, flag='r')) as open_shelf:
-            data = {key:open_shelf[key] for key in self.shelf_objects}
+            data = open_shelf[self.shelf_key]
         return data
 
 # end class BroadcomBaseCommand
@@ -357,7 +357,7 @@ class EnableInterface(BroadcomBaseCommand):
         This is actually just a call to DisableInterface...
         """
         try:
-            self.band = self.load()[self.shelf_key]
+            self.band = self.load()
             self.disable()
         except KeyError as error:
             self.logger.debug(error)
@@ -454,7 +454,7 @@ class DisableInterface(BroadcomBaseCommand):
         enables the interface 
         """
         try:
-            self.band = self.load()[self.shelf_key]
+            self.band = self.load()
             self.enable()
         except KeyError as error:
             self.logger.debug(error)
@@ -572,7 +572,7 @@ class SetChannel(BroadcomBaseCommand):
         Sets the channels found on the shelve
         """
         try:
-            self.channel = self.load()[self.shelf_key]
+            self.channel = self.load()
             self()
         except KeyError as error:
             self.logger.debug(error)
