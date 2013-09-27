@@ -322,7 +322,10 @@ import random
 import re
 
 #third-party
-import numpy.random as nrandom
+try:
+    import numpy.random as nrandom
+except ImportError:
+    print "No testing for you"    
 # this package
 from randomizer import Randomizer
 
