@@ -78,6 +78,7 @@ class BroadcomBCM94718NR(BaseClass):
         # aggregated classes
         self._channel_changer = None
         self._query = None
+        self._ssid_query = None
         return
 
     @property
@@ -120,6 +121,18 @@ class BroadcomBCM94718NR(BaseClass):
         return self._query
 
     @property
+    def ssid_query(self):
+        """
+        A Broadcom SSID Querier band:reader dictionary
+        """
+        if self._query is None:
+            self._query = {'2':BroadcomSSIDQuerier(connection=self.connection,
+                                                    band='5'),
+                             '5':BroadcomSSIDQuerier(connection=self.connection,
+                                                      band='2.4')}
+        return self._query
+
+    @property
     def connection(self):
         """
         A connection to the AP (right now this acts as an HTTPConnection builder)
@@ -158,7 +171,7 @@ class BroadcomBCM94718NR(BaseClass):
         """
         Gets the ssid for the interface matching the band
         """
-        return self.query[band[0]].ssid
+        return self.ssid_query[band[0]].ssid
 
     def set_channel(self, channel):
         """
