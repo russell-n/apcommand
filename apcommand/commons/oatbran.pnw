@@ -483,7 +483,7 @@ import re
 try:
     import numpy.random as nrandom
 except ImportError:
-    print "No testing for you"    
+    pass
 # this package
 from randomizer import Randomizer
 @

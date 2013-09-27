@@ -182,9 +182,9 @@ class BroadcomBCM94718NR(BaseClass):
         """
         if self._query is None:
             self._query = {'2':BroadcomRadioQuerier(connection=self.connection,
-                                                    band='5'),
+                                                    band='2.4'),
                              '5':BroadcomRadioQuerier(connection=self.connection,
-                                                      band='2.4')}
+                                                      band='5')}
         return self._query
 
     @property
@@ -192,12 +192,12 @@ class BroadcomBCM94718NR(BaseClass):
         """
         A Broadcom SSID Querier band:reader dictionary
         """
-        if self._query is None:
-            self._query = {'2':BroadcomSSIDQuerier(connection=self.connection,
+        if self._ssid_query is None:
+            self._ssid_query = {'2':BroadcomSSIDQuerier(connection=self.connection,
                                                     band='5'),
-                             '5':BroadcomSSIDQuerier(connection=self.connection,
+                                                    '5':BroadcomSSIDQuerier(connection=self.connection,
                                                       band='2.4')}
-        return self._query
+        return self._ssid_query
 
     @property
     def connection(self):
