@@ -205,13 +205,13 @@ class BroadcomBCM94718NR(BaseClass):
             return '\n'.join((channel, ssid, state, sideband))
         else:
             output = ['2.4 GHz:\n']
-            output.append("\tChannel: {0}".format(self.query['2'].channel))
-            output.append('\tSSID: {0}'.format(self.query['2'].ssid))
+            output.append("\tChannel: {0}".format(self.get_channel('2.4')))
+            output.append('\tSSID: {0}'.format(self.get_ssid('2.4')))
             output.append('\tState: {0}'.format(self.query['2'].state))
             output.append('5 GHz:\n')
-            output.append('\tChannel: {0}'.format(self.query['5'].channel))
+            output.append('\tChannel: {0}'.format(self.get_channel('5')))
             output.append('\tSideband: {0}'.format(self.query['5'].sideband))            
-            output.append('\tSSID: {0}'.format(self.query['5'].ssid))
+            output.append('\tSSID: {0}'.format(self.get_ssid('5')))
             output.append('\tState: {0}'.format(self.query['5'].state))
             return '\n'.join(output)
 
