@@ -262,8 +262,8 @@ class BroadcomBCM94718NR(BaseClass):
         Returns an aggregate string for the band
         """
         if band is not 'all':
-            channel = "Channel: {0}".format(self.query[band[0]].channel)
-            ssid = "SSID: {0}".format(self.query[band[0]].ssid)
+            channel = "Channel: {0}".format(self.get_channel(band))
+            ssid = "SSID: {0}".format(self.get_ssid(band))
             state = "State: {0}".format(self.query[band[0]].state)
             if band.startswith('5'):
                 sideband = "Sideband: {0}".format(self.query[band[0]].sideband)
