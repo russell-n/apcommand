@@ -23,7 +23,7 @@ from commons import action_dict, radio_page
 from commons import BroadcomWirelessData, BroadcomRadioData
 from commons import BroadcomPages, set_page
 from commons import BandEnumeration
-from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier, BroadcomQuerier
+from querier import BroadcomRadioQuerier, BroadcomSSIDQuerier
 @
 .. _broadcom-commands-introduction:
 Introduction
@@ -261,11 +261,13 @@ class BroadcomBaseCommand(BaseClass):
     def querier(self):
         """
         A querier to get the previous state for the undo.
+
+        This assumes radio.asp right now
         """
         if self._querier is None:
-            self._querier = BroadcomQuerier(connection=self.connection,
-                                            refresh=False,
-                                            band=self.band)
+            self._querier = BroadcomRadioQuerier(connection=self.connection,
+                                                 refresh=False,
+                                                 band=self.band)
         return self._querier
 
     @property
@@ -1017,11 +1019,9 @@ class TestEnableInterface(unittest.TestCase):
         command = EnableInterface(connection=self.connection,
                                   band='2')
         command()
-        self.assertEqual(type(command.querier.querier), Broadcom24GHzQuerier)
 
         command.band = '5'
         command()    
-        self.assertEqual(type(command.querier.querier), Broadcom5GHzQuerier)
         return
 
     def test_24ghz(self):

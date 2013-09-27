@@ -3,6 +3,8 @@ The Broadcom BCM94718NR Parser
 .. currentmodule:: apcommand.accesspoints.broadcom.broadcom_parser
 This is a module to hold an interpreter to pull information from the Broadcom html pages. It uses `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ to break the html tree apart and then regular expressions to extract the specific bits of text.
 
+
+
 The `radio.asp` HTML
 --------------------
 
@@ -53,7 +55,22 @@ The question now -- *is this a better solution than using regular expressions?* 
 
 The answer for now will be to use BeautifulSoup function calls instead of regular expressions, until a case arises where they are needed.
 
-.. note:: So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
+The Selected Case
+~~~~~~~~~~~~~~~~~
+
+So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
+
+In the soup I use a named expression::
+
+    SELECTED_EXPRESSION = r'\bselected\b.*>(?P<{0}>.*)<'
+
+So, for instance, to get the current DHCP-service state you could pull the HTML from the ``lan.asp`` page, feed it to a BeautfulSoup instance (call it ``soup``) and do something like this to get the current state::
+
+    dhcp_selected = SELECTED_EXPRESSION.format('DHCP')
+    
+    lan_proto = soup.find(attrs={'name':'lan_proto'})
+    state = re.search(dhcp_selected, str(lan_proto)).group('DHCP')
+
 
 .. _broadcom-parser-wireless-interface:
 The Wireless Interface
@@ -77,6 +94,22 @@ Right now I am not sure what kind of errors are going to come up, but for runtim
 .. uml::
 
    SoupError -|> RuntimeError
+
+
+
+.. _broadcom-base-soup:
+The BroadcomBaseSoup
+--------------------
+
+Although I have decided to move to aggregation over inheritance, the soups seem to have some common code that is just easier with inheritance -- so here we go again once more for the last time.
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomBaseSoup
+   BroadcomBaseSoup.html
+   BroadcomBaseSoup.soup
+   BroadcomBaseSoup.selected_expression
 
 
 
@@ -163,22 +196,77 @@ This is the interface for those who want to use this to get text from an html in
    BroadcomRadioSoup.channel
    BroadcomRadioSoup.bandwidth
    BroadcomRadioSoup.sideband
-   BroadcomRadioSoup.ssid
 
 Developer API
 +++++++++++++
 
 This is the interface for those who want to add to the Soup.
 
+.. uml::
+
+   BroadcomRadioSoup -|> BroadcomBaseSoup
+
 .. autosummary::
    :toctree: api
 
    BroadcomRadioSoup
-   BroadcomRadioSoup.html
-   BroadcomRadioSoup.soup
    BroadcomRadioSoup.wireless_interface
    BroadcomRadioSoup.get_value_one
    BroadcomRadioSoup.get_value_zero
    
 
+
+The BroadcomLANSoup
+-------------------
+
+Since the Radio Soup is getting so big I am going back to the idea of one soup per page. The only interesting thing I can think of for this page is the DHCP server state (to make sure it is off). I was going to get the IP address but since you need the IP address to get to the server to ask it its IP address I decided not to.
+
+.. uml::
+
+   BroadcomLANSoup -|> BroadcomBaseSoup
+
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomLANSoup
+   BroadcomLANSoup.dhcp_state
+
+
+
+The BroadcomSSIDSoup
+--------------------
+
+Continuing with the one-class one-page pattern...
+
+.. uml::
+
+   BroadcomSSIDSoup -|> BroadcomBaseSoup
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomSSIDSoup
+   BroadcomSSIDSoup.ssid
+
+
+
+
+Some Cases
+----------
+
+This is a scratchpad for BeautfulSoup commands to get specific things.
+
+To get the `DHCP` state (from ``lan.asp``) (for the internal network, use ``lan1_proto`` for the guest network)::
+
+    selected_expression = r'\bselected\b=.*>(?P<{0}>.*)<'.format('DHCP')
+    
+    lan_proto = soup.find(attrs={'name':'lan_proto'})
+    state = re.search(selected_expression, str(lan_proto)).group('DHCP')
+
+* This is one of those cases where you need to find the 'selected' keyword in the tag to figure out which of the drop-down-menu choices is the current one (thus the regular expression)
+
+* State should be one of ``Enabled`` or ``Disabled``.
+
+* The expression is set up in this module as a constant named SELECTED_EXPRESSION
 

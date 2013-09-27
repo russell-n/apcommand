@@ -3,6 +3,18 @@ The Broadcom BCM94718NR Parser
 .. currentmodule:: apcommand.accesspoints.broadcom.broadcom_parser
 This is a module to hold an interpreter to pull information from the Broadcom html pages. It uses `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/>`_ to break the html tree apart and then regular expressions to extract the specific bits of text.
 
+<<name='imports', echo=False>>=
+# python standard library
+import re
+
+# third-party
+import bs4
+
+# this package
+from apcommand.baseclass import BaseClass
+from apcommand.commons.oatbran import Group, Boundaries, CommonPatterns
+@
+
 The `radio.asp` HTML
 --------------------
 
@@ -53,7 +65,22 @@ The question now -- *is this a better solution than using regular expressions?* 
 
 The answer for now will be to use BeautifulSoup function calls instead of regular expressions, until a case arises where they are needed.
 
-.. note:: So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
+The Selected Case
+~~~~~~~~~~~~~~~~~
+
+So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
+
+In the soup I use a named expression::
+
+    SELECTED_EXPRESSION = r'\bselected\b.*>(?P<{0}>.*)<'
+
+So, for instance, to get the current DHCP-service state you could pull the HTML from the ``lan.asp`` page, feed it to a BeautfulSoup instance (call it ``soup``) and do something like this to get the current state::
+
+    dhcp_selected = SELECTED_EXPRESSION.format('DHCP')
+    
+    lan_proto = soup.find(attrs={'name':'lan_proto'})
+    state = re.search(dhcp_selected, str(lan_proto)).group('DHCP')
+
 
 .. _broadcom-parser-wireless-interface:
 The Wireless Interface
@@ -83,6 +110,86 @@ class SoupError(RuntimeError):
     """
     Raise if something is detected at run-time.
     """
+@
+
+.. _broadcom-base-soup:
+The BroadcomBaseSoup
+--------------------
+
+Although I have decided to move to aggregation over inheritance, the soups seem to have some common code that is just easier with inheritance -- so here we go again once more for the last time.
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomBaseSoup
+   BroadcomBaseSoup.html
+   BroadcomBaseSoup.soup
+   BroadcomBaseSoup.selected_expression
+
+<<name='BroadcomBaseSoup', echo=False>>=
+class BroadcomBaseSoup(BaseClass):
+    """
+    A base-class to hold some code common to the soups
+    """
+    def __init__(self, html=None):
+        """
+        BroadcomBaseSoup constructor
+
+        :param:
+
+         - `html`: html text for the soup to parse
+        """
+        super(BroadcomBaseSoup, self).__init__()
+        self._logger = None
+        self._html = None
+        self.html = html
+        self._soup = None
+        # regular expressions
+        self._selected_expression = None
+        return
+
+    @property
+    def html(self):
+        """
+        The html for soup        
+        """
+        return self._html
+
+    @html.setter
+    def html(self, new_html):
+        """
+        sets the html, resets the soup
+        """
+        self._html = new_html
+        self._soup = None
+        return
+
+    @property
+    def soup(self):
+        """
+        A beautiful soup object created from self.html
+
+        :return: BeautifulSoup with self.html loaded
+        :raise: SoupError if something went wrong
+        """
+        if self._soup is None:
+            try:
+                self._soup = bs4.BeautifulSoup(self.html)
+            except TypeError as error:
+                self.logger.error(error)
+                raise SoupError("unable to create soup from {0}".format(self.html))
+        return self._soup
+
+    @property
+    def selected_expression(self):
+        """
+        Compiled regex to get text from selected option (use SELECTED as name for group)
+        """
+        if self._selected_expression is None:
+            self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
+        return self._selected_expression
+
+
 @
 
 .. _broadcom-radio-soup:
@@ -145,16 +252,6 @@ Then uses ``.text`` to get the state of the interface::
 
 *Use ``.text`` to get the text between tags.*
 
-<<name='imports', echo=False>>=
-# python standard library
-import re
-
-# third-party
-import bs4
-
-# this package
-from apcommand.baseclass import BaseClass
-@
 <<name="soup_constants", echo=False>>=
 NAME = 'name'
 VALUE = 'value'
@@ -167,7 +264,13 @@ INTERFACE = 'wl_radio'
 COUNTRY = 'wl_country_code'
 CHANNEL = 'wl_channel'
 BANDWIDTH = 'wl_nbw_cap'
-SELECTED_EXPRESSION = r'selected\svalue=.*>(?P<{0}>.*)<'
+everything = CommonPatterns.everything
+word = Boundaries.word
+
+SELECTED_EXPRESSION = (word('selected') + everything +
+                       r'>' +
+                       Group.named(name='{0}', expression=everything) +
+                       r'<')
 SELECTED = 'selected'
 GENERIC_SELECTED_EXPRESSION = SELECTED_EXPRESSION.format(SELECTED)
 BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
@@ -197,29 +300,30 @@ This is the interface for those who want to use this to get text from an html in
    BroadcomRadioSoup.channel
    BroadcomRadioSoup.bandwidth
    BroadcomRadioSoup.sideband
-   BroadcomRadioSoup.ssid
 
 Developer API
 +++++++++++++
 
 This is the interface for those who want to add to the Soup.
 
+.. uml::
+
+   BroadcomRadioSoup -|> BroadcomBaseSoup
+
 .. autosummary::
    :toctree: api
 
    BroadcomRadioSoup
-   BroadcomRadioSoup.html
-   BroadcomRadioSoup.soup
    BroadcomRadioSoup.wireless_interface
    BroadcomRadioSoup.get_value_one
    BroadcomRadioSoup.get_value_zero
    
 <<name='BroadcomRadioSoup', echo=False>>=
-class BroadcomRadioSoup(BaseClass):
+class BroadcomRadioSoup(BroadcomBaseSoup):
     """
     A holder of BeautifulSoup
     """
-    def __init__(self, html=None):
+    def __init__(self, *args, **kwargs):
         """
         Broadcom soup constructor
 
@@ -227,10 +331,7 @@ class BroadcomRadioSoup(BaseClass):
 
          - `html`: a file-object or string to pass to BeautifulSoup
         """
-        super(BroadcomRadioSoup, self).__init__()
-        self._html = None
-        self.html = html
-        self._soup = None
+        super(BroadcomRadioSoup, self).__init__(*args, **kwargs)
 
         # the sub-trees and text
         self._wireless_interface = None
@@ -240,52 +341,7 @@ class BroadcomRadioSoup(BaseClass):
         self._channel = None
         self._bandwidth = None
         self._sideband = None
-        self._ssid = None
-
-        # regular expressions
-        self._selected_expression = None
         return
-
-    @property
-    def selected_expression(self):
-        """
-        Compiled regex to get text from selected option
-        """
-        if self._selected_expression is None:
-            self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
-        return self._selected_expression
-
-    @property
-    def html(self):
-        """
-        The html for soup        
-        """
-        return self._html
-
-    @html.setter
-    def html(self, new_html):
-        """
-        sets the html, resets the soup
-        """
-        self._html = new_html
-        self._soup = None
-        return
-
-    @property
-    def soup(self):
-        """
-        A beautiful soup object created from self.html
-
-        :return: BeautifulSoup with self.html loaded
-        :raise: SoupError if something went wrong
-        """
-        if self._soup is None:
-            try:
-                self._soup = bs4.BeautifulSoup(self.html)
-            except TypeError as error:
-                self.logger.error(error)
-                raise SoupError("unable to create soup from {0}".format(self.html))
-        return self._soup
 
     @property
     def wireless_interface(self):
@@ -391,15 +447,83 @@ class BroadcomRadioSoup(BaseClass):
             if match:
                 return match.group(SELECTED).rstrip()
             
+@
+
+The BroadcomLANSoup
+-------------------
+
+Since the Radio Soup is getting so big I am going back to the idea of one soup per page. The only interesting thing I can think of for this page is the DHCP server state (to make sure it is off). I was going to get the IP address but since you need the IP address to get to the server to ask it its IP address I decided not to.
+
+.. uml::
+
+   BroadcomLANSoup -|> BroadcomBaseSoup
+
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomLANSoup
+   BroadcomLANSoup.dhcp_state
+
+<<name='BroadcomLANSoup', echo=False>>=
+class BroadcomLANSoup(BroadcomBaseSoup):
+    """
+    A soup for the lan.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        BroadcomLANSoup constructor
+
+        :param:
+
+         - `html`: An initial text to parse
+        """
+        super(BroadcomLANSoup, self).__init__(*args, **kwargs)
+        self._dhcp_state = None
+        return
+
+    @property
+    def dhcp_state(self):
+        """
+        The selected DHCP state
+        """
+        lan_proto = self.soup.find(attrs={'name':'lan_proto'})
+        return self.selected_expression.search(str(lan_proto)).group(SELECTED)
+@
+
+The BroadcomSSIDSoup
+--------------------
+
+Continuing with the one-class one-page pattern...
+
+.. uml::
+
+   BroadcomSSIDSoup -|> BroadcomBaseSoup
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomSSIDSoup
+   BroadcomSSIDSoup.ssid
+
+<<name='BroadcomSSIDSoup', echo=False>>=
+class BroadcomSSIDSoup(BroadcomBaseSoup):
+    """
+    A soup for the ssid.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        super(BroadcomSSIDSoup, self).__init__(*args, **kwargs)
+        self._ssid = None
+        return
+
     @property
     def ssid(self):
         """
         Gets the SSID for the currently selected interface
         """
         return self.soup.find(attrs={NAME:SSID})['value']
-        
+# end class BroadcomSSIDSoup            
 @
-
 <<name='test_imports', echo=False>>=
 # python standard library
 import unittest
@@ -528,18 +652,65 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         self.assertEqual(self.soup_5.sideband, 'Lower')
         return
 
+@
+<<name='TestBroadcomLANSoup', echo=False>>=
+class TestBroadcomLANSoup(unittest.TestCase):
+    def setUp(self):
+        self.lan_html = open('lan_asp.html').read()
+        self.soup = BroadcomLANSoup(self.lan_html)
+        return
+
+    def test_disabled(self):
+        self.assertEqual('Disabled', self.soup.dhcp_state)
+
+        # test the case where the `selected` attribute is out of order
+        self.soup.html = open('lan_asp.html').read()
+        self.assertEqual('Disabled', self.soup.dhcp_state)
+        return
+
+    def test_enabled(self):
+        self.soup.html = open('dhcp_enabled.html').read()
+        self.assertEqual('Enabled', self.soup.dhcp_state)
+        return
+@
+<<name='TestBroadcomSSIDSoup', echo=False>>=
+class TestBroadcomSSIDSoup(unittest.TestCase):
+    def setUp(self):
+        text = open('ssid_asp.html').read()
+        self.soup = BroadcomSSIDSoup(html=text)
+        return
+
     def test_ssid(self):
         """
         Does it get the SSID?
         """
-        # change the page
-        text = open('ssid_asp.html').read()
-        self.soup.html = text
         self.assertEqual('hownowbrowndog', self.soup.ssid)
         return
+
 @
 <%
-for case in (TestBroadcomRadioSoup,):
+for case in (TestBroadcomRadioSoup,
+             TestBroadcomSSIDSoup,
+             TestBroadcomLANSoup):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    
     unittest.TextTestRunner(verbosity=2).run(suite)
 %>
+
+Some Cases
+----------
+
+This is a scratchpad for BeautfulSoup commands to get specific things.
+
+To get the `DHCP` state (from ``lan.asp``) (for the internal network, use ``lan1_proto`` for the guest network)::
+
+    selected_expression = r'\bselected\b=.*>(?P<{0}>.*)<'.format('DHCP')
+    
+    lan_proto = soup.find(attrs={'name':'lan_proto'})
+    state = re.search(selected_expression, str(lan_proto)).group('DHCP')
+
+* This is one of those cases where you need to find the 'selected' keyword in the tag to figure out which of the drop-down-menu choices is the current one (thus the regular expression)
+
+* State should be one of ``Enabled`` or ``Disabled``.
+
+* The expression is set up in this module as a constant named SELECTED_EXPRESSION
+

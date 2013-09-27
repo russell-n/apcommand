@@ -9,7 +9,7 @@ import apcommand.connections.httpconnection as httpconnection
 from commons import BroadcomRadioData
 from commons import SSID, SSID_PAGE
 from commons import set_24_data, set_5_data, ssid_page
-from querier import Broadcom5GHzQuerier, Broadcom24GHzQuerier
+from querier import BroadcomRadioQuerier, BroadcomSSIDQuerier
 from macros import ChannelChanger
 
 # for some reason Pweave sometimes accepts relative paths, sometimes not
@@ -113,8 +113,10 @@ class BroadcomBCM94718NR(BaseClass):
         A Broadcom Querier band:reader dictionary
         """
         if self._query is None:
-            self._query = {'2':Broadcom24GHzQuerier(connection=self.connection),
-                             '5':Broadcom5GHzQuerier(connection=self.connection)}
+            self._query = {'2':BroadcomRadioQuerier(connection=self.connection,
+                                                    band='5'),
+                             '5':BroadcomRadioQuerier(connection=self.connection,
+                                                      band='2.4')}
         return self._query
 
     @property

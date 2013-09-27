@@ -1,10 +1,4 @@
 
-class SoupError(RuntimeError):
-    """
-    Raise if something is detected at run-time.
-    """
-
-
 # python standard library
 import re
 
@@ -13,67 +7,35 @@ import bs4
 
 # this package
 from apcommand.baseclass import BaseClass
+from apcommand.commons.oatbran import Group, Boundaries, CommonPatterns
 
 
-NAME = 'name'
-VALUE = 'value'
-ZERO = '0'
-ONE = '1'
-VALUE_ZERO = {VALUE:ZERO}
-VALUE_ONE = {VALUE:ONE}
-WIRELESS_INTERFACE = 'wl_unit'
-INTERFACE = 'wl_radio'
-COUNTRY = 'wl_country_code'
-CHANNEL = 'wl_channel'
-BANDWIDTH = 'wl_nbw_cap'
-SELECTED_EXPRESSION = r'selected\svalue=.*>(?P<{0}>.*)<'
-SELECTED = 'selected'
-GENERIC_SELECTED_EXPRESSION = SELECTED_EXPRESSION.format(SELECTED)
-BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
-SIDEBAND = 'wl_nctrlsb'
-SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
-SSID = 'wl_ssid'
-
-
-class BroadcomRadioSoup(BaseClass):
+class SoupError(RuntimeError):
     """
-    A holder of BeautifulSoup
+    Raise if something is detected at run-time.
+    """
+
+
+class BroadcomBaseSoup(BaseClass):
+    """
+    A base-class to hold some code common to the soups
     """
     def __init__(self, html=None):
         """
-        Broadcom soup constructor
+        BroadcomBaseSoup constructor
 
         :param:
 
-         - `html`: a file-object or string to pass to BeautifulSoup
+         - `html`: html text for the soup to parse
         """
-        super(BroadcomRadioSoup, self).__init__()
+        super(BroadcomBaseSoup, self).__init__()
+        self._logger = None
         self._html = None
         self.html = html
         self._soup = None
-
-        # the sub-trees and text
-        self._wireless_interface = None
-        self._mac_24_ghz = None
-        self._mac_5_ghz = None
-        self._country = None
-        self._channel = None
-        self._bandwidth = None
-        self._sideband = None
-        self._ssid = None
-
         # regular expressions
         self._selected_expression = None
         return
-
-    @property
-    def selected_expression(self):
-        """
-        Compiled regex to get text from selected option
-        """
-        if self._selected_expression is None:
-            self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
-        return self._selected_expression
 
     @property
     def html(self):
@@ -106,6 +68,68 @@ class BroadcomRadioSoup(BaseClass):
                 self.logger.error(error)
                 raise SoupError("unable to create soup from {0}".format(self.html))
         return self._soup
+
+    @property
+    def selected_expression(self):
+        """
+        Compiled regex to get text from selected option (use SELECTED as name for group)
+        """
+        if self._selected_expression is None:
+            self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
+        return self._selected_expression
+
+
+
+
+NAME = 'name'
+VALUE = 'value'
+ZERO = '0'
+ONE = '1'
+VALUE_ZERO = {VALUE:ZERO}
+VALUE_ONE = {VALUE:ONE}
+WIRELESS_INTERFACE = 'wl_unit'
+INTERFACE = 'wl_radio'
+COUNTRY = 'wl_country_code'
+CHANNEL = 'wl_channel'
+BANDWIDTH = 'wl_nbw_cap'
+everything = CommonPatterns.everything
+word = Boundaries.word
+
+SELECTED_EXPRESSION = (word('selected') + everything +
+                       r'>' +
+                       Group.named(name='{0}', expression=everything) +
+                       r'<')
+SELECTED = 'selected'
+GENERIC_SELECTED_EXPRESSION = SELECTED_EXPRESSION.format(SELECTED)
+BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
+SIDEBAND = 'wl_nctrlsb'
+SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
+SSID = 'wl_ssid'
+
+
+class BroadcomRadioSoup(BroadcomBaseSoup):
+    """
+    A holder of BeautifulSoup
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Broadcom soup constructor
+
+        :param:
+
+         - `html`: a file-object or string to pass to BeautifulSoup
+        """
+        super(BroadcomRadioSoup, self).__init__(*args, **kwargs)
+
+        # the sub-trees and text
+        self._wireless_interface = None
+        self._mac_24_ghz = None
+        self._mac_5_ghz = None
+        self._country = None
+        self._channel = None
+        self._bandwidth = None
+        self._sideband = None
+        return
 
     @property
     def wireless_interface(self):
@@ -211,13 +235,49 @@ class BroadcomRadioSoup(BaseClass):
             if match:
                 return match.group(SELECTED).rstrip()
             
+
+
+class BroadcomLANSoup(BroadcomBaseSoup):
+    """
+    A soup for the lan.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        BroadcomLANSoup constructor
+
+        :param:
+
+         - `html`: An initial text to parse
+        """
+        super(BroadcomLANSoup, self).__init__(*args, **kwargs)
+        self._dhcp_state = None
+        return
+
+    @property
+    def dhcp_state(self):
+        """
+        The selected DHCP state
+        """
+        lan_proto = self.soup.find(attrs={'name':'lan_proto'})
+        return self.selected_expression.search(str(lan_proto)).group(SELECTED)
+
+
+class BroadcomSSIDSoup(BroadcomBaseSoup):
+    """
+    A soup for the ssid.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        super(BroadcomSSIDSoup, self).__init__(*args, **kwargs)
+        self._ssid = None
+        return
+
     @property
     def ssid(self):
         """
         Gets the SSID for the currently selected interface
         """
         return self.soup.find(attrs={NAME:SSID})['value']
-        
+# end class BroadcomSSIDSoup            
 
 
 # python standard library
@@ -347,12 +407,38 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         self.assertEqual(self.soup_5.sideband, 'Lower')
         return
 
+
+
+class TestBroadcomLANSoup(unittest.TestCase):
+    def setUp(self):
+        self.lan_html = open('lan_asp.html').read()
+        self.soup = BroadcomLANSoup(self.lan_html)
+        return
+
+    def test_disabled(self):
+        self.assertEqual('Disabled', self.soup.dhcp_state)
+
+        # test the case where the `selected` attribute is out of order
+        self.soup.html = open('lan_asp.html').read()
+        self.assertEqual('Disabled', self.soup.dhcp_state)
+        return
+
+    def test_enabled(self):
+        self.soup.html = open('dhcp_enabled.html').read()
+        self.assertEqual('Enabled', self.soup.dhcp_state)
+        return
+
+
+class TestBroadcomSSIDSoup(unittest.TestCase):
+    def setUp(self):
+        text = open('ssid_asp.html').read()
+        self.soup = BroadcomSSIDSoup(html=text)
+        return
+
     def test_ssid(self):
         """
         Does it get the SSID?
         """
-        # change the page
-        text = open('ssid_asp.html').read()
-        self.soup.html = text
         self.assertEqual('hownowbrowndog', self.soup.ssid)
         return
+

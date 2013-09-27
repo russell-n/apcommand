@@ -10,14 +10,19 @@ Contents:
     * :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`
     * :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>`
 
+The set_page Decorator
+----------------------
+
+Because I am trying to repeat calls to the server the set_page decorator differs from the one used by the commands. 
+
+
+
 .. uml::
 
    BroadcomBaseQuerier -|> BaseClass
    BroadcomBaseQuerier o-- HTTPConnection
    BroadcomBaseQuerier o-- BroadcomRadioSoup
    BroadcomBaseQuerier : band   
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
 
 .. _broadcom-base-querier:
 BroadcomBaseQuerier
@@ -52,8 +57,6 @@ Since there are an arbitrary number of pages to add (assuming that not all are b
    PageEnumeration : ssid
    PageEnumeration : radio
 
-
-
 The Refresh Parameter Revisited
 -------------------------------
 
@@ -69,84 +72,50 @@ In the ``set_<page>_soup`` methods they should check both the ``refresh`` variab
 
 As you can see from the truth table, there is only one case where you will not load the page -- :math:`\lnot (\lnot refresh \land current_page=enumeration)`, which can be re-written :math:`refresh \lor \lnot current_page=enumeration`. But, on reflection, it actually makes more sense to short-circuit the one case where we do nothing -- :math:`\lnot refresh \land current_page=enumeration`.
 
-The Decorators
---------------
-
-The introduction of the ``refresh`` option has introduced a problem in that the sleep calls are in the decorators, not the methods themselves, so there has to be a different set for the queries as they now behave differently from the commands that change settings.
-
-The decorators now do nothing if :math:`\lnot refresh \land current_page=enumeration` and set the ``current_page`` to the correct enumeration in other cases.
-
-.. autosummary::
-   :toctree: api
-
-   radio_page
-   ssid_page
-   lan_page
 
 
+The BroadcomRadioQuerier
+------------------------
 
-.. _broadcom-24-ghz-querier:
-Broadcom24GHzQuerier
-~~~~~~~~~~~~~~~~~~~~
-
-A 2.4 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
+This is a querier for the radio.asp page.
 
 .. uml::
 
-   Broadcom24GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom24GHzQuerier
-   Broadcom24GHzQuerier.band
-   
-
-
-.. _broadcom-5-ghz-querier:
-Broadcom5GHzQuerier
-~~~~~~~~~~~~~~~~~~~
-
-A 5 GHz implementation of the :ref:`BroadcomBaseQuerier <broadcom-base-querier>`.
-
-.. uml::
-
-   Broadcom5GHzQuerier -|> BroadcomBaseQuerier
-   
-.. autosummary::
-   :toctree: api
-
-   Broadcom5GHzQuerier
-   Broadcom5GHzQuerier.band
-   
-
-
-The BroadcomQuerier
--------------------
-
-This is an aggregating class to try and make it easier to use the queriers without having to build them separately for the different bands.
-
-.. uml::
-
-   BroadcomQuerier -|> BaseClass
-   BroadcomQuerier o- Broadcom5GHzQuerier
-   BroadcomQuerier o- Broadcom24GHzQuerier
+   BroadcomRadioQuerier -|> BroadcomBaseQuerier
 
 .. autosummary::
    :toctree: api
 
-   BroadcomQuerier
-
-The BroadcomQuerier is acting as a pass-through to the aggregated classes -- whatever property they have that you can pull from them will be pulled, if they don't have an attribute you want you'll get an error. Such is life.
+   BroadcomRadioQuerier
+   BroadcomRadioQuerier.mac_address
+   BroadcomRadioQuerier.sideband
+   BroadcomRadioQuerier.channel
+   BroadcomRadioQuerier.state
 
 Example to get the channel for each band::
 
-    q = BroadcomQuerier(connection=connection, band='2.4')
+    q = BroadcomRadioQuerier(connection=connection, band='2.4')
     channel_24 = q.channel
 
     q.band = 5
-    channel_5 = q.channel
-    
+    channel_5 = q.channel    
+
+
+
+The BroadcomSSIDQuerier
+-----------------------
+
+A querier for the ssid.asp page.
+
+.. uml::
+
+   BroadcomSSIDQuerier -|> BroadcomBaseQuerier
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomSSIDQuerier
+   BroadcomSSIDQuerier.ssid
 
 
 

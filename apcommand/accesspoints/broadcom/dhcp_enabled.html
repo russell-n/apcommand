@@ -1,0 +1,763 @@
+<html lang="en">
+<head>
+<title>Broadcom Home Gateway Reference Design: LAN</title>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link href="style.css" media="screen" rel="stylesheet" type="text/css">
+<script language="JavaScript" src="overlib.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+<!--
+function inet_aton(a)
+{
+	var n;
+
+	n = a.split(/\./);
+	if (n.length != 4)
+		return 0;
+
+	return ((n[0] << 24) | (n[1] << 16) | (n[2] << 8) | n[3]);
+}
+	
+function inet_ntoa(n)
+{
+	var a;
+
+	a = (n >> 24) & 255;
+	a += "."
+	a += (n >> 16) & 255;
+	a += "."
+	a += (n >> 8) & 255;
+	a += "."
+	a += n & 255;
+
+	return a;
+}
+function guest_lan_check()
+{
+//Disable entry to Guest LAN if we are running on VX 
+//	
+	var vx = "";
+	var ap = "";
+	
+	document.forms[0].lan_ifname.value="br0";
+	document.forms[0].lan1_ifname.value="br1";
+
+	
+	if ( (ap == "1") || (vx == "1") ){
+		document.forms[0].lan1_ifname.disabled = 1;
+		document.forms[0].lan1_gateway.disabled = 1;
+		document.forms[0].lan1_netmask.disabled = 1;
+		document.forms[0].lan1_ipaddr.disabled = 1;
+		document.forms[0].lan1_proto.disabled = 1;
+		document.forms[0].lan1_dhcp.disabled = 1;
+		document.forms[0].lan1_lease.disabled = 1;
+		document.forms[0].dhcp1_start.disabled = 1;
+		document.forms[0].dhcp1_end.disabled = 1;
+		document.forms[0].lan1_stp.disabled = 1;
+		document.forms[0].num_lan_ifaces.value="1";
+	}
+	else{
+		document.forms[0].num_lan_ifaces.value="2";
+	}
+	
+		
+}
+function display_internal_lan()
+{
+	document.forms[0].write(document.forms[0].lan_ifname.value );
+}
+
+function lan_ipaddr_change()
+{
+	var lan_netaddr, lan_netmask, dhcp_start, dhcp_end;
+	var lan1_netaddr, lan1_netmask, dhcp1_start, dhcp1_end;
+	
+	lan_netaddr = inet_aton(document.forms[0].lan_ipaddr.value);
+	lan_netmask = inet_aton(document.forms[0].lan_netmask.value);
+	lan_netaddr &= lan_netmask;
+
+	dhcp_start = inet_aton(document.forms[0].dhcp_start.value);
+	dhcp_start &= ~lan_netmask;
+	dhcp_start |= lan_netaddr;
+	dhcp_end = inet_aton(document.forms[0].dhcp_end.value);
+	dhcp_end &= ~lan_netmask;
+	dhcp_end |= lan_netaddr;
+
+	document.forms[0].dhcp_start.value = inet_ntoa(dhcp_start);
+	document.forms[0].dhcp_end.value = inet_ntoa(dhcp_end);
+	
+	lan1_netaddr = inet_aton(document.forms[0].lan1_ipaddr.value);
+	lan1_netmask = inet_aton(document.forms[0].lan1_netmask.value);
+	lan1_netaddr &= lan1_netmask;
+
+	dhcp1_start = inet_aton(document.forms[0].dhcp1_start.value);
+	dhcp1_start &= ~lan1_netmask;
+	dhcp1_start |= lan1_netaddr;
+	dhcp1_end = inet_aton(document.forms[0].dhcp1_end.value);
+	dhcp1_end &= ~lan1_netmask;
+	dhcp1_end |= lan1_netaddr;
+
+	document.forms[0].dhcp1_start.value = inet_ntoa(dhcp1_start);
+	document.forms[0].dhcp1_end.value = inet_ntoa(dhcp1_end);
+	document.forms[0].lan1_lease.value = "86400";
+	if (document.forms[0].lan1_lease.value == "")
+		document.forms[0].lan1_lease.value = "86400";
+}
+function lan_dhcp_change(index)
+{
+	var dhcp = document.forms[0].lan_dhcp[document.forms[0].lan_dhcp.selectedIndex].value;
+	var dhcp1 = document.forms[0].lan1_dhcp[document.forms[0].lan1_dhcp.selectedIndex].value;
+	
+	if (index == "0"){
+		if (document.forms[0].lan_dhcp.disabled == 1 || dhcp == "0") {
+			document.forms[0].lan_gateway.disabled = 0;
+			document.forms[0].lan_netmask.disabled = 0;
+			document.forms[0].lan_ipaddr.disabled = 0;
+		}
+		else {
+			document.forms[0].lan_gateway.disabled = 1;
+			document.forms[0].lan_netmask.disabled = 1;
+			document.forms[0].lan_ipaddr.disabled = 1;
+		}
+	}
+	else if (index == "1"){
+	
+		if (document.forms[0].lan1_dhcp.disabled == 1 || dhcp1 == "0") {
+			document.forms[0].lan1_netmask.disabled = 0;
+			document.forms[0].lan1_ipaddr.disabled = 0;
+		}
+		else {
+			document.forms[0].lan1_netmask.disabled = 1;
+			document.forms[0].lan1_ipaddr.disabled = 1;
+			document.forms[0].dhcp1_start.disabled = 1;
+		
+		}
+	}
+	
+}
+
+function lan_dhcp_server_change(index)
+{
+	var proto = document.forms[0].lan_proto[document.forms[0].lan_proto.selectedIndex].value;
+	var proto1 = document.forms[0].lan1_proto[document.forms[0].lan1_proto.selectedIndex].value;
+	
+	if (index == 0){
+		if (document.forms[0].lan_proto.disabled == 1 || proto == "static") {
+			document.forms[0].dhcp_start.disabled = 1;
+			document.forms[0].dhcp_end.disabled = 1;
+			document.forms[0].lan_lease.disabled = 1;
+		}
+		else {
+			document.forms[0].dhcp_start.disabled = 0;
+			document.forms[0].dhcp_end.disabled = 0;
+			document.forms[0].lan_lease.disabled = 0;
+		}
+	}
+	else if (index == 1){
+	
+		if (document.forms[0].lan1_proto.disabled == 1 || proto1 == "static") {
+			document.forms[0].dhcp1_start.disabled = 1;
+			document.forms[0].dhcp1_end.disabled = 1;
+			document.forms[0].lan1_lease.disabled = 1;
+		}
+		else {
+			document.forms[0].dhcp1_start.disabled = 0;
+			document.forms[0].dhcp1_end.disabled = 0;
+			document.forms[0].lan1_lease.disabled = 0;		
+		}
+	}
+	
+}
+
+/*
+*/ 
+var ipv6hint6to4 = "Sets the 6to4 subnet ID(0-65535)";
+function ipv6_change(idx)
+{
+	var router_disable = "";
+	var ipv6mode, v66to4id, v6prefix, v6dns;
+
+	if (idx == 0)	{
+		ipv6mode = document.forms[0].lan_ipv6_mode.value;
+		v6prefix = document.forms[0].lan_ipv6_prefix; 
+		v6dns = document.forms[0].lan_ipv6_dns; 		
+		v66to4id = document.forms[0].lan_ipv6_6to4id; 	
+	} else if (idx == 1) {
+		ipv6mode = document.forms[0].lan1_ipv6_mode.value;
+		v6prefix = document.forms[0].lan1_ipv6_prefix; 
+		v6dns = document.forms[0].lan1_ipv6_dns; 		
+		v66to4id = document.forms[0].lan1_ipv6_6to4id; 	
+	}
+	v6prefix.disabled = 1; 
+	v6dns.disabled = 1; 		
+	v66to4id.disabled = 1; 	
+
+	if (router_disable == 1)
+		ipv6hint6to4 = "Currently IPv6 WAN Prefix is not effective. To Enable, Go to Basic Page and select the Router Mode."
+
+	if (ipv6mode != 0) {
+		if (router_disable == 0) {
+			if (ipv6mode & 1)
+				v66to4id.disabled = 0; 	
+			if (ipv6mode & 2)
+				v6prefix.disabled = 0;
+			v6dns.disabled = 0;
+		} 
+		else if (ipv6mode & 2)  {
+			v6prefix.disabled = 0;  
+  		v6dns.disabled = 0; 
+		}
+	}	
+} 
+/*
+*/
+function lan_update()
+{
+	var ap = "";
+	var dhcp = "";
+	var dhcp1= "static";
+	var ure_disable = "1";
+	
+	
+	if (ap == "1") {
+		document.forms[0].lan_dhcp.disabled = 0;
+		document.forms[0].lan_proto.disabled = 1;
+		document.forms[0].dhcp_start.disabled = 1;
+		document.forms[0].dhcp_end.disabled = 1;
+		document.forms[0].lan_lease.disabled = 1;
+	}
+	else {
+		document.forms[0].lan_dhcp.disabled = 1;
+		document.forms[0].lan_proto.disabled = 0;
+		document.forms[0].dhcp_start.disabled = 0;
+		document.forms[0].dhcp_end.disabled = 0;
+		document.forms[0].lan_lease.disabled = 0;
+		document.forms[0].lan1_dhcp.disabled = 1;
+		document.forms[0].lan1_proto.disabled = 0;
+		document.forms[0].dhcp1_start.disabled = 0;
+		document.forms[0].dhcp1_end.disabled = 0;
+		document.forms[0].lan1_lease.disabled = 0;
+		if(dhcp == "static") {
+			document.forms[0].dhcp_start.disabled = 1;
+			document.forms[0].dhcp_end.disabled = 1;
+			document.forms[0].lan_lease.disabled = 1;
+		}
+		if(dhcp1 == "static") {
+			document.forms[0].dhcp1_start.disabled = 1;
+			document.forms[0].dhcp1_end.disabled = 1;
+			document.forms[0].lan1_lease.disabled = 1;
+		}
+	}
+	guest_lan_check();
+	if (ure_disable == "0") {
+		document.forms[0].lan1_ifname.disabled = 1;
+		document.forms[0].lan1_dhcp.disabled = 1;
+		document.forms[0].lan1_ipaddr.disabled = 1;
+		document.forms[0].lan1_netmask.disabled = 1;
+		document.forms[0].lan1_gateway.disabled = 1;
+		document.forms[0].lan1_proto.disabled = 1;
+		document.forms[0].dhcp1_start.disabled = 1;
+		document.forms[0].dhcp1_end.disabled = 1;
+		document.forms[0].lan1_lease.disabled = 1;
+		document.forms[0].lan1_stp.disabled = 1;
+   }
+/*
+*/ 
+	ipv6_change(0);
+	ipv6_change(1);
+/*
+*/
+}
+//-->
+</script>
+</link></meta></head>
+<body onload="lan_update();">
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+<table bgcolor="#cc0000" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td><a href="index.asp"><img alt="Basic" border="0" src="basic.gif"/></a></td>
+<td><a href="lan.asp"><img alt="LAN" border="0" src="lan.gif"/></a></td>
+<td><a href="wan.asp"><img alt="WAN" border="0" src="wan.gif"/></a></td>
+<td><a href="status.asp"><img alt="Status" border="0" src="status.gif"/></a></td>
+<td><a href="filter.asp"><img alt="Filters" border="0" src="filter.gif"/></a></td>
+<td><a href="forward.asp"><img alt="Routing" border="0" src="forward.gif"/></a></td>
+<td><a href="qos.asp"><img alt="IQos" border="0" src="qos.gif"/></a></td>
+<td><a href="radio.asp"><img alt="Wlan I/F" border="0" src="radio.gif"/></a></td>
+<td><a href="ssid.asp"><img alt="xyz" border="0" src="ssid.gif"/></a></td>
+<td><a href="security.asp"><img alt="Security" border="0" src="security.gif"/></a></td>
+<td><a href="firmware.asp"><img alt="Firmware" border="0" src="firmware.gif"/></a></td>
+<td width="100%"></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="edge" colspan="2"><img alt="" border="0" src="blur_new.jpg"/></td>
+</tr>
+<tr>
+<td><img alt="" border="0" src="logo_new.gif"/></td>
+<td valign="top" width="100%">
+<br>
+<span class="title">LAN</span><br>
+<span class="subtitle">This page allows you to configure the LAN of the router.</span>
+</br></br></td>
+</tr>
+</table>
+<form action="apply.cgi" method="post">
+<input name="page" type="hidden" value="lan.asp">
+<!-- These are set by the Javascript functions above -->
+<input name="num_lan_ifaces" type="hidden" value="2">
+<input name="lan_ifname" type="hidden" value="">
+<input name="lan1_ifname" type="hidden" value="">
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th width="310">
+	Configured Networks:  
+    </th>
+<td>  </td>
+<td><b>Internal Network</b></td>
+<td>  </td>
+<td><b>Guest Network</b></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Shows the MAC address (also known as Ethernet address) of the LAN interface.', LEFT);" width="310">
+	MAC Address:  
+    </th>
+<td>  </td>
+<td>00:90:4C:08:11:03</td>
+<td>  </td>
+<td>00:00:00:00:00:00</td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Selects interfaces for LAN ', LEFT);" width="310">
+	LAN Interface:  
+    </th>
+<td>  </td>
+<td>
+	br0
+    </td>
+<td>  </td>
+<td>
+	br1
+    </td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the method to use to obtain an IP address of the LAN interface.', LEFT);" width="310">
+	Protocol:  
+    </th>
+<td>  </td>
+<td>
+<select name="lan_dhcp" onchange="lan_dhcp_change(0);">
+<option value="1">DHCP</option>
+<option selected value="0">Static</option>
+</select>
+</td>
+<td>  </td>
+<td>
+<select name="lan1_dhcp" onchange="lan_dhcp_change(1);">
+<option value="1">DHCP</option>
+<option selected value="0">Static</option>
+</select>
+</td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the IP address of the LAN interface.', LEFT);" width="310">
+	IP Address:  
+    </th>
+<td>  </td>
+<td><input maxlength="15" name="lan_ipaddr" onchange="lan_ipaddr_change();" size="15" value="192.168.1.1"/></td>
+<td>  </td>
+<td><input maxlength="15" name="lan1_ipaddr" onchange="lan_ipaddr_change();" size="15" value="192.168.2.1"/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the IP netmask of the LAN interface.', LEFT);" width="310">
+	Subnet Mask:  
+    </th>
+<td>  </td>
+<td><input maxlength="15" name="lan_netmask" onchange="lan_ipaddr_change();" size="15" value="255.255.255.0"/></td>
+<td>  </td>
+<td><input maxlength="15" name="lan1_netmask" onchange="lan_ipaddr_change();" size="15" value="255.255.255.0"/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the Default Gateway of the LAN interface.', LEFT);" width="310">
+	Default Gateway:  
+    </th>
+<td>  </td>
+<td><input maxlength="15" name="lan_gateway" size="15" value="192.168.1.1"/></td>
+<td>  </td>
+<td><input maxlength="15" name="lan1_gateway" size="15" value="192.168.2.1"/></td>
+<td></td>
+</tr>
+</table>
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Enables DHCP Server functionality on the LAN.', LEFT);" width="310">
+	DHCP Server:  
+    </th>
+<td>  </td>
+<td>
+<select name="lan_proto" onchange="lan_dhcp_server_change(0);">
+<option selected value="dhcp">Enabled</option>
+<option value="static">Disabled</option>
+</select>
+</td>
+<td>  </td>
+<td>
+<select name="lan1_proto" onchange="lan_dhcp_server_change(1);">
+<option value="dhcp">Enabled</option>
+<option selected value="static">Disabled</option>
+</select>
+</td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the start of the IP address range that the DHCP Server will use.', LEFT);" width="310">
+	DHCP Starting IP Address:  
+    </th>
+<td>  </td>
+<td><input maxlength="15" name="dhcp_start" size="15" value="192.168.1.100"/></td>
+<td>  </td>
+<td><input maxlength="15" name="dhcp1_start" size="15" value="192.168.2.100"/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the end of the IP address range that the DHCP Server will use.', LEFT);" width="310">
+	DHCP Ending IP Address:  
+    </th>
+<td>  </td>
+<td><input maxlength="15" name="dhcp_end" size="15" value="192.168.1.150"/></td>
+<td>  </td>
+<td><input maxlength="15" name="dhcp1_end" size="15" value="192.168.2.150"/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the number of seconds DHCP leases should be valid for.', LEFT);" width="310">
+	DHCP Lease Time:  
+    </th>
+<td>  </td>
+<td><input maxlength="6" name="lan_lease" size="6" value="86400"/></td>
+<td>  </td>
+<td><input maxlength="6" name="lan1_lease" size="6" value="86400"/></td>
+</tr>
+<tr>
+<th < th width="310">
+<td>  </td>
+<td>
+</td>
+<td>  </td>
+<td>
+</td>
+</th></tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Enables the use of the Ethernet 802.1d Spanning Tree Protocol to eliminate bridging loops across the LAN interfaces.', LEFT);" width="310">
+	Spanning Tree Protocol:  
+    </th>
+<td>  </td>
+<td>
+<select name="lan_stp">
+<option selected value="1">Enabled</option>
+<option value="0">Disabled</option>
+</select>
+</td>
+<td>  </td>
+<td>
+<select name="lan1_stp">
+<option selected value="1">Enabled</option>
+<option value="0">Disabled</option>
+</select>
+</td>
+</tr>
+</table>
+<!--
+-->
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('IPv6 support', LEFT);" width="310">
+	IPv6 Mode:  
+    </th>
+<td>  </td>
+<td>
+<select name="lan_ipv6_mode" onchange="ipv6_change(0);">
+<option value="0">Disabled</option>
+<option value="1">6to4 Only</option>
+<option value="2">Native IPv6 Only</option>
+<option selected value="3">6to4+Native IPv6</option>
+</select>
+</td>
+<td>  </td>
+<td>
+<select name="lan1_ipv6_mode" onchange="ipv6_change(1);">
+<option selected value="0">Disabled</option>
+<option value="1">6to4 Only</option>
+<option value="2">Native IPv6 Only</option>
+<option value="3">6to4+Native IPv6</option>
+</select>
+</td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the IPv6 Network Prefix for LAN.', LEFT);" width="310">
+	IPv6 LAN Network Prefix:  
+    </th>
+<td>  </td>
+<td><input maxlength="43" name="lan_ipv6_prefix" size="15" value="2001:db8:1:0::/64"/></td>
+<td>  </td>
+<td><input maxlength="43" name="lan1_ipv6_prefix" size="15" value=""/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Sets the IP addresses of the DNS servers to use for resolving host names.', LEFT);" width="310">
+	IPv6 DNS Server:  
+    </th>
+<td>  </td>
+<td><input maxlength="43" name="lan_ipv6_dns" size="15" value=""/></td>
+<td>  </td>
+<td><input maxlength="43" name="lan1_ipv6_dns" size="15" value=""/></td>
+</tr>
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib(ipv6hint6to4, LEFT);" width="310">
+	IPv6 6to4 subnet ID:  
+    </th>
+<td>  </td>
+<td><input maxlength="5" name="lan_ipv6_6to4id" size="15" value="0"/></td>
+<td>  </td>
+<td><input maxlength="5" name="lan1_ipv6_6to4id" size="15" value=""/></td>
+</tr>
+</table>
+<!--
+-->
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Active DHCP leases since last reboot.', LEFT);" valign="top" width="310">
+	Active DHCP Leases:  
+    </th>
+<td>  </td>
+<td>
+<table>
+<tr>
+<td class="label">Hostname</td>
+<td class="label">MAC Address</td>
+<td class="label">IP Address</td>
+<td class="label">Expires In</td>
+<td class="label">Network</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Set up static routes to the given networks.', LEFT);" rowspan="6" valign="top" width="310">
+<input name="lan_route" type="hidden" value="5">
+	Static Routes:  
+    </input></th>
+<td>  </td>
+<td class="label">IP Address</td>
+<td></td>
+<td class="label">Subnet Mask</td>
+<td></td>
+<td class="label">Gateway</td>
+<td></td>
+<td class="label">Metric</td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="lan_route_ipaddr0" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_netmask0" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_gateway0" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="2" name="lan_route_metric0" size="2" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="lan_route_ipaddr1" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_netmask1" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_gateway1" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="2" name="lan_route_metric1" size="2" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="lan_route_ipaddr2" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_netmask2" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_gateway2" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="2" name="lan_route_metric2" size="2" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="lan_route_ipaddr3" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_netmask3" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_gateway3" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="2" name="lan_route_metric3" size="2" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="lan_route_ipaddr4" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_netmask4" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="lan_route_gateway4" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="2" name="lan_route_metric4" size="2" value=""/></td>
+</tr>
+</table>
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Enables/Disables Efficient Multicast Forwarding feature', LEFT);" width="310">
+EMF:  
+</th>
+<td>  </td>
+<td>
+<select name="emf_enable">
+<option value="1">Enabled</option><option selected value="0">Disabled</option></select>
+</td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Add/Delete static forwarding entries for the multicast groups.', LEFT);" rowspan="6" valign="top" width="310">
+<input name="emf_entry" type="hidden" value="5">
+Static Multicast Forwarding Entries:  
+</input></th>
+<td>  </td>
+<td class="label">Multicast IP Address</td>
+<td></td>
+<td class="label">Interface</td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_entry_mgrp0" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="emf_entry_if0" size="15" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_entry_mgrp1" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="emf_entry_if1" size="15" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_entry_mgrp2" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="emf_entry_if2" size="15" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_entry_mgrp3" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="emf_entry_if3" size="15" value=""/></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_entry_mgrp4" size="15" value=""/></td>
+<td> </td>
+<td><input maxlength="15" name="emf_entry_if4" size="15" value=""/></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('Add/Delete unregistered multicast data frames forwarding port entries. Multicast data frames that fail MFDB lookup will be flooded on to these ports.', LEFT);" rowspan="6" valign="top" width="310">
+<input name="emf_uffp_entry" type="hidden" value="5">
+Unregistered Multicast Frames Forwarding Ports:  
+</input></th>
+<td>  </td>
+<td class="label">Interface</td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_uffp_entry_if0" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_uffp_entry_if1" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_uffp_entry_if2" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_uffp_entry_if3" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_uffp_entry_if4" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<th onmouseout="return nd();" onmouseover="return overlib('These are the LAN interfaces on which multicast routers are present. IGMP Report frames are forwared to these ports.', LEFT);" rowspan="6" valign="top" width="310">
+<input name="emf_rtport_entry" type="hidden" value="5">
+Multicast Router / IGMP Forwarding Ports:  
+</input></th>
+<td>  </td>
+<td class="label">Interface</td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_rtport_entry_if0" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_rtport_entry_if1" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_rtport_entry_if2" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_rtport_entry_if3" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+<tr>
+<td>  </td>
+<td><input maxlength="15" name="emf_rtport_entry_if4" size="15" value=""/></td>
+<td>  </td>
+<td></td>
+</tr>
+</table>
+<p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td width="310"></td>
+<td>  </td>
+<td>
+<input name="action" type="submit" value="Apply">
+<input name="action" type="reset" value="Cancel">
+</input></input></td>
+</tr>
+</table>
+</p></p></p></p></p></p></p></input></input></input></input></form>
+<p class="label">©2001-2010 Broadcom Corporation. All rights reserved.</p>
+</body>
+</html>
