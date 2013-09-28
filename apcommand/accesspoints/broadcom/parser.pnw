@@ -18,7 +18,7 @@ from apcommand.commons.oatbran import Group, Boundaries, CommonPatterns
 The `radio.asp` HTML
 --------------------
 
-I know very little about HTML and web scraping and am making this empirically so I will use this document as a lab-report as much as a code-module.
+I know very little about HTML and web scraping and am making this empirically so I will use this as a lab-report as much as a code-module.
 
 Radio State
 ~~~~~~~~~~~
@@ -37,11 +37,11 @@ The `state` variable now should have some text like this::
     </select>
 
     
-If you look at the `soup.find` parameters you can see that it chose the sub-tree that had a tag attribute matching the dictionary I passed in (there is also a `find_all` method that will return a list of all matching sub-trees, but in this case I know there is only one). 
+If you look at the `soup.find` parameters you can see that it chose the sub-tree that had a tag attribute matching the dictionary I passed in (i.e. I passed in ``{'name'='wl_radio'} and it pulled the subtree whose parent has the attribute ``name="wl_radio"``). 
 
 The lines with the `option` tags can be interpreted this way:
 
-    * if it has ``selected`` then that is the current Wireless Interface that the user would see if this were in a browser (when the GET request was made ``data={'wl_unit':'0'}`` was passed in as a parameter or it is the default) 
+    * if it has ``selected`` then that is the current state of the Wireless Interface that the user would see if this were in a browser
 
     * If the ``selected`` text is 'Disabled', the radio is off, if 'Enabled' the radio is on
 
@@ -54,33 +54,40 @@ The previous warning means that you cannot search it directly with a regular exp
 It also means that you can use the `find` method to burrow your way down to the right child without regular expressions::
 
     select = soup.find(attrs={'name':'wl_radio'})
-    band_24 = select.find(attrs={'value':'0'})
-    state_string = band_24.text
+    radio_state = select.find(attrs={'value':'0'})
+    state_string = radio_state.text
 
 The variable `state_string` now contains the (unicode) string 'Disabled'. You could also do it as one line::
 
     state_string = soup.find(attrs={'name':'wl_radio'}).find(attrs={'value':'0'}).text
 
-The question now -- *is this a better solution than using regular expressions?* From a personal standpoint I would say no, regular expressions are more generalizable, while this is a specific package. Then again, it would be impossible to decompose the html tree with just regular expressions (okay, hard, not impossible), so why would it be worse to use it to get the rest?
+One thing that is not mentioned here is which interface we're looking at. It turns out that you can't tell just by looking at most of the sub-trees. Only the 'wl_unit' sub-tree can tell you -- whichever interface it says is selected is the interface whose values are being shown in 'wl_radio'.
 
-The answer for now will be to use BeautifulSoup function calls instead of regular expressions, until a case arises where they are needed.
+**But** it turns out that the previous code does not work... well, it does, it is just meaningless. To know which interface is disabled you need to find the 'selected' tag -- all I did was find the text in the first entry in the drop-down menu, not which item is currently selected. As an example of pulling text it works, so I will leave it in, but see the next section to find out how to get the actual state.
 
 The Selected Case
 ~~~~~~~~~~~~~~~~~
 
-So, it appears that the Broadcom web interface adds a selected="" tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` tag (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
+So, it appears that the Broadcom web interface adds a ``selected=""`` tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the `selected` attribute (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.
 
-In the soup I use a named expression::
+A rough sketch to match it might be::
+
+    <anything> = ?anything in the alphabet?
+    <everything> = {<anything>}
+    <boundary> = ?word boundary?
+    <selected> = <boundary> + 'selected' + <boundary> + <everything> + '>' + (<everything>) + '<'
+
+The use of <everything> following the literal 'selected' might seem too aggressive, but I have found that the tags change over time (the attributes appear in different order). There is probably a more specific way to do it, but I'm also re-using the expression on multiple pages and exhaustively testing it seems impratical (plus I don't feel like it).
+    
+In the code I use a named expression::
 
     SELECTED_EXPRESSION = r'\bselected\b.*>(?P<{0}>.*)<'
 
-So, for instance, to get the current DHCP-service state you could pull the HTML from the ``lan.asp`` page, feed it to a BeautfulSoup instance (call it ``soup``) and do something like this to get the current state::
+So, for instance, to get the current state of the Wireless Interface chosen when you pulled the html, feed it to a BeautfulSoup instance (call it ``soup``) and do something like this to get the current state::
 
-    dhcp_selected = SELECTED_EXPRESSION.format('DHCP')
-    
-    lan_proto = soup.find(attrs={'name':'lan_proto'})
-    state = re.search(dhcp_selected, str(lan_proto)).group('DHCP')
-
+    wifi_state = SELECTED_EXPRESSION.format('wifi_state')
+    radio_state_menu = soup.find(attrs={'name':'wl_radio'})    
+    state = re.search(wifi_state, str(radio_state_menu)).group('wifi_state')
 
 .. _broadcom-parser-wireless-interface:
 The Wireless Interface
@@ -95,6 +102,32 @@ The output of ``soup.find(attrs={'name':'wl_unit'})``::
     <option value="1">(00:90:4C:13:11:03)</option>
     </select>
 
+The extraction of the enabled interface (indicated by the ``selected`` attribute) is slightly different in this case from the previous. Here we want the right-hand-side of the 'value' expression. There might be other ways of getting it, but the two ways I figured out:
+
+Pure python::
+
+    expression = re.compile(r'value="(?P<interface>0|1)"')
+    lines = str(soup.find(attrs={'name':'wl_unit'})).split('\n')
+    match = expression.search([line for line in lines if 'selected' in line][0])
+    enabled_interface = match.group('interface')
+
+This works, but I also explored getting it using `pyparsing <http://pyparsing.wikispaces.com/>`_ so I am going to document it here.
+
+The Grammar
+~~~~~~~~~~~
+
+A sketch of the part of the text we are interested in::
+
+    selected_literal = Literal('selected')
+    value_equal = Literal('value=')
+    quote = Literal('"')
+    value = oneOf('0 1'.split())
+    selected = selected_literal & value_equal + quote + value.setResultName('interface') + quote
+
+    text = str(soup.find(attrs={'name':'wl_unit'}))
+    enabled_interface = selected.searchString(text)[0].interface
+
+The reason why this is an improvement over a pure-regular expression version (not the previous example with a for-loop) is that the ``&`` symbol in pyparsing means look for both the left-hand-side and right-hand-side expressions but in any order, ignoring whitespace (e.g. ``A & B`` matches both 'A B' and 'B A' but not just 'B' or 'A' and not 'A C B'). For one example it might not seem like it is an improvement over the for-loop style of searching, but presumably if many different types of searches need to be made, a grammar would be built and the `pyparsing` method more closely resembles one and so might reduce errors.
 
 The SoupError
 -------------
