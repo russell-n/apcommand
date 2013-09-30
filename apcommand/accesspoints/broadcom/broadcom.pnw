@@ -259,7 +259,13 @@ class BroadcomBCM94718NR(BaseClass):
 
     def get_status(self, band):
         """
-        Returns an aggregate string for the band
+        Outputs and logs the status of the AP
+
+        :param:
+
+         - `band`: '2.4', '5', or 'all'
+
+        :postcondition: status strings sent to stdout and logged
         """
         if band is not 'all':
             channel = "Channel: {0}".format(self.get_channel(band))
@@ -404,6 +410,17 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         with patch('time.sleep'):
             self.control.set_channel(channel)
         changer.assert_called_with(channel)
+        return
+
+    def test_get_status(self):
+        """
+        Does it get all the queries and log and print them?
+        """
+        stdout = MagicMock()
+        logger = MagicMock()
+        self.control._logger = logger
+        with patch('sys.stdout', stdout):
+            self.control.get_status()
         return
 # end class TestBroadcom            
 @
