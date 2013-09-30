@@ -57,14 +57,24 @@ from apcommand.baseclass import BaseClass
 import apcommand.connections.httpconnection as httpconnection
 
 from commons import BroadcomRadioData
+from commons import BandEnumeration
 from commons import SSID, SSID_PAGE
 from commons import set_24_data, set_5_data, ssid_page
 from querier import BroadcomRadioQuerier, BroadcomSSIDQuerier
+from querier import BroadcomLANQuerier
 from macros import ChannelChanger
 
 # for some reason Pweave sometimes accepts relative paths, sometimes not
 from apcommand.accesspoints.broadcom.commands import DisableInterface
 from apcommand.accesspoints.broadcom.commands import EnableInterface
+@
+<<name='constants', echo=False>>=
+BAND_STRING = '{0} GHz:'
+CHANNEL_STRING = '\tChannel: {0}'
+SSID_STRING = '\tSSID: {0}'
+STATE_STRING = '\tState: {0}'
+SIDEBAND_STRING = '\tSideband: {0}'
+DHCP_STRING = '\tDHCP: {0}'
 @
 
 .. autosummary::
@@ -146,8 +156,18 @@ class BroadcomBCM94718NR(BaseClass):
         self._channel_changer = None
         self._query = None
         self._ssid_query = None
+        self._lan_query = None
         return
 
+    @property
+    def lan_query(self):
+        """
+        A BroadcomLANQuery 
+        """
+        if self._lan_query is None:
+            self._lan_query = BroadcomLANQuerier(connection=self.connection)
+        return self._lan_query
+    
     @property
     def disable_command(self):
         """
@@ -257,36 +277,44 @@ class BroadcomBCM94718NR(BaseClass):
         """
         return self.query[band[0]].channel
 
+    def print_and_log(self, string):
+        """
+        Sends the string to stdout and the logger (debug)
+        """
+        print(string)
+        self.logger.debug(string)
+        return
+    
     def get_status(self, band):
         """
         Outputs and logs the status of the AP
 
         :param:
 
-         - `band`: '2.4', '5', or 'all'
+         - `band`: '2.4', '5', or 'both'
 
         :postcondition: status strings sent to stdout and logged
         """
-        if band is not 'all':
-            channel = "Channel: {0}".format(self.get_channel(band))
-            ssid = "SSID: {0}".format(self.get_ssid(band))
-            state = "State: {0}".format(self.query[band[0]].state)
-            if band.startswith('5'):
-                sideband = "Sideband: {0}".format(self.query[band[0]].sideband)
-            else:
-                sideband = ''
-            return '\n'.join((channel, ssid, state, sideband))
+        if band is not BandEnumeration.both:
+            self.log_status(band)
         else:
-            output = ['2.4 GHz:\n']
-            output.append("\tChannel: {0}".format(self.get_channel('2.4')))
-            output.append('\tSSID: {0}'.format(self.get_ssid('2.4')))
-            output.append('\tState: {0}'.format(self.query['2'].state))
-            output.append('5 GHz:\n')
-            output.append('\tChannel: {0}'.format(self.get_channel('5')))
-            output.append('\tSideband: {0}'.format(self.query['5'].sideband))            
-            output.append('\tSSID: {0}'.format(self.get_ssid('5')))
-            output.append('\tState: {0}'.format(self.query['5'].state))
-            return '\n'.join(output)
+            bands = (BandEnumeration.two_point_four, BandEnumeration.five)
+            for band in bands:
+                self.log_status(band)
+            return
+
+    def log_status(self, band):
+        """
+        Prints and logs the status for a single band
+        """
+        self.print_and_log(BAND_STRING.format(band))
+        self.print_and_log(CHANNEL_STRING.format(self.get_channel(band)))            
+        self.print_and_log(SSID_STRING.format(self.get_ssid(band)))
+        self.print_and_log(STATE_STRING.format(self.query[band[0]].state))
+        if band.startswith('5'):
+            self.print_and_log(SIDEBAND_STRING.format(self.query[band[0]].sideband))
+        self.print_and_log(DHCP_STRING.format(self.lan_query.dhcp_state))
+        return
 
     def unset_channel(self):
         """
@@ -412,20 +440,79 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         changer.assert_called_with(channel)
         return
 
-    def test_get_status(self):
+    def test_get_24_ghz_status(self):
         """
         Does it get all the queries and log and print them?
         """
         stdout = MagicMock()
         logger = MagicMock()
+        querier = MagicMock()
+        ssid_querier = MagicMock()
+        lan_querier = MagicMock()
         self.control._logger = logger
-        with patch('sys.stdout', stdout):
-            self.control.get_status()
+        self.control._query = querier
+        self.control._ssid_query = ssid_querier
+        self.control._lan_query = lan_querier
+
+        querier.__getitem__().channel = '11'
+        querier.__getitem__().state = 'Disabled'
+        ssid_querier.__getitem__().ssid = 'ummagumma'
+        lan_querier.dhcp_state = 'Disabled'
+        
+        outputs = "2.4 GHz:,\tChannel: 11,\tSSID: ummagumma,\tState: Disabled"
+
+        outputs_24 = outputs + ',\tDHCP: Disabled'
+        logger_calls = [call(output) for output in outputs_24.split(',')]
+        stdout_calls = []
+        newline_call = call('\n')
+        for called in logger_calls:
+            stdout_calls.append(called)
+            stdout_calls.append(newline_call)
+
+        with patch('sys.stdout', stdout):            
+            self.control.get_status(BandEnumeration.two_point_four)
+
+            self.assertEqual(stdout.write.call_args_list, stdout_calls)
+            self.assertEqual(logger.debug.call_args_list, logger_calls)
+
+        # try 5 GHz
+        querier.__getitem__().sideband = 'Upper'
+        outputs = outputs.replace('2.4', '5')
+        outputs += ',\tSideband: Upper'
+
+        outputs_5 = outputs + ',\tDHCP: Disabled'       
+        logger_calls = [call(output) for output in outputs_5.split(',')]
+        stdout_calls = []
+        newline_call = call('\n')
+
+        # reset the mocks
+        stdout.reset_mock()
+        logger.reset_mock()
+        for called in logger_calls:
+            stdout_calls.append(called)
+            stdout_calls.append(newline_call)
+
+        with patch('sys.stdout', stdout):            
+            self.control.get_status(BandEnumeration.five)
+
+            #print stdout.write.mock_calls
+            self.assertEqual(stdout.write.call_args_list, stdout_calls)
+            self.assertEqual(logger.debug.call_args_list, logger_calls)
         return
+
+    def test_get_both_status(self):
+        """
+        Does it call log_status once for each band if given 'both'?
+        """
+        log_status = MagicMock()
+        self.control.log_status = log_status
+        self.control.get_status(BandEnumeration.both)
+        expected = [call(BandEnumeration.two_point_four), call(BandEnumeration.five)]
+        self.assertEqual(log_status.mock_calls, expected)
+        return
+
 # end class TestBroadcom            
 @
-
-
 
 
 <%

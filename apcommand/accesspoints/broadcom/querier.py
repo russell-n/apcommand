@@ -34,6 +34,7 @@ from commons import BroadcomLANData
 from commons import BAND_INTERFACE_MAP
 from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
 from apcommand.accesspoints.broadcom.parser import BroadcomSSIDSoup
+from apcommand.accesspoints.broadcom.parser import BroadcomLANSoup
 
 
 class BroadcomBaseQuerier(BaseClass):
@@ -272,6 +273,41 @@ class BroadcomSSIDQuerier(BroadcomBaseQuerier):
 # class BroadcomSSIDQuerier
 
 
+class BroadcomLANQuerier(BroadcomBaseQuerier):
+    """
+    A querier for the lan.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        super(BroadcomLANQuerier, self).__init__(*args, **kwargs)
+        self._dhcp_state = None
+        return
+
+    @property
+    def asp_page(self):
+        """
+        lan.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.lan
+        return self._asp_page
+
+    @property
+    def soup(self):
+        """
+        The BroadcomLANSoup
+        """
+        if self._soup is None:
+            self._soup = BroadcomLANSoup()
+        return self._soup
+
+    @property
+    def dhcp_state(self):
+        """
+        gets the dhcp_state from the soup
+        """
+        return self.soup.dhcp_state
+
+
 # python standard library
 import unittest
 
@@ -385,3 +421,23 @@ class TestBroadcomQueriers(unittest.TestCase):
         return
             
 # end class TestBroadcomBaseQuerier    
+
+
+class TestBroadcomLanQuerier(unittest.TestCase):
+    def setUp(self):
+        self.connection = MagicMock()
+        self.querier = BroadcomLANQuerier(connection=self.connection)
+        self.soup = MagicMock(spec=BroadcomLANSoup)
+        self.querier._soup = self.soup
+        return
+
+
+    def test_dhcp_state(self):
+        """
+        Does the querier get the DHCP state from the soup?
+        """
+        self.soup.dhcp_state = "Disabled"
+        state = self.querier.dhcp_state
+        self.assertEqual('Disabled', state)
+        return
+# class TestBroadcomLanQuerier        

@@ -69,8 +69,6 @@ The BroadcomBCM94718NR (Henceforth to be known as 'George')
 
 
 
-
-
 []
 []
 

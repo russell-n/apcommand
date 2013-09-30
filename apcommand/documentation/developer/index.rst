@@ -104,3 +104,4 @@ Miscellaneous Coding:
 
    The Command Pattern <appendices/command>
    Shelve <appendices/shelve>
+   Mock Examples <appendices/mock_examples>

@@ -119,3 +119,21 @@ A querier for the ssid.asp page.
 
 
 
+The BroadcomLANQuerier
+----------------------
+
+A querier for the ``lan.asp`` page.
+
+.. uml::
+
+   BroadcomLANQuerier -|> BroadcomBaseQuerier
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomLANQuerier
+   BroadcomLANQuerier.dhcp_state
+
+
+
+
