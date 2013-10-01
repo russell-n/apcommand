@@ -115,7 +115,7 @@ class Arguments(object):
         status = self.subparsers.add_parser('status',
                                             help='Get some information for an interface')
         status.add_argument('band',
-                            help="the band of the interface to query (default=%(default)s) (use 'all' for all interfaces)",
+                            help="the band of the interface to query (default=%(default)s)",
                             default=BandEnumeration.both,
                             nargs="?")
         status.set_defaults(function=self.subcommands.status)
@@ -153,7 +153,7 @@ class Arguments(object):
         ssid.add_argument('ssid',
                           help='The SSID to use', nargs='?',
                           default=None)
-        ssid.add_argument('-b', '--band', help='2.4 or 5 (default=%(default)s)',
+        ssid.add_argument('-b', '--band', help='2.4 or 5 (default=both)',
                           default=None)
         ssid.set_defaults(function=self.subcommands.ssid)
 
