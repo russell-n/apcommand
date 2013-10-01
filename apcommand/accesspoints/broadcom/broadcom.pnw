@@ -74,7 +74,7 @@ CHANNEL_STRING = '\tChannel: {0}'
 SSID_STRING = '\tSSID: {0}'
 STATE_STRING = '\tState: {0}'
 SIDEBAND_STRING = '\tSideband: {0}'
-DHCP_STRING = '\tDHCP: {0}'
+DHCP_STRING = 'DHCP: {0}'
 @
 
 .. autosummary::
@@ -301,7 +301,8 @@ class BroadcomBCM94718NR(BaseClass):
             bands = (BandEnumeration.two_point_four, BandEnumeration.five)
             for band in bands:
                 self.log_status(band)
-            return
+        self.print_and_log(DHCP_STRING.format(self.lan_query.dhcp_state))
+        return
 
     def log_status(self, band):
         """
@@ -312,8 +313,7 @@ class BroadcomBCM94718NR(BaseClass):
         self.print_and_log(SSID_STRING.format(self.get_ssid(band)))
         self.print_and_log(STATE_STRING.format(self.query[band[0]].state))
         if band.startswith('5'):
-            self.print_and_log(SIDEBAND_STRING.format(self.query[band[0]].sideband))
-        self.print_and_log(DHCP_STRING.format(self.lan_query.dhcp_state))
+            self.print_and_log(SIDEBAND_STRING.format(self.query[band[0]].sideband))        
         return
 
     def unset_channel(self):

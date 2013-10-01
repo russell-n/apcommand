@@ -305,6 +305,7 @@ class BroadcomLANQuerier(BroadcomBaseQuerier):
         """
         gets the dhcp_state from the soup
         """
+        self.set_soup()
         return self.soup.dhcp_state
 
 
