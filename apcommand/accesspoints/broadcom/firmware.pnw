@@ -1,0 +1,220 @@
+The Firmware Page
+=================
+
+This is a module for getting information from the ``firmware.asp`` page. Since the page keeps the information in a table whose data lacks identifying meta-data, I am going to experiment with using pyparsing to get it out.
+
+The page is structured as a collection of tables and forms (which contain tables):
+
+.. digraph:: firmware_asp
+
+   HTML -> Head
+   HTML -> Body
+   table_1 [label="Table: Navigation Header"]
+   table_2 [label="Table: Logo, Title"]
+   table_4 [label="Table: Select New Firmware"]
+   table_5 [label="Table: Submit New Firmware"]
+   form_2 [label="Table: Upload NVRAM"]
+   form_3 [label="Table: Submit Upload"]
+   tr_1 [label="Bootloader Version"]
+   tr_2 [label="OS Version"]
+   tr_3 [label="Driver Version"]
+   Body -> table_1
+   Body -> table_2
+   Body -> form_1
+   Body -> form_2
+   Body -> form_3
+   form_1 -> table_0
+   table_0 -> tr_1
+   table_0 -> tr_2
+   table_0 -> tr_3
+   form_1 -> table_4
+   form_1 -> table_5
+   
+Looking at the graph it appears that ``table_0`` is the one we are interested here. This is what the html for that table looks like:
+
+.. highlight:: html
+.. include:: firmware_table.html
+   :code: html
+
+
+I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be brute-force BeautifulSoup:
+
+<<name="imports", wrap=False>>=
+# python standard library
+import re
+
+# third-party
+from bs4 import BeautifulSoup
+
+# this package
+from parser import BroadcomBaseSoup
+from commons import BroadcomPages
+from querier import BroadcomBaseQuerier
+@
+
+First, we can get the form directly because it has a unique ``action`` attribute:
+
+<<name='get_form', wrap=False>>=
+soup = BeautifulSoup(open('firmware_asp.html'))
+
+# find_all returns a list, but since we specified the attrs, we know it has what we want
+form = soup('form', attrs={'action': 'upgrade.cgi'})[0]
+@
+
+``form`` is a BeautfulSoup ``tag`` so it can be searched for the table. There are two ways I thought of to do this. One is to use the fact that we know that the table we want is the first:
+
+<<name='get_table', wrap=False>>=
+table = form('table')[0]
+@
+
+But that seems to be wrong, somehow, so I prefer to discover it:
+
+<<name='find_table', wrap=False>>=
+for table in form('table'):
+    if any(['Version' in tag.next for tag in table('th')]):
+        break
+print table
+@
+
+Unfortunately, looking at the table-data, you can see that there is no really nice way to discover information. You either need to used the indices or assume the form of the versions will not change. At this point I will just give up and use the indices.
+
+<<name='find_versions', wrap=False>>=
+data = table('td')
+extractor = re.compile('\s*<[/]*td>')
+for index in range(1,6,2):
+    print extractor.sub('', str(data[index]))
+@
+
+Since that was so convoluted I will do it again in one piece using indices:
+
+<<name='final_versions', wrap=False>>=
+version_identifier = {1:'Bootloader', 3:'OS', 5:'Driver'}
+data = soup('form', attrs={'action': 'upgrade.cgi'})[0]('table')[0]('td')
+for index in range(1,6,2):
+    print version_identifier[index] + ": " + extractor.sub('', str(data[index]))
+@
+
+The BroadcomFirmwareSoup
+------------------------
+
+Using the stuff from above, a Soup for the information will be created.
+
+.. uml::
+
+   BroadcomFirmwareSoup -|> BroadcomBaseSoup
+
+.. autosummary::
+   :toctree: api
+
+   BroadcomFirmwareSoup
+   BroadcomFirmwareSoup.bootloader_version
+   BroadcomFirmwareSoup.os_version
+   BroadcomFirmwareSoup.wl_driver_version
+
+<<name='more_constants', echo=False>>=
+EMPTY_STRING = ''
+BOOTLOADER = 1
+OS_VERSION = 3
+WL_DRIVER = 5
+@
+<<name='BroadcomFirmwareSoup', echo=False>>=
+class BroadcomFirmwareSoup(BroadcomBaseSoup):
+    """
+    A soup to get the firmware information
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        BroadcomFirmwareSoup Constructor
+        """
+        super(BroadcomFirmwareSoup, self).__init__(*args, **kwargs)
+        self._extractor_expression = None
+        return
+
+    def get_data(self, index):
+        """
+        Get the data of at table-data index
+        """
+        data = self.soup('form', attrs={'action': 'upgrade.cgi'})[0]('table')[0]('td')
+        return self.extractor_expression.sub(EMPTY_STRING, str(data[index]))
+    
+    @property
+    def extractor_expression(self):
+        """
+        A compiled regular expression to get the 'td' tags
+        """
+        if self._extractor_expression is None:
+            self._extractor_expression = re.compile('\s*<[/]*td>')
+        return self._extractor_expression
+
+    @property
+    def bootloader_version(self):
+        """
+        returns the bootloader version
+        """        
+        return self.get_data(BOOTLOADER)
+
+    @property
+    def os_version(self):
+        """
+        Return the OS version
+        """
+        return self.get_data(OS_VERSION)
+
+    @property
+    def wl_driver_version(self):
+        """
+        return the WL Driver Version
+        """
+        return self.get_data(WL_DRIVER)
+#
+@
+
+The FirmwareQuerier
+-------------------
+
+Now a querier to bundle the Soup with a connection
+
+.. uml::
+
+   BroadcomFirmwareQuerier -|> BroadcomBaseQuerier
+
+.. autosummary::
+
+   BroadcomFirmwareQuerier
+
+<<name='BroadcomFirmwareQuerier', echo=False>>=
+class BroadcomFirmwareQuerier(BroadcomBaseQuerier):
+    """
+    A querier for the firmware.asp page
+    """
+    def __init__(self, *args, **kwargs):
+        super(BroadcomFirmwareQuerier, self).__init__(*args, **kwargs)
+        return
+
+    @property
+    def asp_page(self):
+        """
+        firmware.asp
+        """
+        if self._asp_page is None:
+            self._asp_page = BroadcomPages.firmware
+        return self._asp_page
+
+    @property
+    def soup(self):
+        """
+        A BroadcomFirmwareSoup
+        """
+        if self._soup is None:
+            self._soup = BroadcomFirmwareSoup()
+        return self._soup
+
+    @property
+    def __getattr__(self, attribute):
+        return getattr(self.soup, attribute)
+@
+
+
+
+
+
