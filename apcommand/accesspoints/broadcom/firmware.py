@@ -49,7 +49,7 @@ class BroadcomFirmwareSoup(BroadcomBaseSoup):
     def bootloader_version(self):
         """
         returns the bootloader version
-        """        
+        """
         return self.get_data(BOOTLOADER)
 
     @property
@@ -95,5 +95,16 @@ class BroadcomFirmwareQuerier(BroadcomBaseQuerier):
         return self._soup
 
     @property
-    def __getattr__(self, attribute):
-        return getattr(self.soup, attribute)
+    def bootloader_version(self):
+        self.set_soup()
+        return self.soup.bootloader_version
+
+    @property
+    def os_version(self):
+        self.set_soup()
+        return self.soup.os_version
+
+    @property
+    def wl_driver_version(self):
+        self.set_soup()
+        return self.soup.wl_driver_version
