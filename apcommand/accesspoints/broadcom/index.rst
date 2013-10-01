@@ -11,5 +11,6 @@ The modules for the Broadcom Access Point:
     Broadcom Queriers (HTTPConnection + Soup) <querier>    
     Broadcom Commands (HTTPConnection + data) <commands>
     Common Functions and Constants <commons>
+    Broadcom Firmware Explorations <firmware_explotations>
     The Broadcom Firmware Page (Querier) <firmware>
 
