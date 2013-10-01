@@ -249,6 +249,7 @@ class BroadcomBCM94718NR(BaseClass):
             bands = (BandEnumeration.two_point_four, BandEnumeration.five)
             for band in bands:
                 self.log_status(band)
+        print 
         self.print_and_log(DHCP_STRING.format(self.lan_query.dhcp_state))
         self.print_and_log(BOOTLOADER_STRING.format(self.firmware_query.bootloader_version))
         self.print_and_log(OS_STRING.format(self.firmware_query.os_version))
@@ -416,13 +417,20 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         firmware_querier.wl_driver_version = '5.60.134'
         
         outputs = "2.4 GHz:,\tChannel: 11,\tSSID: ummagumma,\tState: Disabled"
+        outputs_24 = ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
+        logger_calls = [call(output) for output in (outputs + outputs_24).split(',')]
 
-        outputs_24 = outputs + ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
-        logger_calls = [call(output) for output in outputs_24.split(',')]
         stdout_calls = []
         newline_call = call('\n')
-        for called in logger_calls:
-            stdout_calls.append(called)
+
+        for called in outputs.split(','):
+            stdout_calls.append(call(called))
+            stdout_calls.append(newline_call)
+        stdout_calls.append(newline_call)
+        outs = outputs_24.lstrip(',')
+
+        for called in outs.split(','):
+            stdout_calls.append(call(called))
             stdout_calls.append(newline_call)
 
         with patch('sys.stdout', stdout):            
@@ -436,18 +444,25 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         outputs = outputs.replace('2.4', '5')
         outputs += ',\tSideband: Upper'
 
-        outputs_5 = outputs + ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
-        logger_calls = [call(output) for output in outputs_5.split(',')]
-        stdout_calls = []
-        newline_call = call('\n')
+        outputs_5 = ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
+        logger_calls = [call(output) for output in (outputs + outputs_5).split(',')]
+
 
         # reset the mocks
         stdout.reset_mock()
         logger.reset_mock()
-        for called in logger_calls:
-            stdout_calls.append(called)
+
+        stdout_calls = []
+        for output in outputs.split(','):
+            stdout_calls.append(call(output))
+            stdout_calls.append(newline_call)
+        stdout_calls.append(newline_call)
+        outs = outputs_5.lstrip(',')
+        for output in outs.split(','):
+            stdout_calls.append(call(output))
             stdout_calls.append(newline_call)
 
+        print stdout_calls        
         with patch('sys.stdout', stdout):            
             self.control.get_status(BandEnumeration.five)
 
