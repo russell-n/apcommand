@@ -12,6 +12,7 @@ from commons import SSID, SSID_PAGE
 from commons import set_24_data, set_5_data, ssid_page
 from querier import BroadcomRadioQuerier, BroadcomSSIDQuerier
 from querier import BroadcomLANQuerier
+from firmware import BroadcomFirmwareQuerier
 from macros import ChannelChanger
 
 # for some reason Pweave sometimes accepts relative paths, sometimes not
@@ -25,6 +26,9 @@ SSID_STRING = '\tSSID: {0}'
 STATE_STRING = '\tState: {0}'
 SIDEBAND_STRING = '\tSideband: {0}'
 DHCP_STRING = 'DHCP: {0}'
+BOOTLOADER_STRING = 'Bootloader Version: {0}'
+OS_STRING = 'OS Version: {0}'
+WL_DRIVER_STRING = 'WL Driver Version: {0}'
 
 
 class RadioPageConnection(BaseClass):
@@ -90,7 +94,18 @@ class BroadcomBCM94718NR(BaseClass):
         self._query = None
         self._ssid_query = None
         self._lan_query = None
+        self._firmware_query = None
         return
+
+    @property
+    def firmware_query(self):
+        """
+        A BroadcomFirmwareQuery
+        """
+        if self._firmware_query is None:
+            self._firmware_query = BroadcomFirmwareQuerier(connection=self.connection)
+        return self._firmware_query
+
 
     @property
     def lan_query(self):
@@ -235,6 +250,9 @@ class BroadcomBCM94718NR(BaseClass):
             for band in bands:
                 self.log_status(band)
         self.print_and_log(DHCP_STRING.format(self.lan_query.dhcp_state))
+        self.print_and_log(BOOTLOADER_STRING.format(self.firmware_query.bootloader_version))
+        self.print_and_log(OS_STRING.format(self.firmware_query.os_version))
+        self.print_and_log(WL_DRIVER_STRING.format(self.firmware_query.wl_driver_version))
         return
 
     def log_status(self, band):
@@ -246,7 +264,7 @@ class BroadcomBCM94718NR(BaseClass):
         self.print_and_log(SSID_STRING.format(self.get_ssid(band)))
         self.print_and_log(STATE_STRING.format(self.query[band[0]].state))
         if band.startswith('5'):
-            self.print_and_log(SIDEBAND_STRING.format(self.query[band[0]].sideband))        
+            self.print_and_log(SIDEBAND_STRING.format(self.query[band[0]].sideband))
         return
 
     def unset_channel(self):
@@ -381,19 +399,25 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         querier = MagicMock()
         ssid_querier = MagicMock()
         lan_querier = MagicMock()
+        firmware_querier = MagicMock()
+        
         self.control._logger = logger
         self.control._query = querier
         self.control._ssid_query = ssid_querier
         self.control._lan_query = lan_querier
+        self.control._firmware_query = firmware_querier
 
         querier.__getitem__().channel = '11'
         querier.__getitem__().state = 'Disabled'
         ssid_querier.__getitem__().ssid = 'ummagumma'
         lan_querier.dhcp_state = 'Disabled'
+        firmware_querier.bootloader_version = '5.10.128.2'
+        firmware_querier.os_version = '5.70.63.1'
+        firmware_querier.wl_driver_version = '5.60.134'
         
         outputs = "2.4 GHz:,\tChannel: 11,\tSSID: ummagumma,\tState: Disabled"
 
-        outputs_24 = outputs + ',\tDHCP: Disabled'
+        outputs_24 = outputs + ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
         logger_calls = [call(output) for output in outputs_24.split(',')]
         stdout_calls = []
         newline_call = call('\n')
@@ -412,7 +436,7 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         outputs = outputs.replace('2.4', '5')
         outputs += ',\tSideband: Upper'
 
-        outputs_5 = outputs + ',\tDHCP: Disabled'       
+        outputs_5 = outputs + ',DHCP: Disabled,Bootloader Version: 5.10.128.2,OS Version: 5.70.63.1,WL Driver Version: 5.60.134'
         logger_calls = [call(output) for output in outputs_5.split(',')]
         stdout_calls = []
         newline_call = call('\n')
@@ -437,6 +461,8 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
         Does it call log_status once for each band if given 'both'?
         """
         log_status = MagicMock()
+        self.control._lan_query = MagicMock()
+        self.control._firmware_query = MagicMock()
         self.control.log_status = log_status
         self.control.get_status(BandEnumeration.both)
         expected = [call(BandEnumeration.two_point_four), call(BandEnumeration.five)]

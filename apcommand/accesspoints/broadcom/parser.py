@@ -250,7 +250,6 @@ class BroadcomLANSoup(BroadcomBaseSoup):
          - `html`: An initial text to parse
         """
         super(BroadcomLANSoup, self).__init__(*args, **kwargs)
-        self._dhcp_state = None
         return
 
     @property
@@ -268,7 +267,6 @@ class BroadcomSSIDSoup(BroadcomBaseSoup):
     """
     def __init__(self, *args, **kwargs):
         super(BroadcomSSIDSoup, self).__init__(*args, **kwargs)
-        self._ssid = None
         return
 
     @property

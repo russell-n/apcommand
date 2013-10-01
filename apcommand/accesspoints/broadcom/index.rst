@@ -8,7 +8,8 @@ The modules for the Broadcom Access Point:
 
     The Broadcom BCM94718NR Access Point (aggregating class) <broadcom>
     The Broadcom Soup (HTML parsing) <parser>
-    Broadcom Queriers (HTTPConnection + Soup) <querier>
+    Broadcom Queriers (HTTPConnection + Soup) <querier>    
     Broadcom Commands (HTTPConnection + data) <commands>
     Common Functions and Constants <commons>
+    The Broadcom Firmware Page (Querier) <firmware>
 
