@@ -149,8 +149,7 @@ class HTTPConnection(BaseClass):
         """
         if self._timer is None:
             self._timer = EventTimer(seconds=self.rest)
-        return self._timer
-        
+        return self._timer        
 
     @property
     def lock(self):
@@ -338,7 +337,7 @@ class TestHTTPConnection(unittest.TestCase):
 
     def test_call(self):
         """
-        Does the calling the HTTPConnection do the same thing as GET?
+        Does calling the HTTPConnection do the same thing as GET?
         """
         with patch('requests.request', self.requests):
             data = {'wl_radio':'1'}

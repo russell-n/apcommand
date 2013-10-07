@@ -1,5 +1,8 @@
 # Makefile for Sphinx documentation
 #
+THIS_NAME = apcommand
+RSYNC_NAME = ap_command
+RSYNC_CATEGORY = commands
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
@@ -10,9 +13,11 @@ BUILDDIR      = build
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) apcommand
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(THIS_NAME)
 # the i18n builder cannot share the environment and doctrees with the others
-I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) apcommand
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(THIS_NAME	)
+
+RSYNC_DIR = ~/repositories/repository_documentation/build/html/$(RSYNC_CATEGORY)/$(RSYNC_NAME)
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
@@ -47,6 +52,7 @@ html:
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 	@echo "Synching with the repository_documentation"
 	rsync -ravz build/html/ apcontrol@elin:public_html
+	rsync -ravz $(BUILDDIR)/html/ $(RSYNC_DIR)
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

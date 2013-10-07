@@ -62,9 +62,9 @@ In this initial use I don't use parameters so I didn't do the same thing for the
 EventTimer
 ----------
 
-If you hit the Broadcom web-server too soon after a previous call to it'll return an error or erroneous page. To prevent this I was having the users of this sleep between calls, but that seems to inelegant and causes unnecessary waiting sometimes (it's like it works for Tri-Met, or something).
+If you hit the Broadcom web-server too soon after a previous call to it'll return an error or erroneous page. To prevent this I was having the users of this sleep between calls, but that seems inelegant and causes unnecessary waiting sometimes (kind of like taking the bus).
 
-Instead the HTTPConnection will maintain and EventTimer and block if you try to make a new request too soon (too soon being something that needs to be empirically determined by the user, right now it seems to be a half second).
+Instead the HTTPConnection will maintain an EventTimer and block if you try to make a new request too soon (too soon being something that needs to be empirically determined by the user, right now it seems to be a half second).
 
 .. uml::
 
@@ -104,7 +104,7 @@ Basic Use::
        # do something here
        return
 
-.. warning:: This is a method decorator -- it assumes the object it belongs to has a ``timer`` properties (``EventTimer``).
+.. warning:: This is a method decorator -- it assumes the object it belongs to has a ``self.timer`` property (which is an instance of ``EventTimer``).
    
 
 
@@ -121,6 +121,9 @@ The HTTPConnection
    :toctree: api
 
    HTTPConnection
+   HTTPConnection.__call__
+   HTTPConnection.request
+   HTTPConnection.__getattr__
 
 The URL is being put together with the python `urlparse.urlunparse <http://docs.python.org/2/library/urlparse.html>`_ method. For future reference, the tuple that is passed to it has these fields:
 

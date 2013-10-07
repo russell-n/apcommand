@@ -160,8 +160,7 @@ def radio_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
         self.connection.path = BroadcomRadioData.radio_page
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
 
 # a decorator to set the page to 'ssid.asp'
@@ -172,8 +171,7 @@ def ssid_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
         self.connection.path = SSID_PAGE
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
 
 # a decorator to set the page assuming that the object has a self.asp_page attribute
@@ -184,10 +182,8 @@ def set_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to {0}".format(self.asp_page))
         self.connection.path = self.asp_page
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
-
 @
 
 Data
