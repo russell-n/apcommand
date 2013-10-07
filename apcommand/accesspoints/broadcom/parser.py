@@ -49,7 +49,10 @@ class BroadcomBaseSoup(BaseClass):
         """
         sets the html, resets the soup
         """
-        self._html = new_html
+        # henry's machines don't have their locale setup
+        # so they are returning strange non-us unicode
+        # so cast to a string to be safe
+        self._html = str(new_html)
         self._soup = None
         return
 
