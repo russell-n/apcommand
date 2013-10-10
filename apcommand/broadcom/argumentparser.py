@@ -38,7 +38,7 @@ class Arguments(object):
         :return: ArgumentParser 
         """
         if self._parser is None:
-            self._parser = argparse.ArgumentParser()
+            self._parser = argparse.ArgumentParser(fromfile_prefix_chars='@')
         return self._parser
 
     @property

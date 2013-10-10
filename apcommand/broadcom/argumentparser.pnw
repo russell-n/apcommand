@@ -14,6 +14,10 @@ A map from command-line-arguments to a namespace.
 
    Arguments
 
+Since the hostname changes around I added a `fromfile_prefix_chars=@` to the ArgumentParser so you can put the argument (``--hostname=192.168.30.22`` **Not strings, type exactly what you would type on the command-line**) in a file then pass them in like::
+
+   broadcom @config.txt status
+
 <<name='imports', echo=False>>=
 #python standard library
 import argparse
@@ -54,7 +58,7 @@ class Arguments(object):
         :return: ArgumentParser 
         """
         if self._parser is None:
-            self._parser = argparse.ArgumentParser()
+            self._parser = argparse.ArgumentParser(fromfile_prefix_chars='@')
         return self._parser
 
     @property
