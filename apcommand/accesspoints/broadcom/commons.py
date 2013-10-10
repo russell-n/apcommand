@@ -22,7 +22,13 @@ class BroadcomRadioData(object):
     A holder of constants for setting or checking the channel
     """
     __slots__ = ()
-    channels_5ghz =  '36 44 149 157'.split()
+    # left list has 'lower' channels and right-list has 'upper' channels
+    lower = '36 44 149 157'.split()
+    upper =  '40 48 153 161'.split()
+    channels_5ghz =  lower + upper
+    sidebands = ['lower'] * len(lower) + ['upper'] * len(upper)
+    sideband_map = dict(zip(channels_5ghz, sidebands))
+
     channels_24ghz = [str(channel) for channel in xrange(1,12)]
     radio_page = 'radio.asp'
     interface = 'wl_radio'
@@ -74,8 +80,7 @@ def radio_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
         self.connection.path = BroadcomRadioData.radio_page
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
 
 # a decorator to set the page to 'ssid.asp'
@@ -86,8 +91,7 @@ def ssid_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
         self.connection.path = SSID_PAGE
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
 
 # a decorator to set the page assuming that the object has a self.asp_page attribute
@@ -98,10 +102,8 @@ def set_page(method):
     def _method(self, *args, **kwargs):
         self.logger.debug("Setting connection.path to {0}".format(self.asp_page))
         self.connection.path = self.asp_page
-        outcome = method(self, *args, **kwargs)
-        return outcome
+        return method(self, *args, **kwargs)
     return _method
-
 
 
 # a dictionary for data that changes the state of the broadcom

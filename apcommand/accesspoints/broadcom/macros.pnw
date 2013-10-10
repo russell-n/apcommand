@@ -125,7 +125,9 @@ class ChannelChanger(BaseClass):
 
                 self.enable_command.band = band
                 self.set_channel_command.channel=channel
-                self.set_sideband_command.direction = 'lower'
+                sideband = BroadcomRadioData.sideband_map[channel]
+                self.set_sideband_command.direction = sideband
+                self.logger.debug("Setting the sideband to '{0}'".format(sideband))
                 self._set_channel_command += self._enable_command
                 self._set_channel_command += self._set_sideband_command
             else:

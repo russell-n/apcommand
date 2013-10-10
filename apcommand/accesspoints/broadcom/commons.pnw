@@ -48,6 +48,7 @@ This holds constants for the radio.asp page.
 
    BroadcomRadioData : channels_24ghz
    BroadcomRadioData : channels_5ghz
+   BroadcomRadioData : sideband_map
    BroadcomRadioData : interface
    BroadcomRadioData : radio_page
    BroadcomRadioData : radio_on
@@ -60,7 +61,13 @@ class BroadcomRadioData(object):
     A holder of constants for setting or checking the channel
     """
     __slots__ = ()
-    channels_5ghz =  '36 44 149 157'.split()
+    # left list has 'lower' channels and right-list has 'upper' channels
+    lower = '36 44 149 157'.split()
+    upper =  '40 48 153 161'.split()
+    channels_5ghz =  lower + upper
+    sidebands = ['lower'] * len(lower) + ['upper'] * len(upper)
+    sideband_map = dict(zip(channels_5ghz, sidebands))
+
     channels_24ghz = [str(channel) for channel in xrange(1,12)]
     radio_page = 'radio.asp'
     interface = 'wl_radio'

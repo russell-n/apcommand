@@ -462,7 +462,6 @@ class TestBroadcomBCM94718NR(unittest.TestCase):
             stdout_calls.append(call(output))
             stdout_calls.append(newline_call)
 
-        print stdout_calls        
         with patch('sys.stdout', stdout):            
             self.control.get_status(BandEnumeration.five)
 

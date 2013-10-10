@@ -42,6 +42,7 @@ This holds constants for the radio.asp page.
 
    BroadcomRadioData : channels_24ghz
    BroadcomRadioData : channels_5ghz
+   BroadcomRadioData : sideband_map
    BroadcomRadioData : interface
    BroadcomRadioData : radio_page
    BroadcomRadioData : radio_on
@@ -117,8 +118,7 @@ These are decorators to do the repetitive calls common to many methods.
         def _method(self, *args, **kwargs):
             self.logger.debug("Setting connection.path to '{0}'".format(BroadcomRadioData.radio_page))
             self.connection.path = BroadcomRadioData.radio_page
-            outcome = method(self, *args, **kwargs)
-            return outcome
+            return method(self, *args, **kwargs)
         return _method
     
     # a decorator to set the page to 'ssid.asp'
@@ -129,8 +129,7 @@ These are decorators to do the repetitive calls common to many methods.
         def _method(self, *args, **kwargs):
             self.logger.debug("Setting connection.path to {0}".format(SSID_PAGE))
             self.connection.path = SSID_PAGE
-            outcome = method(self, *args, **kwargs)
-            return outcome
+            return method(self, *args, **kwargs)
         return _method
     
     # a decorator to set the page assuming that the object has a self.asp_page attribute
@@ -141,10 +140,8 @@ These are decorators to do the repetitive calls common to many methods.
         def _method(self, *args, **kwargs):
             self.logger.debug("Setting connection.path to {0}".format(self.asp_page))
             self.connection.path = self.asp_page
-            outcome = method(self, *args, **kwargs)
-            return outcome
+            return method(self, *args, **kwargs)
         return _method
-    
     
 
 
