@@ -1,7 +1,7 @@
 APCommand
 =========
 
-This is a command-line controller for an access point (only the Atheros AR5KAP right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to marry with Aren's code to allow changing channels in between test-runs.
+This is a command-line controller for an access point (only the Atheros AR5KAP right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to marry with Aren's code to allow changing channels in between test-runs. See the online documentation `here <http://rallion.bitbucket.org/commands/ap_command/index.html>`_.
 
 The Interface
 -------------
