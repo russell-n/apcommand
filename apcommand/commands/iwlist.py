@@ -79,9 +79,9 @@ class IwlistLexer(BaseClass):
         A compiled regular expression to match the current channel
         """
         if self._channel_expression is None:
-            self._channel_expression = re.compile("\(Channel" + oatbran.SPACES  +
-                                                    oatbran.NAMED(n=IwlistEnum.channel,
-                                                                  e=oatbran.NATURAL) + '\)')
+            self._channel_expression = re.compile("\(Channel" + oatbran.CommonPatterns.spaces  +
+                                                    oatbran.Group.named(name=IwlistEnum.channel,
+                                                                  expression=oatbran.Numbers.integer) + '\)')
         return self._channel_expression
 
     def channel(self, lines):
@@ -105,10 +105,10 @@ class IwlistLexer(BaseClass):
         A compiled regular expression to match the current frequency
         """
         if self._frequency_expression is None:
-            self._frequency_expression = re.compile("Current Frequency" + oatbran.OPTIONAL_SPACES + r'(:|=)' +
-                                                    oatbran.OPTIONAL_SPACES + 
-                                                    oatbran.NAMED(n=IwlistEnum.frequency,
-                                                                  e=oatbran.REAL) + oatbran.SPACES + 'GHz')
+            self._frequency_expression = re.compile("Current Frequency" + oatbran.CommonPatterns.optional_spaces + r'(:|=)' +
+                                                    oatbran.CommonPatterns.optional_spaces + 
+                                                    oatbran.Group.named(name=IwlistEnum.frequency,
+                                                                  expression=oatbran.Numbers.real) + oatbran.CommonPatterns.spaces + 'GHz')
         return self._frequency_expression
 
     def frequency(self, lines):

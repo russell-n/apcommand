@@ -198,9 +198,9 @@ class IwconfigLexer(object):
         Named regular expression to match the found_interface
         """
         if self._found_interface is None:
-            self._found_interface = re.compile(oatbran.STRING_START + 
-                                                    oatbran.NAMED(n=IwconfigEnums.interface,
-                                                                  e=oatbran.LETTERS + oatbran.NATURAL))
+            self._found_interface = re.compile(oatbran.Boundaries.string_start + 
+                                                    oatbran.Group.named(name=IwconfigEnums.interface,
+                                                                  expression=oatbran.CommonPatterns.letters + oatbran.Numbers.integer))
         return self._found_interface
 
     @property
@@ -211,10 +211,10 @@ class IwconfigLexer(object):
         :return: compiled regular expression with named expression IwconfigEnums.protocol
         """
         if self._protocol is None:
-            self._protocol = re.compile("IEEE" + oatbran.SPACES + r'802\.11' +
-                                                    oatbran.NAMED(n=IwconfigEnums.protocol,
-                                                                  e=oatbran.CLASS('abgn')+
-                                                                  oatbran.ONE_OR_MORE))
+            self._protocol = re.compile("IEEE" + oatbran.CommonPatterns.spaces + r'802\.11' +
+                                                    oatbran.Group.named(name=IwconfigEnums.protocol,
+                                                                  expression=oatbran.CharacterClass.character_class('abgn')+
+                                                                  oatbran.Quantifier.one_or_more))
         return self._protocol
 
     @property
@@ -223,33 +223,33 @@ class IwconfigLexer(object):
         Named expression to match the frequency
         """
         if self._frequency is None:
-            self._frequency = re.compile("Frequency" + oatbran.OPTIONAL_SPACES + r'(:|=)' +
-                                                    oatbran.OPTIONAL_SPACES + 
-                                                    oatbran.NAMED(n=IwconfigEnums.frequency,
-                                                                  e=oatbran.REAL) + oatbran.SPACES + 'GHz')
+            self._frequency = re.compile("Frequency" + oatbran.CommonPatterns.optional_spaces + r'(:|=)' +
+                                                    oatbran.CommonPatterns.optional_spaces + 
+                                                    oatbran.Group.named(name=IwconfigEnums.frequency,
+                                                                  expression=oatbran.Numbers.real) + oatbran.CommonPatterns.spaces + 'GHz')
         return self._frequency
 
     
     @property
     def bitrate(self):
         if self._bitrate is None:
-            self._bitrate = re.compile("Bit" + oatbran.SPACES + 
-                                                  "Rate" + oatbran.OPTIONAL_SPACES + r'(:|=)' +
-                                                  oatbran.OPTIONAL_SPACES + 
-                                                  oatbran.NAMED(n=IwconfigEnums.bitrate,
-                                                                e=oatbran.INTEGER + oatbran.EVERYTHING + 'b/s') +
-                                                  oatbran.SPACES)
+	   self._bitrate = re.compile("Bit" + oatbran.CommonPatterns.spaces + 
+                                                  "Rate" + oatbran.CommonPatterns.optional_spaces + r'(:|=)' +
+                                                  oatbran.CommonPatterns.optional_spaces + 
+                                                  oatbran.Group.named(name=IwconfigEnums.bitrate,
+                                                                expression=oatbran.Numbers.integer + oatbran.CommonPatterns.everything + 'b/s') +
+                                                  oatbran.CommonPatterns.spaces)
         return self._bitrate
 
     @property
     def noise(self):
         if self._noise is None:
-            self._noise = re.compile("Noise" + oatbran.SPACES + 
-                                               "level" + oatbran.OPTIONAL_SPACES + '=' +
-                                               oatbran.OPTIONAL_SPACES + 
-                                               oatbran.NAMED(n=IwconfigEnums.noise,
-                                                             e='-' + oatbran.INTEGER)+
-                                               oatbran.SPACES + 'dBm')
+            self._noise = re.compile("Noise" + oatbran.CommonPatterns.spaces + 
+                                               "level" + oatbran.CommonPatterns.optional_spaces + '=' +
+                                               oatbran.CommonPatterns.optional_spaces + 
+                                               oatbran.Group.named(name=IwconfigEnums.noise,
+                                                             expression='-' + oatbran.Number.integer)+
+                                               oatbran.CommonPattern.spaces + 'dBm')
         return self._noise
 
     @property
@@ -258,12 +258,12 @@ class IwconfigLexer(object):
         :return: compiled regular expression to match the rssi value
         """
         if self._rssi is None:
-            self._rssi = re.compile("Signal" + oatbran.SPACES + "level"+
-                                               oatbran.OPTIONAL_SPACES + "=" +
-                                               oatbran.OPTIONAL_SPACES +
-                                               oatbran.NAMED(n=IwconfigEnums.rssi,
-                                                             e=oatbran.INTEGER) +
-                                               oatbran.SPACES + "dBm")
+            self._rssi = re.compile("Signal" + oatbran.CommonPatterns.spaces + "level"+
+                                               oatbran.CommonPatterns.optional_spaces + "=" +
+                                               oatbran.CommonPatterns.optional_spaces +
+                                               oatbran.Group.named(name=IwconfigEnums.rssi,
+                                                             expression=oatbran.Numbers.integer) +
+                                               oatbran.CommonPatterns.spaces + "dBm")
         return self._rssi
     
     @property
@@ -272,8 +272,8 @@ class IwconfigLexer(object):
         :return: compiled regular expression to match the SSID
         """
         if self._ssid is None:
-            self._ssid = re.compile(r'ESSID:\"{0}\"'.format(oatbran.NAMED(n=IwconfigEnums.ssid,
-                                                                                     e='[^"]' + oatbran.ONE_OR_MORE)))
+            self._ssid = re.compile(r'ESSID:\"{0}\"'.format(oatbran.Group.named(name=IwconfigEnums.ssid,
+                                                                                     expression='[^"]' + oatbran.Quantifier.one_or_more)))
         return self._ssid
 
     @property
@@ -282,9 +282,9 @@ class IwconfigLexer(object):
         :return: compiled regular expression to match the BSSID
         """
         if self._bssid is None:
-            self._bssid = re.compile("Access" + oatbran.SPACES + "Point:" + oatbran.SPACES +
-                                                oatbran.NAMED(n=IwconfigEnums.bssid,
-                                                              e=oatbran.MAC_ADDRESS))
+            self._bssid = re.compile("Access" + oatbran.CommonPatterns.spaces + "Point:" + oatbran.CommonPatterns.spaces +
+                                                oatbran.Group.named(name=IwconfigEnums.bssid,
+                                                              expression=oatbran.Networking.mac_address))
         return self._bssid
     
     def search(self, lines, expression, name):

@@ -347,7 +347,7 @@ class CommonPatterns(object):
     optional_letters = Quantifier.zero_or_more(letter)
     space = r'\s'
     spaces = Quantifier.one_or_more(space)
-    optional_spaces = Quantifier.zero_or_more
+    optional_spaces = Quantifier.zero_or_more(space)
     not_space = r'\S'
     not_spaces = Quantifier.one_or_more(not_space)
 @
