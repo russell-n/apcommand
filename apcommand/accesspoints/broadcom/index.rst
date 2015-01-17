@@ -1,16 +1,28 @@
 The Broadcom Modules
 ====================
 
-The modules for the Broadcom Access Point:
+
+
+
+
+
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-    The Broadcom BCM94718NR Access Point (aggregating class) <broadcom>
-    The Broadcom Soup (HTML parsing) <parser>
-    Broadcom Queriers (HTTPConnection + Soup) <querier>    
-    Broadcom Commands (HTTPConnection + data) <commands>
-    Common Functions and Constants <commons>
-    Broadcom Firmware Explorations <firmware_explotations>
-    The Broadcom Firmware Page (Querier) <firmware>
+   The Broadcom BCM94718NR Access Point <broadcom.rst>
+   The Broadcom Commands <commands.rst>
+   The Broadcom Commons <commons.rst>
+   The Firmware Page <firmware.rst>
+   Firmware Exploration <firmware_exploration.rst>
+   Broadcom Macros <macros.rst>
+   The Broadcom BCM94718NR Parser <parser.rst>
+   The Broadcom Queriers <querier.rst>
+
+.. toctree::
+   :maxdepth: 1
+
+
+
+
 

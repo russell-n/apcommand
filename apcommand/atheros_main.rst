@@ -14,3 +14,19 @@ In the first case the user brings the Access Point up. For the default case (|at
 
    apcontrol up
 
+.. module:: apcontrol.main
+.. autosummary:: 
+   :toctree: api
+
+   enable_debugger
+   main
+
+
+
+
+
+
+
+
+
+

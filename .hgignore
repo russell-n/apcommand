@@ -1,7 +1,8 @@
 syntax:glob
 
 *.pyc
-build/*
+build/
+doc/
 dist/
 sl4a_setup/
 *.egg-info/*

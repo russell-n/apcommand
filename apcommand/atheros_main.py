@@ -3,7 +3,6 @@
 from atheros.argumentparser import Arguments
 from log_setter import set_logger
 
-
 def enable_debugger(args):
     """
     Enables interactive debugger (pudb takes precedence over pdb)
@@ -21,7 +20,6 @@ def enable_debugger(args):
         pdb.set_trace()
     return
 
-
 def main():
     """
     Runs the command-line interface
@@ -33,7 +31,6 @@ def main():
         enable_debugger(args)
     args.function(args)
     return
-
 
 if __name__ == "__main__":
     main()

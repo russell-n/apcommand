@@ -11,9 +11,9 @@ import re
 from bs4 import BeautifulSoup
 
 # this package
-from parser import BroadcomBaseSoup
-from commons import BroadcomPages
-from querier import BroadcomBaseQuerier
+from apcommand.accesspoints.broadcom.parser import BroadcomBaseSoup
+from apcommand.accesspoints.broadcom.commons import BroadcomPages
+from apcommand.accesspoints.broadcom.querier import BroadcomBaseQuerier
 @
 
 The BroadcomFirmwareSoup

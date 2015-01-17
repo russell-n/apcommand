@@ -8,7 +8,7 @@ RSYNC_CATEGORY = commands
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = build
+BUILDDIR      = doc
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -17,7 +17,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(T
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(THIS_NAME	)
 
-RSYNC_DIR = ~/repositories/repository_documentation/build/html/$(RSYNC_CATEGORY)/$(RSYNC_NAME)
+RSYNC_DIR = ~/repositories/documentation/build/html/$(RSYNC_CATEGORY)/$(RSYNC_NAME)
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
@@ -51,7 +51,6 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 	@echo "Synching with the repository_documentation"
-	rsync -ravz build/html/ apcontrol@elin:public_html
 	rsync -ravz $(BUILDDIR)/html/ $(RSYNC_DIR)
 
 dirhtml:
