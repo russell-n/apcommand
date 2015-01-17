@@ -8,6 +8,7 @@ Contents:
 
    User <documentation/user/index>
    Developer <documentation/developer/index>
+   Readme <readme>
 
 
 Indices and tables
