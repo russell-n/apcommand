@@ -3,7 +3,7 @@ APCommand
 
 
 
-This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <http://rallion.bitbucket.org/commands/ap_command/index.html>`_.
+This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <https://bitbucket.org/rallion/apcontrol>`_.
 
 Installation
 ------------
@@ -12,7 +12,7 @@ To install the code change into the top folder and enter::
 
    python setup.py install
 
-You may need to run this as root if you aren installing in system-wide.
+You may need to run this as root if you are installing it system-wide.
 
 The Interface
 -------------
@@ -29,20 +29,17 @@ You will end up with a command line command called `atheros` (you can rename it 
 
     usage: atheros [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
                    [--username USERNAME] [--password PASSWORD]
-    {up,down,destroy,status,reset,channel,ssid,ip,security,command}
+                   {up,down,destroy,status,reset,channel,ssid,ip,security,command}
                    ...
     
     optional arguments:
       -h, --help            show this help message and exit
       --pudb                Run the `pudb` debugger (default=False).
       --pdb                 Run the `pdb` debugger (default=False).
-      -s, --silent          If True only emit error messages
-    (default=False)
+      -s, --silent          If True only emit error messages (default=False)
       -d, --debug           If True emit debug messages (default=False)
-      --hostname HOSTNAME   The hostname for the AP (leave unset for
-    default).
-      --username USERNAME   The user-login for the AP (leave unset for
-    default)
+      --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+      --username USERNAME   The user-login for the AP (leave unset for default)
       --password PASSWORD   The login password for the AP (Leave unset for
                             default)
     
@@ -61,7 +58,6 @@ You will end up with a command line command called `atheros` (you can rename it 
         ip                  Change the IP Address
         security            Change the security
         command             Execute an arbitrary command.
-    
     
     
 
@@ -96,25 +92,20 @@ There is also a separate command for the `Broadcom` AP. The interface is similar
 .. code::
 
     usage: broadcom [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
-                    [--username USERNAME] [--password PASSWORD] [--sleep
-    SLEEP]
+                    [--username USERNAME] [--password PASSWORD] [--sleep SLEEP]
                     {status,channel,disable,enable,ssid} ...
     
     optional arguments:
       -h, --help            show this help message and exit
       --pudb                Run the `pudb` debugger (default=False).
       --pdb                 Run the `pdb` debugger (default=False).
-      -s, --silent          If True only emit error messages
-    (default=False)
+      -s, --silent          If True only emit error messages (default=False)
       -d, --debug           If True emit debug messages (default=False)
-      --hostname HOSTNAME   The hostname for the AP (leave unset for
-    default).
-      --username USERNAME   The user-login for the AP (leave unset for
-    default)
+      --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+      --username USERNAME   The user-login for the AP (leave unset for default)
       --password PASSWORD   The login password for the AP (Leave unset for
                             default)
-      --sleep SLEEP         Seconds to sleep after web server call
-    (default=0.5)
+      --sleep SLEEP         Seconds to sleep after web server call (default=0.5)
     
     Broadcom subcommands:
       Available Sub-Commands
@@ -128,16 +119,15 @@ There is also a separate command for the `Broadcom` AP. The interface is similar
         ssid                Change the SSID
     
     
-    
 
 
 
-The Repository
---------------
-
-If you did not pull this from bitbucket (or have forgotten where you got it from), the repository is at:
-
-   * ssh://hg@bitbucket.org/rallion/apcontrol
+.. The Repository
+.. --------------
+.. 
+.. If you did not pull this from bitbucket (or have forgotten where you got it from), the repository is at:
+.. 
+..    * ssh://hg@bitbucket.org/rallion/apcontrol
 
 The code was written using `pweave <http://mpastell.com/pweave/>`_ so for each ``.py`` file there are accompanying ``.rst`` and ``.pnw`` files.
 
@@ -164,6 +154,6 @@ If you don't want to install it, edit the `conf.py` file so it isn't one of the 
 
 .. '
    
-And the documentation will be in a folder called `build` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
+And the documentation will be in a folder called `doc` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
    
 

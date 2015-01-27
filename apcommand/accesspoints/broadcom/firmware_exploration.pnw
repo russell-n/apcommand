@@ -1,6 +1,9 @@
 Firmware Exploration
 ====================
-
+<<name='future'>>=
+from __future__ import unicode_literals
+from __future__ import print_function
+@
 .. _firmware-exploration:
 
 The page is structured as a collection of tables and forms (which contain tables):
@@ -39,6 +42,8 @@ Looking at the graph it appears that ``table_0`` is the one we are interested he
 
 I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be brute-force BeautifulSoup:
 
+.. highlight:: python
+
 <<name="imports", wrap=False>>=
 # python standard library
 import re
@@ -68,7 +73,6 @@ But that seems to be wrong, somehow, so I prefer to discover it:
 for table in form('table'):
     if any(['Version' in tag.next for tag in table('th')]):
         break
-print table
 @
 
 Unfortunately, looking at the table-data, you can see that there is no really nice way to discover information. You either need to used the indices or assume the form of the versions will not change. At this point I will just give up and use the indices.
@@ -77,7 +81,7 @@ Unfortunately, looking at the table-data, you can see that there is no really ni
 data = table('td')
 extractor = re.compile('\s*<[/]*td>')
 for index in range(1,6,2):
-    print extractor.sub('', str(data[index]))
+    print(extractor.sub('', str(data[index])))
 @
 
 Since that was so convoluted I will do it again in one piece using indices:
@@ -86,8 +90,7 @@ Since that was so convoluted I will do it again in one piece using indices:
 version_identifier = {1:'Bootloader', 3:'OS', 5:'Driver'}
 data = soup('form', attrs={'action': 'upgrade.cgi'})[0]('table')[0]('td')
 for index in range(1,6,2):
-    print version_identifier[index] + ": " + extractor.sub('', str(data[index]))
+    output = "{0}: {1}".format(version_identifier[index],
+                               extractor.sub('', str(data[index])))
+    print(output)
 @
-
-
-

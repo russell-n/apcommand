@@ -1,13 +1,14 @@
 The Broadcom Commands
 =====================
 
-.. currentmodule: apcommand.accesspoints.broadcom.broadcom_commands
+.. module: apcommand.accesspoints.broadcom.commands
 .. _broadcom-commands:
 Contents:
 
    * :ref:`Introduction <broadcom-commands-introduction>`
    * :ref:`BroadcomBaseData <broadcom-base-data>`
    * :ref:`BroadcomBaseCommand <broadcom-base-command>`
+
 
 
 .. _broadcom-commands-introduction:
@@ -47,6 +48,7 @@ A *command* is data sent to the server. At a minimum the server is sent the inte
 
    BroadcomBaseData -|> BaseClass
 
+.. module:: apcommand.accesspoints.broadcom.commands   
 .. autosummary::
    :toctree: api
 
@@ -54,6 +56,7 @@ A *command* is data sent to the server. At a minimum the server is sent the inte
    BroadcomBaseData.base_data
    BroadcomBaseData.base_24_ghz_data
    BroadcomBaseData.base_5_ghz_data
+
 
 
 
@@ -112,10 +115,12 @@ The reason for all these data-dictionaries is so that commands can be composed f
 
 
 
+
 StateData
 ---------
 
 Since the EnableInterface and DisableInterface have to undo what they did, I created a class to hold the keys for their shelving dictionary. I was going to use named-tuples but they are not pickleable.
+
 
 
 
@@ -139,6 +144,7 @@ This is a command implementation to enable the wireless interface.
 
 
 
+
 Disable Interface
 ~~~~~~~~~~~~~~~~~
 
@@ -159,6 +165,7 @@ This is a command implementation to disable a wireless interface.
 
 
 
+
 The Channel Setter
 ------------------
 
@@ -175,6 +182,7 @@ This is an implementation of a channel setter for the AP.
 
 
 
+
 Set Sideband
 ------------
 
@@ -188,6 +196,22 @@ Sets the sideband -- assumes that it has to be 5GHz.
    :toctree: api
 
    SetSideband
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

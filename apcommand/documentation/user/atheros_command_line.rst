@@ -1,7 +1,7 @@
 Atheros Command Line
 ====================
 
-.. note:: These are observations I made while trying to figure out how to set up the AP. Not everything here is necessarily correct but maybe you won't have to crawl around like a naked mole-rat if you at least start with someone else's notes.
+.. note:: These are observations I made while trying to figure out how to set up the AP. Not everything here is necessarily correct but maybe you won't have to struggle quite so much if you at least start with someone else's notes.
 
 Code references:
 

@@ -5,6 +5,7 @@ This is a module to hold an interpreter to pull information from the Broadcom ht
 
 
 
+
 The `radio.asp` HTML
 --------------------
 
@@ -130,12 +131,14 @@ Right now I am not sure what kind of errors are going to come up, but for runtim
 
 
 
+
 .. _broadcom-base-soup:
 The BroadcomBaseSoup
 --------------------
 
 Although I have decided to move to aggregation over inheritance, the soups seem to have some common code that is just easier with inheritance -- so here we go again once more for the last time.
 
+.. module:: apcommand.accesspoints.broadcom.parser
 .. autosummary::
    :toctree: api
 
@@ -143,6 +146,7 @@ Although I have decided to move to aggregation over inheritance, the soups seem 
    BroadcomBaseSoup.html
    BroadcomBaseSoup.soup
    BroadcomBaseSoup.selected_expression
+
 
 
 
@@ -208,6 +212,7 @@ Then uses ``.text`` to get the state of the interface::
 
 
 
+
 .. uml::
 
    BroadcomRadioSoup -|> BaseClass
@@ -249,6 +254,7 @@ This is the interface for those who want to add to the Soup.
    
 
 
+
 The BroadcomLANSoup
 -------------------
 
@@ -267,6 +273,7 @@ Since the Radio Soup is getting so big I am going back to the idea of one soup p
 
 
 
+
 The BroadcomSSIDSoup
 --------------------
 
@@ -281,6 +288,17 @@ Continuing with the one-class one-page pattern...
 
    BroadcomSSIDSoup
    BroadcomSSIDSoup.ssid
+
+
+
+
+
+
+
+
+
+
+
 
 
 

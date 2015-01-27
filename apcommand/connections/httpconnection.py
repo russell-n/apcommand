@@ -9,7 +9,6 @@ from apcommand.baseclass import BaseClass
 # third-party
 import requests
 
-
 class EventTimer(BaseClass):
     """
     A timer object to set an event
@@ -78,8 +77,7 @@ class EventTimer(BaseClass):
             timeout = self.seconds
         self.event.wait(timeout)
         return            
-# end class EventTimer        
-
+# end class EventTimer
 
 def wait(method):
     """
@@ -92,17 +90,14 @@ def wait(method):
         outcome = method(self, *args, **kwargs)
         self.timer.start()
         return outcome
-    return _method                
-
+    return _method
 
 PROTOCOL = 'http'
 GET = 'GET'
 EMPTY_STRING = ''
 
-
 class HTTPConnectionError(RuntimeError):
    """An exception to raise if the server wasn't reachable."""
-
 
 class HTTPConnection(BaseClass):
     """
@@ -262,8 +257,6 @@ class HTTPConnection(BaseClass):
             return self.request(method.upper(), *args, **kwargs)
 
         return request_call
-    
-
 
 # python standard library
 import unittest
@@ -274,7 +267,6 @@ import string
 
 # third-party
 from mock import MagicMock, patch, call
-
 
 random_letters = lambda : ''.join([choose(string.letters) for choice in xrange(randrange(100))])
 class TestHTTPConnection(unittest.TestCase):
@@ -369,8 +361,6 @@ class TestHTTPConnection(unittest.TestCase):
                          self.connection.url)
         return
 
-
-
 class TestEventTimer(unittest.TestCase):
     def setUp(self):
         self.event_patch = patch('threading.Event')        
@@ -441,7 +431,6 @@ class TestEventTimer(unittest.TestCase):
         self.timer.wait(timeout)
         self.timer.event.wait.assert_called_with(timeout)
         return
-
 
 class TestWait(unittest.TestCase):
     def setUp(self):

@@ -25,7 +25,7 @@ An example use based on the Broadcom BCM94718NR::
     response = connection(data={'wl_unit':'0'})
     print response.text
 
-The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on :ref:`Aren's Broadcom Code <arens-broadcom>` which translates to curl's::
+The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on Aren's Broadcom Code which translates to curl's::
 
    curl -d 'wl_unit=0' --user :admin http://192.168.1.1/radio.asp
 

@@ -1,7 +1,7 @@
 The Broadcom Commands
 =====================
 
-.. currentmodule: apcommand.accesspoints.broadcom.broadcom_commands
+.. module: apcommand.accesspoints.broadcom.commands
 .. _broadcom-commands:
 Contents:
 
@@ -62,6 +62,7 @@ A *command* is data sent to the server. At a minimum the server is sent the inte
 
    BroadcomBaseData -|> BaseClass
 
+.. module:: apcommand.accesspoints.broadcom.commands   
 .. autosummary::
    :toctree: api
 
@@ -1211,10 +1212,5 @@ class TestSetSideband(unittest.TestCase):
         self.connection.assert_called_with(data=expected_data)
         return
 @
-<%
-for case in (TestBroadcomCommands, TestEnableInterface, TestDisableInterface,
-             TestSetChannel, TestSetSideband):
-    suite = unittest.TestLoader().loadTestsFromTestCase(case)    
-    unittest.TextTestRunner(verbosity=2).run(suite)
-%>
+
 

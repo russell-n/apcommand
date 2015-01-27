@@ -19,6 +19,7 @@ The ChannelChanger
 
    ChannelChanger -|> BaseClass
 
+.. module:: apcommand.accesspoints.broadcom.macros
 .. autosummary::
    :toctree: api
 

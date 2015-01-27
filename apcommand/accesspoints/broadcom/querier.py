@@ -1,4 +1,18 @@
 
+# python standard library
+from abc import ABCMeta, abstractproperty
+
+# this package
+from apcommand.baseclass import BaseClass
+from commons import BroadcomWirelessData
+from commons import BroadcomPages
+from commons import BroadcomRadioData
+from commons import BroadcomLANData
+from commons import BAND_INTERFACE_MAP
+from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
+from apcommand.accesspoints.broadcom.parser import BroadcomSSIDSoup
+from apcommand.accesspoints.broadcom.parser import BroadcomLANSoup
+
 # a decorator to set the page 
 def set_page(method):
     """
@@ -20,22 +34,6 @@ def set_page(method):
         outcome = method(self, *args, **kwargs)
         return outcome
     return _method
-
-
-# python standard library
-from abc import ABCMeta, abstractproperty
-
-# this package
-from apcommand.baseclass import BaseClass
-from commons import BroadcomWirelessData
-from commons import BroadcomPages
-from commons import BroadcomRadioData
-from commons import BroadcomLANData
-from commons import BAND_INTERFACE_MAP
-from apcommand.accesspoints.broadcom.parser import BroadcomRadioSoup
-from apcommand.accesspoints.broadcom.parser import BroadcomSSIDSoup
-from apcommand.accesspoints.broadcom.parser import BroadcomLANSoup
-
 
 class BroadcomBaseQuerier(BaseClass):
     """
@@ -97,7 +95,6 @@ class BroadcomBaseQuerier(BaseClass):
         self.soup.html = text        
         return
 # end class BroadcomBaseQuerier
-
 
 class BroadcomRadioQuerier(BroadcomBaseQuerier):
     """
@@ -201,8 +198,7 @@ class BroadcomRadioQuerier(BroadcomBaseQuerier):
             return self.soup.mac_24_ghz        
         elif self.band == BroadcomWirelessData.interface_5_ghz:
             return self.soup.mac_5_ghz
-# end class BroadcomRadioQuerier            
-
+# end class BroadcomRadioQuerier
 
 class BroadcomSSIDQuerier(BroadcomBaseQuerier):
     """
@@ -272,7 +268,6 @@ class BroadcomSSIDQuerier(BroadcomBaseQuerier):
         return self.soup.ssid
 # class BroadcomSSIDQuerier
 
-
 class BroadcomLANQuerier(BroadcomBaseQuerier):
     """
     A querier for the lan.asp page
@@ -308,13 +303,11 @@ class BroadcomLANQuerier(BroadcomBaseQuerier):
         self.set_soup()
         return self.soup.dhcp_state
 
-
 # python standard library
 import unittest
 
 # third-party
 from mock import MagicMock, patch, call
-
 
 TEST_SSID = 'hownowbrowndog'
 SSID_ASP = 'ssid_asp.html'
@@ -421,8 +414,7 @@ class TestBroadcomQueriers(unittest.TestCase):
         self.assertEqual(calls, self.connection.mock_calls)
         return
             
-# end class TestBroadcomBaseQuerier    
-
+# end class TestBroadcomBaseQuerier
 
 class TestBroadcomLanQuerier(unittest.TestCase):
     def setUp(self):
@@ -441,4 +433,4 @@ class TestBroadcomLanQuerier(unittest.TestCase):
         state = self.querier.dhcp_state
         self.assertEqual('Disabled', state)
         return
-# class TestBroadcomLanQuerier        
+# class TestBroadcomLanQuerier

@@ -5,6 +5,7 @@ Since the :ref:`commands <broadcom-commands>` have been broken down to do only o
 
 
 
+
 The ChannelChanger
 --------------------------
 
@@ -12,11 +13,17 @@ The ChannelChanger
 
    ChannelChanger -|> BaseClass
 
+.. module:: apcommand.accesspoints.broadcom.macros
 .. autosummary::
    :toctree: api
 
    ChannelChanger
    
+
+
+
+
+
 
 
 

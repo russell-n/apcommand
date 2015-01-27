@@ -6,7 +6,6 @@ from apcommand.accesspoints.broadcom.commands import DisableInterface, EnableInt
 from apcommand.accesspoints.broadcom.commands import SetChannel, SetSideband
 from apcommand.accesspoints.broadcom.commons import BroadcomError
 
-
 class ChannelChanger(BaseClass):
     """
     A channel changer for the broadcom 
@@ -125,13 +124,11 @@ class ChannelChanger(BaseClass):
 
 # end class BroadcomChannelChanger
 
-
 # python standard library
 import unittest
 
 # third-party
 from mock import MagicMock, patch
-
 
 class TestBroadcomChannelChanger(unittest.TestCase):
     def setUp(self):

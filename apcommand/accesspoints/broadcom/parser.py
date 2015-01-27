@@ -9,12 +9,10 @@ import bs4
 from apcommand.baseclass import BaseClass
 from apcommand.commons.oatbran import Group, Boundaries, CommonPatterns
 
-
 class SoupError(RuntimeError):
     """
     Raise if something is detected at run-time.
     """
-
 
 class BroadcomBaseSoup(BaseClass):
     """
@@ -81,9 +79,6 @@ class BroadcomBaseSoup(BaseClass):
             self._selected_expression = re.compile(SELECTED_EXPRESSION.format(SELECTED))
         return self._selected_expression
 
-
-
-
 NAME = 'name'
 VALUE = 'value'
 ZERO = '0'
@@ -108,7 +103,6 @@ BANDWIDTH_EXPRESSION = SELECTED_EXPRESSION.format(BANDWIDTH)
 SIDEBAND = 'wl_nctrlsb'
 SIDEBAND_EXPRESSION = SELECTED_EXPRESSION.format(SIDEBAND)
 SSID = 'wl_ssid'
-
 
 class BroadcomRadioSoup(BroadcomBaseSoup):
     """
@@ -237,8 +231,6 @@ class BroadcomRadioSoup(BroadcomBaseSoup):
             match = self.selected_expression.search(str(line))
             if match:
                 return match.group(SELECTED).rstrip()
-            
-
 
 class BroadcomLANSoup(BroadcomBaseSoup):
     """
@@ -263,7 +255,6 @@ class BroadcomLANSoup(BroadcomBaseSoup):
         lan_proto = self.soup.find(attrs={'name':'lan_proto'})
         return self.selected_expression.search(str(lan_proto)).group(SELECTED)
 
-
 class BroadcomSSIDSoup(BroadcomBaseSoup):
     """
     A soup for the ssid.asp page
@@ -278,8 +269,7 @@ class BroadcomSSIDSoup(BroadcomBaseSoup):
         Gets the SSID for the currently selected interface
         """
         return self.soup.find(attrs={NAME:SSID})['value']
-# end class BroadcomSSIDSoup            
-
+# end class BroadcomSSIDSoup
 
 # python standard library
 import unittest
@@ -289,12 +279,10 @@ choose = random.choice
 # third-party
 from mock import MagicMock, patch
 
-
 wl_unit = """<select name="wl_unit" onchange="submit();">
 <option selected value="0">(00:90:4C:09:11:03)</option>
 <option value="1">(00:90:4C:13:11:03)</option>
 </select>"""
-
 
 class TestBroadcomRadioSoup(unittest.TestCase):
     def setUp(self):
@@ -408,8 +396,6 @@ class TestBroadcomRadioSoup(unittest.TestCase):
         self.assertEqual(self.soup_5.sideband, 'Lower')
         return
 
-
-
 class TestBroadcomLANSoup(unittest.TestCase):
     def setUp(self):
         self.lan_html = open('lan_asp.html').read()
@@ -429,7 +415,6 @@ class TestBroadcomLANSoup(unittest.TestCase):
         self.assertEqual('Enabled', self.soup.dhcp_state)
         return
 
-
 class TestBroadcomSSIDSoup(unittest.TestCase):
     def setUp(self):
         text = open('ssid_asp.html').read()
@@ -442,4 +427,3 @@ class TestBroadcomSSIDSoup(unittest.TestCase):
         """
         self.assertEqual('hownowbrowndog', self.soup.ssid)
         return
-

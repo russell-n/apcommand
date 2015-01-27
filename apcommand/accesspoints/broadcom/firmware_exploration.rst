@@ -1,6 +1,13 @@
 Firmware Exploration
 ====================
 
+.. code:: python
+
+    from __future__ import unicode_literals
+    from __future__ import print_function
+    
+
+
 .. _firmware-exploration:
 
 The page is structured as a collection of tables and forms (which contain tables):
@@ -39,88 +46,62 @@ Looking at the graph it appears that ``table_0`` is the one we are interested he
 
 I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be brute-force BeautifulSoup:
 
-::
+.. highlight:: python
+
+
+.. code:: python
 
     # python standard library
     import re
     
     # third-party
     from bs4 import BeautifulSoup
-    
 
 
 
 First, we can get the form directly because it has a unique ``action`` attribute:
 
-::
+
+.. code:: python
 
     soup = BeautifulSoup(open('firmware_asp.html'))
     
     # find_all returns a list, but since we specified the attrs, we know it has what we want
     form = soup('form', attrs={'action': 'upgrade.cgi'})[0]
-    
 
 
 
 ``form`` is a BeautfulSoup ``tag`` so it can be searched for the table. There are two ways I thought of to do this. One is to use the fact that we know that the table we want is the first:
 
-::
+
+.. code:: python
 
     table = form('table')[0]
-    
 
 
 
 But that seems to be wrong, somehow, so I prefer to discover it:
 
-::
+
+.. code:: python
 
     for table in form('table'):
         if any(['Version' in tag.next for tag in table('th')]):
             break
-    print table
-    
-
-::
-
-    <table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-    <th onmouseout="return nd();" onmouseover="return overlib('Displays the current version of Boot Loader.', LEFT);" width="310">
-    	Boot Loader Version:  
-        </th>
-    <td>  </td>
-    <td>CFE 5.10.128.2</td>
-    </tr>
-    <tr>
-    <th onmouseout="return nd();" onmouseover="return overlib('Displays the current version of OS.', LEFT);" width="310">
-    	OS Version:  
-        </th>
-    <td>  </td>
-    <td>Linux  5.70.63.1</td>
-    </tr>
-    <tr>
-    <th onmouseout="return nd();" onmouseover="return overlib('Displays the current version of Wireless Driver.', LEFT);" width="310">
-    	WL Driver Version:  
-        </th>
-    <td>  </td>
-    <td>5.60.134 </td>
-    </tr>
-    </table>
-    
 
 
 
 Unfortunately, looking at the table-data, you can see that there is no really nice way to discover information. You either need to used the indices or assume the form of the versions will not change. At this point I will just give up and use the indices.
 
-::
+
+.. code:: python
 
     data = table('td')
     extractor = re.compile('\s*<[/]*td>')
     for index in range(1,6,2):
-        print extractor.sub('', str(data[index]))
-    
+        print(extractor.sub('', str(data[index])))
 
-::
+.. code::
 
     CFE 5.10.128.2
     Linux  5.70.63.1
@@ -131,18 +112,21 @@ Unfortunately, looking at the table-data, you can see that there is no really ni
 
 Since that was so convoluted I will do it again in one piece using indices:
 
-::
+
+.. code:: python
 
     version_identifier = {1:'Bootloader', 3:'OS', 5:'Driver'}
     data = soup('form', attrs={'action': 'upgrade.cgi'})[0]('table')[0]('td')
     for index in range(1,6,2):
-        print version_identifier[index] + ": " + extractor.sub('', str(data[index]))
-    
+        output = "{0}: {1}".format(version_identifier[index],
+                                   extractor.sub('', str(data[index])))
+        print(output)
 
-::
+.. code::
 
     Bootloader: CFE 5.10.128.2
     OS: Linux  5.70.63.1
     Driver: 5.60.134
     
+
 

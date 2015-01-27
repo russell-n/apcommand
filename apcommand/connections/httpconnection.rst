@@ -3,6 +3,7 @@ HTTP Connection
 .. currentmodule:: apcommand.connections.httpconnection
 
 
+
 .. _http-connection:
 This is a client-connection to communicate with HTTP-servers. Since some of the parameters are reminiscent of telnet and SSH sessions I will model it somewhat after the SSHConnection, but it will primarily act as an interface to the `requests <http://docs.python-requests.org/en/latest/>`_ package.
 
@@ -15,7 +16,7 @@ An example use based on the Broadcom BCM94718NR::
     response = connection(data={'wl_unit':'0'})
     print response.text
 
-The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on :ref:`Aren's Broadcom Code <arens-broadcom>` which translates to curl's::
+The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on Aren's Broadcom Code which translates to curl's::
 
    curl -d 'wl_unit=0' --user :admin http://192.168.1.1/radio.asp
 
@@ -84,6 +85,7 @@ Instead the HTTPConnection will maintain an EventTimer and block if you try to m
 
 
 
+
 The ``wait`` Decorator
 ----------------------
 
@@ -106,6 +108,7 @@ Basic Use::
 
 .. warning:: This is a method decorator -- it assumes the object it belongs to has a ``self.timer`` property (which is an instance of ``EventTimer``).
    
+
 
 
    
@@ -139,9 +142,21 @@ The URL is being put together with the python `urlparse.urlunparse <http://docs.
 
 
 
+
 .. uml::
 
    HTTPConnectionError -|> RuntimeError
+
+
+
+
+
+
+
+
+
+
+
 
 
 

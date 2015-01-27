@@ -6,16 +6,14 @@ import re
 from bs4 import BeautifulSoup
 
 # this package
-from parser import BroadcomBaseSoup
-from commons import BroadcomPages
-from querier import BroadcomBaseQuerier
-
+from apcommand.accesspoints.broadcom.parser import BroadcomBaseSoup
+from apcommand.accesspoints.broadcom.commons import BroadcomPages
+from apcommand.accesspoints.broadcom.querier import BroadcomBaseQuerier
 
 EMPTY_STRING = ''
 BOOTLOADER = 1
 OS_VERSION = 3
 WL_DRIVER = 5
-
 
 class BroadcomFirmwareSoup(BroadcomBaseSoup):
     """
@@ -66,7 +64,6 @@ class BroadcomFirmwareSoup(BroadcomBaseSoup):
         """
         return self.get_data(WL_DRIVER)
 #
-
 
 class BroadcomFirmwareQuerier(BroadcomBaseQuerier):
     """

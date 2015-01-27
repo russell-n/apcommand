@@ -28,6 +28,7 @@ Using the stuff from :ref:`Firmware Exploration <firmwares-exploration>`, a Soup
 
    BroadcomFirmwareSoup -|> BroadcomBaseSoup
 
+.. module:: apcommand.accesspoints.broadcom.firmware
 .. autosummary::
    :toctree: api
 

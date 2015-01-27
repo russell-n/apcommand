@@ -1,7 +1,7 @@
 Atheros
 =======
 
-This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on :ref:`Aren's Code <arens-atheros>` and partially on the Atheross' shell scripts found in ``/etc/ath`` on the device.
+This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on Aren's Code and partially on the Atheros' shell scripts found in ``/etc/ath`` on the device.
 
 Contents:
 
@@ -408,23 +408,6 @@ class AtherosAR5KAP(BaseClass):
         return        
 @
 
-Testing the AtherosAR5KAP
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-   :toctree: api
-
-   TestAR5KAP.test_constructor
-   TestAR5KAP.test_up
-   TestAR5KAP.test_down
-   TestAR5KAP.test_destroy
-   TestAR5KAP.test_status
-   TestAR5KAP.test_ifconfig_fail
-   TestAR5KAP.test_reset
-   TestAR5KAP.test_set_ssid
-   TestAR5KAP.test_set_channel_24
-   TestAR5KAP.test_set_channel_5
-   TestAR5KAP.test_set_security
 
 .. _atheros-security-setter:
    
@@ -778,6 +761,24 @@ class AtherosChannelChanger(BaseClass):
         return
 @
 
+Testing the AtherosAR5KAP
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+
+   TestAR5KAP.test_constructor
+   TestAR5KAP.test_up
+   TestAR5KAP.test_down
+   TestAR5KAP.test_destroy
+   TestAR5KAP.test_status
+   TestAR5KAP.test_ifconfig_fail
+   TestAR5KAP.test_reset
+   TestAR5KAP.test_set_ssid
+   TestAR5KAP.test_set_channel_24
+   TestAR5KAP.test_set_channel_5
+   TestAR5KAP.test_set_security
+
 .. autosummary::
    :toctree: api
 
@@ -814,12 +815,13 @@ import random
 from mock import MagicMock, call, patch
 from nose.tools import raises
 @
+
 <<name='test_constants', echo=False>>=
 ENTER_CALLS = [call.apdown(), call.cfg('-a AP_RADIO_ID=0'),
                call.cfg('-a AP_STARTMODE=standard')]
 EXIT_CALLS = [call.cfg('-c'), call.apup()]
-
 @
+
 <<name='TestAR5KAP', echo=False>>=
 EMPTY_TUPLE = ('','')
 
@@ -979,7 +981,7 @@ class TestAR5KAP(unittest.TestCase):
         self.set_context_connection()
         expected_ip = '.'.join([str(random.randrange(1,254)) for octet in range(4)])
         mask = '255.' + '.'.join([random.choice(('255', '0')) for octet in range(3)])
-        print expected_ip
+        print(expected_ip)
         self.ap.set_ip(address=expected_ip, mask=mask)
         calls = ENTER_CALLS + [call.cfg('-a AP_IPADDR={0}'.format(expected_ip)),
                                call.cfg('-a AP_NETMASK={0}'.format(mask))] + EXIT_CALLS
@@ -1236,6 +1238,7 @@ class TestAtherosOpen(unittest.TestCase):
         self.setter()
         return
 @
+
 <%
 for case in (TestAR5KAP, TestConfigure, TestAtheros24, TestAtheros5GHz, TestAtherosOpen):
     suite = unittest.TestLoader().loadTestsFromTestCase(case)    

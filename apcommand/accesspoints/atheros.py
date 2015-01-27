@@ -10,7 +10,6 @@ from apcommand.commons.errors import ArgumentError
 from apcommand.accesspoints.arbitrarycommand import ArbitraryCommand
 from apcommand.commands.settingsvalidator import SettingsValidator
 
-
 EMPTY_STRING = ''
 FIVE_GHZ_SUFFIX = '_2'
 
@@ -20,7 +19,6 @@ BAND_ID = {TWO_POINT_FOUR:0, FIVE:1}
 G_BANDWIDTH = 'HT20'
 A_LOWER_BANDWIDTH = 'HT40PLUS'
 A_UPPER_BANDWIDTH = 'HT40MINUS'
-
 
 class LineLogger(BaseClass):
     """
@@ -56,7 +54,6 @@ class LineLogger(BaseClass):
                     raise CommandError(line)
                 logger(line)
         return
-
 
 class Configure(BaseClass):
     """
@@ -113,8 +110,7 @@ class Configure(BaseClass):
         # bring up the AP
         output, error = self.connection.apup()
         self.log_lines(output)
-        return    
-
+        return
 
 class AtherosAR5KAP(BaseClass):
     """
@@ -320,8 +316,7 @@ class AtherosAR5KAP(BaseClass):
         Send command to the connection and dump output to the screen
         """
         self.command_executor(command)
-        return        
-
+        return
 
 class AtherosSecuritySetter(BaseClass):
     """
@@ -358,7 +353,6 @@ class AtherosSecuritySetter(BaseClass):
         """
         return
 
-
 class AtherosOpen(AtherosSecuritySetter):
     """
     Setter for open-security
@@ -379,7 +373,6 @@ class AtherosOpen(AtherosSecuritySetter):
             out, err = self.connection.cfg('-a AP_SECMODE=None')
             self.log_lines(out)
         return
-
 
 class AtherosChannelChanger(BaseClass):
     """
@@ -614,7 +607,6 @@ class AtherosChannelChanger(BaseClass):
             raise ArgumentError("Invalid Channel: {0}".format(channel))
         return
 
-
 # python standard library
 import unittest
 import random
@@ -622,12 +614,9 @@ import random
 from mock import MagicMock, call, patch
 from nose.tools import raises
 
-
 ENTER_CALLS = [call.apdown(), call.cfg('-a AP_RADIO_ID=0'),
                call.cfg('-a AP_STARTMODE=standard')]
 EXIT_CALLS = [call.cfg('-c'), call.apup()]
-
-
 
 EMPTY_TUPLE = ('','')
 
@@ -794,7 +783,6 @@ class TestAR5KAP(unittest.TestCase):
         self.assertEqual(calls, self.connection.method_calls)
         return
 
-
 class TestConfigure(unittest.TestCase):
     """
     Tests the Configure context manager
@@ -846,7 +834,6 @@ class TestConfigure(unittest.TestCase):
                  #call.wlanconfig("ath1 destroy")]
         self.assertEqual(calls, self.connection.method_calls)
         return
-
 
 class TestAtheros24(unittest.TestCase):
     def setUp(self):
@@ -924,7 +911,6 @@ class TestAtheros24(unittest.TestCase):
     
         self.assertEqual(calls, self.connection.method_calls)
         return
-
 
 class TestAtheros5GHz(unittest.TestCase):
     def setUp(self):
@@ -1018,7 +1004,6 @@ class TestAtheros5GHz(unittest.TestCase):
         channel = self.dfs_channel()
         self.assertRaises(ArgumentError, self.changer.validate_channel, [channel])
         return
-
 
 class TestAtherosOpen(unittest.TestCase):
     def set_context_connection(self):

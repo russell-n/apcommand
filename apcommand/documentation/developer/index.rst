@@ -89,14 +89,6 @@ Appendices
 
 This is reference information to help understand what's going on.  
    
-Arens Code:
-
-.. toctree::
-   :maxdepth: 2
-
-   Arens' Atheros Code <../../arenscode/arensatheros>
-   Arens' BroadcomCode <../../arenscode/arensbroadcom>
-   
 Miscellaneous Coding:
 
 .. toctree::

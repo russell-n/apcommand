@@ -5,7 +5,7 @@ APCommand
 import subprocess
 @
 
-This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <http://rallion.bitbucket.org/commands/ap_command/index.html>`_.
+This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <https://bitbucket.org/rallion/apcontrol>`_.
 
 Installation
 ------------
@@ -14,7 +14,7 @@ To install the code change into the top folder and enter::
 
    python setup.py install
 
-You may need to run this as root if you aren installing in system-wide.
+You may need to run this as root if you are installing it system-wide.
 
 The Interface
 -------------
@@ -26,7 +26,7 @@ You will end up with a command line command called `atheros` (you can rename it 
 
    atheros -h
 
-<<name='atheros_help', echo=False>>=
+<<name='atheros_help', echo=False, wrap=False>>=
 print(subprocess.check_output('atheros -h'.split()))
 @
 
@@ -55,7 +55,7 @@ There is also a separate command for the `Broadcom` AP. The interface is similar
 
    Broadcom -h
 
-<<name='broadcom_help', echo=False>>=
+<<name='broadcom_help', echo=False, wrap=False>>=
 print(subprocess.check_output('broadcom -h'.split()))
 @
 
@@ -91,6 +91,6 @@ If you don't want to install it, edit the `conf.py` file so it isn't one of the 
 
 .. '
    
-And the documentation will be in a folder called `build` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
+And the documentation will be in a folder called `doc` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
    
 

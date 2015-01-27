@@ -1,7 +1,7 @@
 Atheros
 =======
-.. currentmodule:: apcommand.accesspoints.atheros
-This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on :ref:`Aren's Code <arens-atheros>` and partially on the Atheross' shell scripts found in ``/etc/ath`` on the device.
+
+This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on Aren's Code and partially on the Atheros' shell scripts found in ``/etc/ath`` on the device.
 
 Contents:
 
@@ -12,6 +12,10 @@ Contents:
    * :ref:`AtherosOpen Security <atheros-open-security>`
    * :ref:`AtherosChannelChanger <atheros-channel-changer>`
    
+
+
+
+
 
 
 .. _line-logger:
@@ -25,11 +29,13 @@ Several of the classes have ended up using this same method so I broke it out so
 
    LineLogger -|> BaseClass
 
+.. module:: apcommand.accesspoints.atheros
 .. autosummary::
    :toctree: api
 
    LineLogger
    LineLogger.__call__
+
 
 
 
@@ -51,6 +57,7 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
    Configure
    Configure.__enter__
    Configure.__exit__
+
 
 
 
@@ -86,23 +93,7 @@ This is an access-point used for WiFi Alliance testing. It is not a commercial a
    
 
 
-Testing the AtherosAR5KAP
-~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autosummary::
-   :toctree: api
-
-   TestAR5KAP.test_constructor
-   TestAR5KAP.test_up
-   TestAR5KAP.test_down
-   TestAR5KAP.test_destroy
-   TestAR5KAP.test_status
-   TestAR5KAP.test_ifconfig_fail
-   TestAR5KAP.test_reset
-   TestAR5KAP.test_set_ssid
-   TestAR5KAP.test_set_channel_24
-   TestAR5KAP.test_set_channel_5
-   TestAR5KAP.test_set_security
 
 .. _atheros-security-setter:
    
@@ -124,6 +115,7 @@ This is a base-class for the security setters.
 
 
 
+
 .. _atheros-open-security:
 
 AtherosOpen Security
@@ -139,6 +131,7 @@ This sets the security to open-none.
    :toctree: api
 
    AtherosOpen
+
 
 
 
@@ -166,6 +159,25 @@ AtherosChannelChanger
 This was a base class for 2.4 and 5 ghz channel changers but I realized that the settings should be discovered through the channel that is being passed in so it does not make sense to maintain separate classes.
 
 
+
+
+Testing the AtherosAR5KAP
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+
+   TestAR5KAP.test_constructor
+   TestAR5KAP.test_up
+   TestAR5KAP.test_down
+   TestAR5KAP.test_destroy
+   TestAR5KAP.test_status
+   TestAR5KAP.test_ifconfig_fail
+   TestAR5KAP.test_reset
+   TestAR5KAP.test_set_ssid
+   TestAR5KAP.test_set_channel_24
+   TestAR5KAP.test_set_channel_5
+   TestAR5KAP.test_set_security
 
 .. autosummary::
    :toctree: api
@@ -196,5 +208,24 @@ This was a base class for 2.4 and 5 ghz channel changers but I realized that the
 
    
 
-121.9.151.227
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+29.165.126.179

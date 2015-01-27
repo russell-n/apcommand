@@ -14,7 +14,6 @@ from commons import BroadcomPages, set_page
 from commons import BandEnumeration
 from querier import BroadcomRadioQuerier, BroadcomSSIDQuerier
 
-
 class BroadcomBaseData(object):
     """
     The base-data to hold the data-dict
@@ -83,7 +82,6 @@ class BroadcomBaseData(object):
                                                              self.base_data(),
                                                              self.base_5_ghz_data(),
                                                              self.base_24_ghz_data())
-
 
 class BroadcomBaseCommand(BaseClass):
     """
@@ -307,12 +305,10 @@ class BroadcomBaseCommand(BaseClass):
 
 # end class BroadcomBaseCommand
 
-
 class StateData(object):
     __slots__ = ()
     state = 'state'
     band = 'band'
-
 
 class EnableInterface(BroadcomBaseCommand):
     """
@@ -401,7 +397,6 @@ class EnableInterface(BroadcomBaseCommand):
             radio_data = BroadcomRadioData
             self._enable_24_data = {radio_data.interface:radio_data.radio_on}
         return self._enable_24_data
-
 
 class DisableInterface(BroadcomBaseCommand):
     """
@@ -500,7 +495,6 @@ class DisableInterface(BroadcomBaseCommand):
             self._disable_24_data = {radio_data.interface: radio_data.radio_off}
         return self._disable_24_data
 
-
 class SetChannel(BroadcomBaseCommand):
     """
     A channel setter for the AP
@@ -581,7 +575,6 @@ class SetChannel(BroadcomBaseCommand):
             self.logger.debug("No entry on shelf for {0}".format(self.shelf_key))
         return
 
-
 class SetSideband(BroadcomBaseCommand):
     """
     A side-band ('upper' or 'lower') setter
@@ -635,8 +628,7 @@ class SetSideband(BroadcomBaseCommand):
         """
         self.connection(data=self.data)
         return
-# end SetSideband    
-
+# end SetSideband
 
 # python standard library
 import unittest
@@ -646,9 +638,7 @@ import string
 # third-party
 from mock import MagicMock, call, patch
 
-
 random_letters = lambda: ",".join((random.choice(string.letters) for char in xrange(random.randint(1,5))))
-
 
 class BadChild(BroadcomBaseCommand):
     def query(self):
@@ -815,8 +805,6 @@ class TestBroadcomCommands(unittest.TestCase):
         command_1 -= command_3
         self.assertEqual(command_1.data, data_1)
         return
-        
-
 
 class TestEnableInterface(unittest.TestCase):
     def setUp(self):
@@ -907,7 +895,6 @@ class TestEnableInterface(unittest.TestCase):
         #self.assertEqual(self.connection.mock_calls, calls)
         return
 
-
 class TestDisableInterface(unittest.TestCase):
     def setUp(self):
         self.connection = MagicMock(name='connection')
@@ -941,8 +928,6 @@ class TestDisableInterface(unittest.TestCase):
                         'wl_unit':'1',
                         'wl_radio':'0'}
         self.assertEqual(command.data, expected_data)
-        
-
 
 class TestSetChannel(unittest.TestCase):
     def setUp(self):
@@ -1005,8 +990,7 @@ class TestSetChannel(unittest.TestCase):
         self.assertEqual(self.fake_channel,
                           shelf_objects[command.shelf_key])
         return
-# end class TestSetChannel        
-
+# end class TestSetChannel
 
 class TestSetSideband(unittest.TestCase):
     def setUp(self):
