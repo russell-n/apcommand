@@ -11,28 +11,6 @@ After installing this package::
 
 you will end up with a command-line command called `atheros`. If you inspect it you'll see that it's just a text file that calls the entry-point to this code (defined in the `setup.py` file). If that doesn't mean anything to you, don't worry, I bring it up to point out that it's nothing special so you can rename it if you want (or move it anywhere on your PATH).
 
-Contents:
-
-   * :ref:`The Command-line Interface <atheros-cli>` 
-
-   * :ref:`The Sub-Commands <atheros-subcommands>`
-
-   * :ref:`Up and Down <up-and-down-subcommand>`
-
-   * :ref:`Destroy <destroy-subcommand>`
-
-   * :ref:`Status <status-subcommand>`
-
-   * :ref:`Reset <reset-subcommand>`
-
-   * :ref:`Channel <channel-subcommand>`
-
-   * :ref:`SSID <ssid-subcommand>`
-
-   * :ref:`Security <security-subcommand>`
-
-   * :ref:`Command <command-subcommand>`
-
 .. _atheros-cli:
 
 The Command-Line Interface
