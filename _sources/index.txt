@@ -1,7 +1,7 @@
 AP Command Documentation
 ========================
 
-This is the documentation for the `apcommand`, a command-line controller that was created to enable someone using a language other than python (specifically `perl`) to have a way to control a Wireless Access Point without needing to implement the interface to the access point directly.
+This is the documentation for the `apcommand <https://github.com/russellnakamura/apcommand>`_, a command-line controller that was created to enable someone using a language other than python (specifically `perl`) to have a way to control a Wireless Access Point without needing to implement the interface to the access point directly.
 
 Contents:
 

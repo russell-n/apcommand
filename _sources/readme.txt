@@ -3,7 +3,7 @@ APCommand
 
 
 
-This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <https://bitbucket.org/rallion/apcontrol>`_.
+This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow testers to write `perl <http://www.perl.org/>`_ code to control the APs. The documentation is online `here <https://russellnakamura.github.io/apcommand>`_.
 
 Installation
 ------------
@@ -122,12 +122,6 @@ There is also a separate command for the `Broadcom` AP. The interface is similar
 
 
 
-.. The Repository
-.. --------------
-.. 
-.. If you did not pull this from bitbucket (or have forgotten where you got it from), the repository is at:
-.. 
-..    * ssh://hg@bitbucket.org/rallion/apcontrol
 
 The code was written using `pweave <http://mpastell.com/pweave/>`_ so for each ``.py`` file there are accompanying ``.rst`` and ``.pnw`` files.
 
