@@ -13,17 +13,23 @@ from apcommand.accesspoints.broadcom.commons import BroadcomError
 @
 
 The ChannelChanger
---------------------------
+------------------
 
 .. uml::
 
    ChannelChanger -|> BaseClass
 
-.. module:: apcommand.accesspoints.broadcom.macros
+.. currentmodule:: apcommand.accesspoints.broadcom.macros
 .. autosummary::
    :toctree: api
 
    ChannelChanger
+   ChannelChanger.enable_command
+   ChannelChanger.disable_command
+   ChannelChanger.set_channel_command
+   ChannelChanger.set_sideband_command
+   ChannelChanger.undo
+   ChannelChanger.__call__
    
 <<name='ChannelChanger', echo=False>>=
 class ChannelChanger(BaseClass):

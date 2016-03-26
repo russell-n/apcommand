@@ -34,9 +34,6 @@ MAIN_HELP_START
        command             Execute an arbitrary command.
 MAIN_HELP_END
 APCOMMAND_OPTIONS_START
-
-::
-
    usage: atheros [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
                   [--username USERNAME] [--password PASSWORD]
                   {up,down,destroy,status,reset,channel,ssid,security,command}

@@ -1,6 +1,8 @@
 The Broadcom Command Line
 =========================
 
+This is a description of the *broadcom* command that is created when this code is installed. All the commands are issued from a PC that has network-access to the Access Point.
+
 .. _broadcom-command-line-interface:
 
 The `Broadcom BCM94718NR GigE 802.11n Simultaneous Dual Band Router` controller is accessed at the command line via the ``broadcom`` command. A refresher can be pulled up using the ``broadcom -h`` option:
@@ -29,11 +31,14 @@ Most of the initial arguments use the defaults for the router so if you haven't 
 
     broadcom --hostname 192.168.30.23
 
-The ``sleep`` option is there because the broadcom is being controlled via its web-interface and the web-server cannot take requests too soon after making a change. The ``sleep`` is thus a minimum amount of time that the program has to wait between page requests. If you make it too short it might return a socket error and abort (I could trap this but it could return a socket error for other reasons too so I thought it was better to give feedback). If you make it too long it might make the command take a long time but it should still work. The queries require the least amount of sleeping (the ``status`` subcommand seems to get by with 0 sleep) but the sub-commands that change more than one thing (e.g. if you enable both radios) need at least a little sleep or you will probably get an error (I don't think it's the server-response-time so much as the saving of the data after a change is applied).
+The sleep option
+~~~~~~~~~~~~~~~~
 
-.. note:: These initial options are meant for the ``broadcom`` command and so have to come before any sub-commands (specified below).
+The ``sleep`` option is there because the broadcom is being controlled via its web-interface and the web-server cannot take requests too soon after making a change. The ``sleep`` is thus a minimum amount of time that the program has to wait between page requests. If you make it too short it might return a socket error and abort (I could trap this but it could return a socket error for other reasons too so I thought it was better to give feedback). If you make it too long it might make the command take a long time but it should still work. The commands that query the AP for information require the least amount of sleeping (the ``status`` subcommand seems to get by with 0 sleep) but the sub-commands that change more than one thing (e.g. if you enable both radios) need at least a little sleep or you will probably get an error (I don't think it's the server-response-time so much as the saving of the data after a change is applied).
 
-The general syntax for the command::
+.. note:: These initial options are meant for the ``broadcom`` command and so have to come before any sub-commands (sub-commands are described below).
+
+The general syntax for the ``broadcom`` command::
 
     broadcom <options> <sub-command> <sub-command options>
 
@@ -43,7 +48,7 @@ The Status Subcommand
 The ``status`` gets different state information for the router. The ``broadcom status --help``:
 
 <<name='status_help', echo=False, wrap=False>>=
-print subprocess.check_output('broadcom status --help'.split())
+print( subprocess.check_output('broadcom status --help'.split()))
 @
 
 If you do not specify a band you should see something like::
@@ -70,7 +75,7 @@ It also logs the information to the ``apcommand.log`` file so you can check late
 The channel Subcommand
 ----------------------
 
-This is the main purpose for the ``broadcom`` as it was created so Henry could change the channel in between running Rate-Vs-Range tests. To make it behave like the atheros channel changer it does several things:
+This is the main purpose for the ``broadcom`` as it was created so someone could change the channel in between running tests. To make it behave like the :ref:`atheros channel changer <atheros-cli>` it does several things:
 
     #. Set the channel requested
 
@@ -80,12 +85,12 @@ This is the main purpose for the ``broadcom`` as it was created so Henry could c
 
     #. If the channel is a 5 GHz channel, set the sideband to 'Lower' (the 'Upper' channels are not available)
 
-The command does not output anything to the screen by default and because the command affects both interfaces it is affected by the sleep setting (it has to make a call to the server for each interface and will need to wait in-between to prevent the socket timeout metioned earlier) so if you sit and watch it might seem like it has hung, but like those special kids in the portable buildings, it is just a little slow.
+The command does not output anything to the screen by default and because the command affects both interfaces it is affected by the sleep setting (it has to make a call to the server for each interface and will need to wait in-between to prevent the socket timeout metioned earlier) so if you sit and watch it might seem like it has hung, but it might just be a little slow.
 
 The ``broadcom channel --help``:
 
 <<name='channel_help', echo=False, wrap=False>>=
-print subprocess.check_output('broadcom channel --help'.split())
+print(subprocess.check_output('broadcom channel --help'.split()))
 @
 
 To set a channel (say channel 36) you use the syntax::
@@ -98,7 +103,7 @@ If you call it without passing in any arguments it will return the current chann
 
     broadcom channel
 
-This is just a subset of ``status`` so it is necessarily useful, but I figured it made more sense to give it a purpose.    
+The output for this is just a subset of ``status``.
 
 disable and enable
 ------------------
@@ -113,10 +118,10 @@ As I mentioned before, setting the channel enables the interface for the channel
 .. note:: These sub-commands don't assume that you only want the specified interface-states (e.g. if you enable 5 GHz it won't automatically disable 2.4 GHz).
 
 <<name='enable_help', echo=False, wrap=False>>=
-print subprocess.check_output('broadcom enable --help'.split())
+print(subprocess.check_output('broadcom enable --help'.split()))
 @
     
 ssid
 ----
 
-I am losing access to the access point so this is only a querier right now (to get the SSID). Once again, ``status`` has the SSID in it, so the utility is doubtful, but it is a holding place in case an SSID-setter is implemented later.
+This is a querier to get the SSID. Once again, ``status`` has the SSID in it, so the utility is doubtful, but it is a holding place in case an SSID-setter is implemented later.

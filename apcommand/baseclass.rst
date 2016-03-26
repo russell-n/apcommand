@@ -16,6 +16,12 @@ API
 
 
 
+
+
+
+
+.. base-class::
+
 Class BaseClass
 ---------------
 
@@ -25,6 +31,7 @@ This is the primary base-class. Sub-classes inherit a `logger` attribute so that
 
    BaseClass : logger
    BaseClass o-- logging.Logger
+
 
 
 
@@ -42,3 +49,5 @@ This is an extension to the `BaseClass` that adds a `run_thread` method that log
 
 * `run` is an abstract method that will raise a NotImplementedError exception if called
    
+
+

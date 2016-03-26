@@ -25,7 +25,7 @@ Using the stuff from :ref:`Firmware Exploration <firmwares-exploration>`, a Soup
 
    BroadcomFirmwareSoup -|> BroadcomBaseSoup
 
-.. module:: apcommand.accesspoints.broadcom.firmware
+.. currentmodule:: apcommand.accesspoints.broadcom.firmware
 .. autosummary::
    :toctree: api
 
@@ -101,6 +101,7 @@ Now a querier to bundle the Soup with a connection
 
    BroadcomFirmwareQuerier -|> BroadcomBaseQuerier
 
+.. currentmodule::    apcommand.accesspoints.broadcom.firmware
 .. autosummary::
 
    BroadcomFirmwareQuerier
@@ -134,16 +135,25 @@ class BroadcomFirmwareQuerier(BroadcomBaseQuerier):
 
     @property
     def bootloader_version(self):
+        """
+        Get the AP's bootloader version
+        """
         self.set_soup()
         return self.soup.bootloader_version
 
     @property
     def os_version(self):
+        """
+        Get the ap's OS version
+        """
         self.set_soup()
         return self.soup.os_version
 
     @property
     def wl_driver_version(self):
+        """
+        Get the 'wl' command's driver-version
+        """
         self.set_soup()
         return self.soup.wl_driver_version
 @

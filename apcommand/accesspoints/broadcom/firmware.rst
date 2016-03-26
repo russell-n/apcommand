@@ -16,6 +16,7 @@ This is a module for getting information from the ``firmware.asp`` page.
     from apcommand.accesspoints.broadcom.parser import BroadcomBaseSoup
     from apcommand.accesspoints.broadcom.commons import BroadcomPages
     from apcommand.accesspoints.broadcom.querier import BroadcomBaseQuerier
+    
 
 
 
@@ -28,7 +29,7 @@ Using the stuff from :ref:`Firmware Exploration <firmwares-exploration>`, a Soup
 
    BroadcomFirmwareSoup -|> BroadcomBaseSoup
 
-.. module:: apcommand.accesspoints.broadcom.firmware
+.. currentmodule:: apcommand.accesspoints.broadcom.firmware
 .. autosummary::
    :toctree: api
 
@@ -51,6 +52,7 @@ Now a querier to bundle the Soup with a connection
 
    BroadcomFirmwareQuerier -|> BroadcomBaseQuerier
 
+.. currentmodule::    apcommand.accesspoints.broadcom.firmware
 .. autosummary::
 
    BroadcomFirmwareQuerier

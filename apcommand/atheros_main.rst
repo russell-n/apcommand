@@ -14,7 +14,7 @@ In the first case the user brings the Access Point up. For the default case (|at
 
    apcontrol up
 
-.. module:: apcontrol.main
+.. currentmodule:: apcommand.atheros_main
 .. autosummary:: 
    :toctree: api
 

@@ -23,6 +23,8 @@ import logging
 DOT_JOIN = "{0}.{1}"
 @
 
+.. base-class::
+
 Class BaseClass
 ---------------
 

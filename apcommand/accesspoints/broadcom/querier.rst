@@ -4,15 +4,11 @@ The Broadcom Queriers
 
 
 .. currentmodule:: apcommand.accesspoints.broadcom.querier
+
 .. _broadcom-queriers:
+
 In order to trim down the class-explosion that seems to be going on, all the querys to the Broadcom are combined into two classes :ref:`Broadcom5GHzQuerier <broadcom-5-ghz-querier>` and :ref:`Broadcom24GHzQuerier <broadcom-24-ghz-querier>`.
 
-Contents:
-
-    * :ref:`BroadcomBaseQuerier <broadcom-base-querier>`
-    * :ref:`BroadcomRadioQuerier <broadcom-radio-querier>`
-    * :ref:`BroadcomSSIDQuerier <broadcom-ssid-querier>`
-    * :ref:`BroadcomLANQuerier <broadcom-lan-querier>`
 
 The set_page Decorator
 ----------------------
@@ -22,26 +18,23 @@ Because I am trying to repeat calls to the server the set_page decorator differs
 
 .. code:: python
 
-    # a decorator to set the page
+    # a decorator to set the page 
     def set_page(method):
         """
-        Decorator: sets connection.path to self.asp_page before, sleeps
-    after
+        Decorator: sets connection.path to self.asp_page before, sleeps after 
         """
         def _method(self, *args, **kwargs):
             if not self.refresh and self.current_page == self.asp_page:
                 debug_message = ('Skipping this method (refresh={0},'
                                  'current_page={1})').format(self.refresh,
-    self.current_page)
+                                                             self.current_page)
                 self.logger.debug(debug_message)
                 return _method
     
-            self.logger.debug('Setting current_page to
-    {0}'.format(self.asp_page))
+            self.logger.debug('Setting current_page to {0}'.format(self.asp_page))
             self.current_page = self.asp_page
     
-            self.logger.debug("Setting connection.path to
-    '{0}'".format(self.asp_page))
+            self.logger.debug("Setting connection.path to '{0}'".format(self.asp_page))
             self.connection.path = self.asp_page
             outcome = method(self, *args, **kwargs)
             return outcome
@@ -74,6 +67,7 @@ BroadcomBaseQuerier
    BroadcomBaseQuerier.data
    BroadcomBaseQuerier.asp_page
    BroadcomBaseQuerier.soup
+   BroadcomBaseQuerier.set_soup
 
 The ``refresh`` parameter, if False (the default) will cause the Queriers to only pull a page if it is not already loaded, that way multiple checks will not incur the overhead of waiting for the server (and more significantly the sleeps after each call).
 
@@ -100,7 +94,7 @@ In the ``set_<page>_soup`` methods they should check both the ``refresh`` variab
    True, False, True
    True, True, True
 
-As you can see from the truth table, there is only one case where you will not load the page -- :math:`\lnot (\lnot refresh \land current_page=enumeration)`, which can be re-written :math:`refresh \lor \lnot current_page=enumeration`. But, on reflection, it actually makes more sense to short-circuit the one case where we do nothing -- :math:`\lnot refresh \land current_page=enumeration`.
+As you can see from the truth table, there is only one case where you will not load the page -- :math:`\lnot (\lnot refresh \land current\_page=enumeration)`, which can be re-written :math:`refresh \lor \lnot current\_page=enumeration`. But, on reflection, it actually makes more sense to short-circuit the one case where we do nothing -- :math:`\lnot refresh \land current\_page=enumeration`.
 
 
 

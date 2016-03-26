@@ -5,6 +5,10 @@ The `ReadOutput` acts as a file-like object for output.
 
 
 
+
+
+
+
 StandardOutput
 --------------
 
@@ -25,6 +29,7 @@ A class to act as a read-only file.
 
 
 
+
 ValidatingOutput
 ----------------
 
@@ -42,4 +47,6 @@ The ValidatingOutput takes a function ('validate') that is used to check the lin
    ValidatingOutput : readline()
    ValidatingOutput : readlines()
    ValidatingOutput : read()
+
+
 

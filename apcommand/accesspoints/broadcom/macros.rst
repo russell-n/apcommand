@@ -7,17 +7,23 @@ Since the :ref:`commands <broadcom-commands>` have been broken down to do only o
 
 
 The ChannelChanger
---------------------------
+------------------
 
 .. uml::
 
    ChannelChanger -|> BaseClass
 
-.. module:: apcommand.accesspoints.broadcom.macros
+.. currentmodule:: apcommand.accesspoints.broadcom.macros
 .. autosummary::
    :toctree: api
 
    ChannelChanger
+   ChannelChanger.enable_command
+   ChannelChanger.disable_command
+   ChannelChanger.set_channel_command
+   ChannelChanger.set_sideband_command
+   ChannelChanger.undo
+   ChannelChanger.__call__
    
 
 

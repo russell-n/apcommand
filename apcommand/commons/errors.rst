@@ -22,6 +22,7 @@ The OperatorError is the base-class for any error that will kill the Test Operat
 
 
 
+
 The ComponentError
 ------------------
 
@@ -31,6 +32,7 @@ The ComponentError is the base-class for any error that will kill a particular t
    :toctree: api
    
    ComponentError
+
 
 
 
@@ -58,6 +60,7 @@ The ConnectionWarning is not used and should be removed.
 
 
 
+
 Command Errors
 --------------
 
@@ -76,6 +79,7 @@ A command error is raised if there was an error executing a command. It does not
    
 
 
+
 StorageError
 ------------
 
@@ -91,6 +95,7 @@ StorageError
    StorageError -|> OperatorError
    
 A StorageError is raised if there is a problem sending output to the data-storage. This might also be a Configuration Error, depending on what the cause of the error is, but generally it should be the case that there is something wrong with the system that was not caused by user error.
+
 
 
 
@@ -113,6 +118,7 @@ Affectors are things that affect the state of the hardware infrastructure (e.g. 
 
 
 
+
 User Errors
 -----------
 
@@ -130,4 +136,6 @@ These errors are meant for misconfigured configurations or invalid command-line 
 
    OperatorError <|- ConfigurationError
    OperatorError <|- ArgumentError 
+
+
 

@@ -1,0 +1,14 @@
+**/api/
+build/
+*.py[cod]
+*egg-info/
+dist/
+**/cache/
+*~
+*.cover
+*.log
+__pycache__
+large_data/
+pickles/
+*.gl/
+*.zip

@@ -145,15 +145,13 @@ Since the code was written with `pweave`, the repository is really a sphinx-repo
 
    apt-get install plantuml
 
-If you don't want to install it, edit the `conf.py` file so it isn't one of the listed extensions and you can still build the documentation, it just won't have any UML diagrams. If have everything installed and you are in the same folder as the ``Makefile`` and ``setup.py`` files then you can type the following to install the requirements and build the documentation (either with admin privileges (i.e. sudo) or in a virtual environment)::
+If you don't want to install it, edit the `conf.py` file so it isn't one of the listed extensions and you can still build the documentation, it just won't have any UML diagrams. If you have everything installed and you are in the same folder as the ``Makefile`` and ``setup.py`` files then you can type the following to install the requirements and build the documentation (either with admin privileges (i.e. sudo) or in a virtual environment)::
 
    python setup.py install
    pip install sphinx
    pip install sphinxcontrib-plantuml
    make html
 
-.. '
-   
-And the documentation will be in a folder called `doc` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
+The documentation will be in a folder called `build/html/` in the same directory. You can also create a pdf with `make latexpdf` but the code hasn't been groomed for it so it might not look quite right.
    
 

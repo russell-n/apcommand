@@ -31,6 +31,10 @@ The primary features the `NonLocalConnection` adds to children that inherit from
 
 
 
+
+
+
+
 .. _non-local-connection:
 
 The NonLocalConnection
@@ -58,6 +62,7 @@ The NonLocalConnection
 
 
 
+
 The NonLocalConnectionBuilder
 -----------------------------
 
@@ -74,6 +79,7 @@ The NonLocalConnectionBuilder
    NonLocalConnectionBuilder : product
    NonLocalConnectionBuilder : _logger
    
+
 
 
 ConnectionParameters
@@ -99,6 +105,7 @@ This is a named-tuple to pass parameters to the non-local-connection.
    
 
 
+
 Testing the NonLocalConnection
 ------------------------------
 
@@ -112,6 +119,10 @@ Testing the NonLocalConnection
 
 
 
+
+
+
+
 Testing the NonLocalConnectionBuilder
 -------------------------------------
 
@@ -120,6 +131,7 @@ Testing the NonLocalConnectionBuilder
 
    TestNonLocalConnectionBuilder.test_product
    TestNonLocalConnectionBuilder.test_attributes
+
 
 
 

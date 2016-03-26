@@ -1,12 +1,16 @@
 Firmware Exploration
 ====================
+
+These are notes to explain how the `firmware` page can be used to extract relevant information.
 <<name='future'>>=
 from __future__ import unicode_literals
 from __future__ import print_function
 @
 .. _firmware-exploration:
 
-The page is structured as a collection of tables and forms (which contain tables):
+The Broadcom Access Point's web-page (``firmware.asp``) is structured as a collection of tables and forms (which contain tables):
+
+.. '
 
 .. digraph:: firmware_asp
 
@@ -33,14 +37,14 @@ The page is structured as a collection of tables and forms (which contain tables
    form_1 -> table_4
    form_1 -> table_5
    
-Looking at the graph it appears that ``table_0`` is the one we are interested here. This is what the html for that table looks like:
+Looking at the graph it appears that ``table_0`` is the one we are interested here (because it has the bootloader, OS, and driver versions, as opposed to another table). This is what the html for that table looks like:
 
 .. highlight:: html
 .. include:: firmware_table.html
    :code: html
 
 
-I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be brute-force BeautifulSoup:
+I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be done with brute-force using BeautifulSoup:
 
 .. highlight:: python
 

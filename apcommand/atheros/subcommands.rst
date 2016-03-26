@@ -8,11 +8,14 @@ The try-except Decorator
 
 Since this is a user-level class (it is part of the command-line interface), exceptions are caught and logged, rather than allowing the interpreter to dump the stack-trace (it still logs and displays the stack-trace). To make this simpler a decorator is used to catch `Exception`.
 
+
+.. currentmodule:: apcommand.atheros.subcommands
 .. autosummary::
    :toctree: api
 
    try_except
    
+
 
 
 Class SubCommand
@@ -47,6 +50,9 @@ Collaborators:
 
 
 
+
+
+
 Testing The SubCommand
 ----------------------
 
@@ -61,6 +67,9 @@ The sub-command is largely ignorant of what the objects it holds does so this is
    TestSubCommand.test_args
    TestSubCommand.test_status
    TestSubCommand.test_security
+
+
+
 
 
 

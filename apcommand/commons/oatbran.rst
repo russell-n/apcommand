@@ -2,14 +2,15 @@ The OatBran
 ===========
 .. currentmodule:: apcommand.commons.oatbran
 Oat Bran helps with regular expressions. Names are uppercased to avoid keyword clashes
-::
+
+
+
+.. code:: python
 
     # the class-based expressions are mostly for organization
     # but sometimes they're just too clunky
     LEFT_BRACKET = '['
     RIGHT_BRACKET = ']'
-    
-    
     
 
 
@@ -37,6 +38,7 @@ These are the basic building blocks of regular expressions.
 
 
 
+
 Groups
 ------
 
@@ -55,6 +57,7 @@ Besides the basic use of grouping with parentheses (to explicitly apply operatio
 
 
 
+
 Quantifiers
 -----------
 
@@ -69,6 +72,7 @@ Quantifiers are used to describe repetitions of patterns. The `zero_or_more` qua
    Quantifier.zero_or_one
    Quantifier.exactly
    Quantifier.m_to_n
+
 
 
 
@@ -93,6 +97,7 @@ A helper with character classes (stuff put in square-brackets ('[]')). There are
 
 
 
+
 Boundaries
 ----------
 
@@ -105,6 +110,7 @@ Boundaries
    Boundaries.word
    Boundaries.string
    
+
 
 
 Common Patterns
@@ -126,6 +132,7 @@ These are pattens that I use a lot but I could not think of where to put them.
    CommonPatterns.not_space
    CommonPatterns.not_spaces
    
+
 
 
 
@@ -168,11 +175,22 @@ The numbers are broken up into types based on those listed `here <http://mathwor
    
 
 
+
 .. autosummary::
    :toctree: api
 
    Networking.octet
    
+
+
+
+
+
+
+
+
+
+
 
 
 .. autosummary::
@@ -181,5 +199,15 @@ The numbers are broken up into types based on those listed `here <http://mathwor
    TestQuantifier.test_one_or_more
    TestQuantifier.test_zero_or_more
    
+
+
+
+
+
+
+
+
+
+
 
 

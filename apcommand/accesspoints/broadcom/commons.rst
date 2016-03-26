@@ -5,12 +5,14 @@ The Broadcom Commons
 To prevent circular imports common methods, functions, and constants are put in here (or maybe they are put in here to prevent circular imports, whichever you prefer).
 
 
+
 Constants
 ---------
 
 Some of the constants are gathered into a class in order to try and make it easier to understand what they refer to. In particular the data names and values (e.g. 'wl_unit' and '0') are grouped by page.
 
-::
+
+.. code:: python
 
     ZERO = '0'
     ONE = '1'
@@ -33,6 +35,7 @@ This is to try and make how 2.4 ghz is specified more consistent.
 
 
 
+
 BroadcomRadioData
 ~~~~~~~~~~~~~~~~~
 
@@ -51,6 +54,7 @@ This holds constants for the radio.asp page.
 
 
 
+
 BroadcomLANData
 ~~~~~~~~~~~~~~~
 
@@ -60,7 +64,8 @@ This is data for the ``lan.asp`` page.
 
    BroadcomLANData : lan_page
 
-::
+
+.. code:: python
 
     class BroadcomLANData(object):
         __slots__ = ()
@@ -82,6 +87,7 @@ This holds settings for the `Wireless Interface` drop-down which decides which i
 
 
 
+
 BroadcomPages
 -------------
 
@@ -97,18 +103,21 @@ A holder of names of the web-pages.
 
 
 
+
 Decorators
 ----------
 
 These are decorators to do the repetitive calls common to many methods.
 
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
 .. autosummary::
    :toctree: api
 
    radio_page
    ssid_page
 
-::
+
+.. code:: python
 
     # a decorator to set the page to 'radio.asp'
     def radio_page(method):
@@ -149,13 +158,25 @@ These are decorators to do the repetitive calls common to many methods.
 Data
 ----
 
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
+.. autosummary::
+   :toctree: api
+
+   set_24_data
+   set_5_data
+   
+
 
 
 Errors
 ------
-
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
 .. autosummary::
    :toctree: api
 
    BroadcomError
+
+
+
+
 

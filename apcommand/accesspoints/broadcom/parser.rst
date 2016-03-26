@@ -138,7 +138,7 @@ The BroadcomBaseSoup
 
 Although I have decided to move to aggregation over inheritance, the soups seem to have some common code that is just easier with inheritance -- so here we go again once more for the last time.
 
-.. module:: apcommand.accesspoints.broadcom.parser
+.. currentmodule:: apcommand.accesspoints.broadcom.parser
 .. autosummary::
    :toctree: api
 

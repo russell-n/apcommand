@@ -30,6 +30,10 @@ API
 
 
 
+
+
+
+
 Cleanup
 -------
 
@@ -43,6 +47,7 @@ This function was implemented so the log does not continue to grow even as the c
 Example use::
 
    log_setter.cleanup("output_directory_name")
+
 
 
 
@@ -66,3 +71,5 @@ Example Use::
    log_setter(args)
 
    
+
+

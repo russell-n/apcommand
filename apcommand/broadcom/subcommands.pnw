@@ -1,6 +1,6 @@
 The Sub-Commands
 ================
-.. currentmodule:: apcommand.broadcom.subcommands
+
 This module holds the sub-commands for the Arguments (methods that it will call).
 
 The try-except Decorator
@@ -8,6 +8,7 @@ The try-except Decorator
 
 Since this is a user-level class (it is part of the command-line interface), exceptions are caught and logged, rather than allowing the interpreter to dump the stack-trace (it still logs and displays the stack-trace). To make this simpler a decorator is used to catch `Exception`.
 
+.. currentmodule:: apcommand.broadcom.subcommands
 .. autosummary::
    :toctree: api
 
@@ -52,12 +53,11 @@ Collaborators:
    SubCommand -|> BaseClass
    SubCommand.access_point
    SubCommand.status
-   SubCommand.reset
    SubCommand.channel
+   SubCommand.disable
+   SubCommand.enable
    SubCommand.ssid
-   SubCommand.security
-   SubCommand.command
-   SubCommand.ipaddress
+
 
 <<name='imports', echo=False>>=
 # this package
@@ -126,16 +126,16 @@ class SubCommand(BaseClass):
             self.logger.debug("Getting channel info")
             out_string = "{0} GHz Channel: {1} {3} ({2})"
             for band in '2.4 5'.split():
-                print "{0} GHz:".format(band)
+                print( "{0} GHz:".format(band))
                 key = band[0]
                 channel = ap.query[key].channel
-                print "   Channel: {0}".format(channel)
+                print( "   Channel: {0}".format(channel))
                 state = ap.query[key].state
-                print "  {0}".format(state)
+                print( "  {0}".format(state))
                 sideband = ap.query[key].sideband
                 if sideband is None:
                     sideband = ''
-                print '   {0}'.format(sideband)
+                print( '   {0}'.format(sideband))
 
                 self.logger.debug(out_string.format(band, channel, state, sideband))
         else:
@@ -196,15 +196,15 @@ class SubCommand(BaseClass):
         indent = ' ' * 3
         if args.band is None:
             if args.ssid is not None:
-                print "Need band to change ssid"
+                print( "Need band to change ssid")
                 return
-            print "2.4 GHz:"
-            print indent + ap.get_ssid('2.4')
-            print "5 GHz:"
-            print indent + ap.get_ssid('5')
+            print( "2.4 GHz:")
+            print( indent + ap.get_ssid('2.4'))
+            print( "5 GHz:")
+            print( indent + ap.get_ssid('5'))
         elif args.ssid is None:
-            print "{0} GHz:".format(args.band)
-            print indent + ap.get_ssid(args.band)
+            print( "{0} GHz:".format(args.band))
+            print( indent + ap.get_ssid(args.band))
         else:
             ap.set_ssid(ssid=args.ssid, band=args.band)
         return

@@ -1,21 +1,74 @@
 Atheros
 =======
 
-This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based partially on Aren's Code and partially on the Atheros' shell scripts found in ``/etc/ath`` on the device.
+This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based on the Atheros' shell scripts found in ``/etc/ath`` on one Atheros device.
 
-Contents:
-
-   * :ref:`Line Logger <line-logger>`
-   * :ref:`TheConfigure <the-configure>`
-   * :ref:`AtherosAR5KAP <atheros-ar5kap>`
-   * :ref:`AtherosSecuritySetter <atheros-security-setter>`
-   * :ref:`AtherosOpen Security <atheros-open-security>`
-   * :ref:`AtherosChannelChanger <atheros-channel-changer>`
+.. '
    
 
 
 
+Constants
+---------
 
+
+.. code:: python
+
+    EMPTY_STRING = ''
+    FIVE_GHZ_SUFFIX = '_2'
+    
+    TWO_POINT_FOUR = '2.4'
+    FIVE = '5'
+    BAND_ID = {TWO_POINT_FOUR:0, FIVE:1}
+    G_BANDWIDTH = 'HT20'
+    A_LOWER_BANDWIDTH = 'HT40PLUS'
+    A_UPPER_BANDWIDTH = 'HT40MINUS'
+    
+
+
+
+Imported Classes
+----------------
+
+The Atheros classes make use of some imported classes. Rather than re-document them here I'll just provide the relevant autosummary documentation.
+
+.. '
+
+.. currentmodule::  apcommand.baseclass
+.. autosummary::
+   :toctree: api
+
+   BaseClass
+
+.. currentmodule:: apcommand.connections.telnetconnection
+.. autosummary::
+   :toctree: api
+   
+   TelnetConnection
+
+.. currentmodule:: apcommand.commons.errors
+.. autosummary::
+   :toctree: api
+
+   CommandError
+
+.. currentmodule:: apcommand.commons.errors
+.. autosummary::
+   :toctree: api
+
+   ArgumentError
+
+.. currentmodule:: apcommand.accesspoints.arbitrarycommand
+.. autosummary::
+   :toctree: api
+   
+   ArbitraryCommand
+
+.. currentmodule:: apcommand.commands.settingsvalidator
+.. autosummary::
+   :toctree: api
+
+   SettingsValidator
 
 
 .. _line-logger:
@@ -23,11 +76,13 @@ Contents:
 The Line Logger
 ---------------
 
-Several of the classes have ended up using this same method so I broke it out so they could share one source instead of duplicating the code.
+Several of the classes have ended up using this same logging method so I broke it out so they could share one source instead of duplicating the code.
 
-.. uml
+.. uml::
 
-   LineLogger -|> BaseClass
+   BaseClass <|-- LineLogger
+   LineLogger o- CommandError
+   LineLogger o- logging.Logger
 
 .. module:: apcommand.accesspoints.atheros
 .. autosummary::
@@ -35,6 +90,8 @@ Several of the classes have ended up using this same method so I broke it out so
 
    LineLogger
    LineLogger.__call__
+
+The :ref:`BaseClass <base-class>` provides the actual logger, this allows the log-level to be changed on the fly and strips the line-endings off to get rid of extra blank lines in the log.
 
 
 
@@ -48,7 +105,8 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
 
 .. uml::
 
-   Configure -|> BaseClass
+   BaseClass <|-- Configure
+   Configure o- LineLogger
    Configure : __init__(connection)
 
 .. autosummary::
@@ -67,14 +125,16 @@ The `Configure` is a `context manager <http://docs.python.org/release/2.5/whatsn
 AtherosAR5KAP
 -------------
 
-This is an access-point used for WiFi Alliance testing. It is not a commercial access-point. The commands to control it are taken from the code that Aren :ref:`wrote <arens-atheros>`. The primary request was that I create a command-line command to change the AP-channel. As such it does not change settings en-masse the way that Arens code does, as it assumes that only incremental changes are being made.
+This is an access-point used for WiFi Alliance testing. It is not a commercial access-point. The primary request was that I create a command-line command to change the AP-channel. As such it does not change settings en-masse, as it assumes that only incremental changes are being made.
 
 .. uml::
 
+   BaseClass <|-- AtherosAR5KAP
    AtherosAR5KAP o- LineLogger
    AtherosAR5KAP o- AtherosChannelChanger
-   AtherosAR5KAP o- ArbitraryCommand   
-   AtherosAR5KAP -|> BaseClass
+   AtherosAR5KAP o- ArbitraryCommand
+   AtherosAR5KAP o- TelnetConnection
+
 
 .. autosummary::
    :toctree: api
@@ -104,7 +164,8 @@ This is a base-class for the security setters.
 
 .. uml::
 
-   AtherosSecuritySetter -|> BaseClass
+
+   BaseClass <|-- AtherosSecuritySetter
    AtherosSecuritySetter o- LineLogger
    AtherosSecuritySetter : __call__(type)
 
@@ -112,6 +173,7 @@ This is a base-class for the security setters.
    :toctree: api
 
    AtherosSecuritySetter
+   AtherosSecuritySetter.__call__
 
 
 
@@ -125,15 +187,19 @@ This sets the security to open-none.
 
 .. uml::
 
-   AtherosOpen -|> AtherosSecuritySetter
+   AtherosSecuritySetter <|-- AtherosOpen
 
 .. autosummary::
    :toctree: api
 
    AtherosOpen
+   AtherosOpen.__call__
 
 
 
+
+Testing the Atheros Open
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api
@@ -147,16 +213,29 @@ AtherosChannelChanger
 
 .. uml::
 
-   AtherosChannelChanger -|> BaseClass
+   BaseClass <|-- AtherosChannelChanger
    AtherosChannelChanger o- SettingsValidator
+   AtherosChannelChanger o- LineLogger
    AtherosChannelChanger : __call__(channel, mode)   
 
 .. autosummary::
    :toctree: api
 
    AtherosChannelChanger
+   AtherosChannelChanger.channels
+   AtherosChannelChanger.g_channels
+   AtherosChannelChanger.a_channels
+   AtherosChannelChanger.a_lower_channels
+   AtherosChannelChanger.a_upper_channels
+   AtherosChannelChanger.channel_to_bandwidth
+   AtherosChannelChanger.a_channels_mode_map
+   AtherosChannelChanger.bandwidth
+   AtherosChannelChanger.mode
+   AtherosChannelChanger.band
+   AtherosChannelChanger.__call__
+   AtherosChannelChanger.validate_channel
 
-This was a base class for 2.4 and 5 ghz channel changers but I realized that the settings should be discovered through the channel that is being passed in so it does not make sense to maintain separate classes.
+This was originally a base class for 2.4 and 5 ghz channel changers but I realized that the settings should be discovered through the channel that is being passed in so it does not make sense to maintain separate classes.
 
 
 
@@ -228,4 +307,6 @@ Testing the AtherosAR5KAP
 
 
 
-29.165.126.179
+
+
+

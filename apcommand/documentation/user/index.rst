@@ -1,7 +1,7 @@
 User Documentation
 ==================
 
-Installing this package will create two commands (so far) -- ``atheros`` and ``broadcom``. Although they are similar, they were done at separate times and in isolation (and both abandoned when the APs were taken away) so they are not entirely the same.
+Installing this package will create two commands (so far) -- ``atheros`` and ``broadcom``. Although they are similar, they were done at separate times and in isolation (and were only available for a limited time) so they are not entirely the same.
 
 The Atheros
 -----------

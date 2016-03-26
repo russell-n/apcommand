@@ -744,10 +744,13 @@ class TestAR5KAP(unittest.TestCase):
         Does the controller get the right (5GHz) channel changer and call it?
         """
         self.set_context_connection()
-        set_1 = [str(i) for i in range(36,65,4)]
-        set_2 = [str(j) for j in range(100,141,4)]
-        set_3 = [str(k) for k in range(149,166,4)]
-        channels = set_1 + set_2 + set_3
+        #set_1 = [str(i) for i in range(36,65,4)]
+        #set_2 = [str(j) for j in range(100,141,4)]
+        #set_3 = [str(k) for k in range(149,166,4)]
+        #channels = set_1 + set_2 + set_3
+        # the the number of used channels was reduced
+        channels = '36 44 149 157 40 48 153 161'.split()
+
         channel = random.choice(channels)
         changer = MagicMock()
         with patch('apcommand.accesspoints.atheros.AtherosChannelChanger', changer):
@@ -776,7 +779,7 @@ class TestAR5KAP(unittest.TestCase):
         self.set_context_connection()
         expected_ip = '.'.join([str(random.randrange(1,254)) for octet in range(4)])
         mask = '255.' + '.'.join([random.choice(('255', '0')) for octet in range(3)])
-        print expected_ip
+        print(expected_ip)
         self.ap.set_ip(address=expected_ip, mask=mask)
         calls = ENTER_CALLS + [call.cfg('-a AP_IPADDR={0}'.format(expected_ip)),
                                call.cfg('-a AP_NETMASK={0}'.format(mask))] + EXIT_CALLS
@@ -1024,3 +1027,6 @@ class TestAtherosOpen(unittest.TestCase):
         self.set_context_connection()
         self.setter()
         return
+
+if __name__ == '__main__':
+    unittest.main()

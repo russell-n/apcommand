@@ -17,6 +17,10 @@ In most cases it is better to use the LocalNixConnection instead which uses Pexp
 
 
 
+
+
+
+
 The OutputError
 ---------------
 
@@ -27,6 +31,7 @@ This is a namedtuple to contain standard-out and standard-error.
    OutputError -|> collections.namedtuple
    OutputError : output
    OutputError : error
+
 
 
 
@@ -41,8 +46,12 @@ The LocalConnection
    
 
 
+
 LocalNixConnection
 ------------------
 
 This class is like the LocalConnection but does not suffer from the problem if stdout blocking the way the LocalConnection. Because it uses `Pexpect` only unix-like systems can use it.
+
+
+
 

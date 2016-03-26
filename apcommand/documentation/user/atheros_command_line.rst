@@ -1,15 +1,17 @@
 Atheros Command Line
 ====================
 
+This documents some of the Atheros AP5KAP's Command line interface. This isn't documentation for the :ref:`atheros<atheros-cli>` command that I created.
+
 .. note:: These are observations I made while trying to figure out how to set up the AP. Not everything here is necessarily correct but maybe you won't have to struggle quite so much if you at least start with someone else's notes.
 
-Code references:
-
-.. toctree::
-   :maxdepth: 1
-   
-   apup and apdown <atheros_files/apup_apdown>
-   apcfg <atheros_files/apcfg>
+.. Code references:
+.. 
+.. .. toctree::
+..    :maxdepth: 1
+..    
+..    apup and apdown <atheros_files/apup_apdown>
+..    apcfg <atheros_files/apcfg>
 
 The Telnet Connection
 ---------------------
@@ -32,20 +34,20 @@ The two commands (``apup`` and ``apdown``) along with the ``cfg`` command seem t
 
 The `/etc/ath/` shell scripts:
 
-    * :download:`activateVAP <atheros_files/etc_ath_activate_VAP.sh>`
-    * :download:`apcfg <atheros_files/etc_ath_apcfg.sh>`
-    * :download:`apdown <atheros_files/etc_ath_apdown.sh>`
-    * :download:`apoob <atheros_files/etc_ath_apoob.sh>`
-    * :download:`apup <atheros_files/etc_ath_apup.sh>`
-    * :download:`killVAP <atheros_files/etc_ath_killVAP.sh>`
-    * :download:`makeVAP <atheros_files/etc_ath_makeVAP.sh>`
+    * `activateVAP`
+    * `apcfg`
+    * `apdown`
+    * `apoob`
+    * `apup`
+    * `killVAP`
+    * `makeVAP`
 
 The `/etc/ath` folder also has what appear to be template configuration files for the access point:
 
-    * :download:`eap.app_bss <atheros_files/etc_ath_eap_ap_bss.txt>`
-    * :download:`psk.app_bss <atheros_files/etc_ath_psk_ap_bss.txt>`
-    * :download:`psk.sta <atheros_files/etc_ath_psk_sta.txt>`
-    * :download:`radius_mac.ap_bss <atheros_files/etc_ath_radius_mac.ap_bss.txt>`
+    * `eap.app_bss`
+    * `psk.app_bss`
+    * `psk.sta`
+    * `radius_mac.ap_bss`
 
 Some of the shell-scripts are using `wlanconfig <http://linux.die.net/man/8/wlanconfig>`_ so you can use it directly if you know the syntax. If you try and follow a MadWifi tutorial you'll find some things work (like creating and destroying `VAPs <http://linux.die.net/man/8/wlanconfig>`_) but many things don't. When in doubt it's probably safest to take one of the shell scripts and if it doesn't do exactly what you need, try and alter it yourself.
 
@@ -82,9 +84,9 @@ You won't see this exactly, there are 16 VAPs setup on the AP and the `-s` optio
 
 .. include:: atheros_files/tmp_secath0.txt
 
-This the `secath0` file won't show you as much as ``cfg -s`` but most of the changes you make using ``cfg -a`` will be there.
+The `secath0` file won't show you as much as ``cfg -s`` but most of the changes you make using ``cfg -a`` will be there.
 
-What you'll notice is that the two ``cfg -s`` and ``secauth0`` have variable names that are similar but not the same. From what I can tell the `cfg` command is setting the variables that ``cfg -s`` shows and then saving them in a file `/tmp/secath0` which is then used to configure the AP. So when you use ``cfg -a`` you should be using the variable names shown by ``cfg -s``. To see the defaults look at the :download:`apcfg <atheros_files/etc_ath_apcfg.sh>` file.
+What you'll notice is that the output of ``cfg -s`` and ``secauth0`` have variable names that are similar but not the same. From what I can tell the `cfg` command is setting the variables that ``cfg -s`` shows and then saving them in a file `/tmp/secath0` which is then used to configure the AP. So when you use ``cfg -a`` you should be using the variable names shown by ``cfg -s``. To see the defaults look at the `apcfg (/etc/ath/apcfg.sh)` file.
 
 The `apcfg` Settings
 ~~~~~~~~~~~~~~~~~~~~

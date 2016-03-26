@@ -7,6 +7,10 @@ The purpose of the Popen Producer is to provide ways to read from the standard o
 
 
 
+
+
+
+
 The PopenProducer
 -----------------
 
@@ -23,6 +27,7 @@ The PopenProducer
 
 
 
+
 The PopenFile
 -------------
 
@@ -35,6 +40,7 @@ The PopenFile
 
    PopenFile -|> BaseThreadClass
    
+
 
 
 

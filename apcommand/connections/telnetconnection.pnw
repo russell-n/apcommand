@@ -3,15 +3,6 @@ The Telnet Connection
 
 .. currentmodule:: apcommand.connections.telnetconnection
 
-Contents:
-
- * :ref:`TelnetConnection <telnet-connection>`
-
- * :ref:`TelnetAdapter <telnet-adapter>`
-
- * :ref:`TelnetOutput <telnet-output>`
-
- * :ref:`TelnetConnectionBuilder <telnet-connection-builder>`
 
 The `TelnetConnection` takes the command-line command as a property and the arguments to the command as parameters.
 

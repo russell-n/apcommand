@@ -152,6 +152,7 @@ Decorators
 
 These are decorators to do the repetitive calls common to many methods.
 
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
 .. autosummary::
    :toctree: api
 
@@ -196,6 +197,13 @@ def set_page(method):
 Data
 ----
 
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
+.. autosummary::
+   :toctree: api
+
+   set_24_data
+   set_5_data
+   
 <<name='dictionary_creators', echo=False>>=
 # a dictionary for data that changes the state of the broadcom
 action_dict = lambda: {'action':'Apply'}
@@ -221,7 +229,7 @@ def set_5_data():
 
 Errors
 ------
-
+.. currentmodule:: apcommand.accesspoints.broadcom.commons
 .. autosummary::
    :toctree: api
 

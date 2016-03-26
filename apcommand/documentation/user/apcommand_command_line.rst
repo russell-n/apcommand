@@ -14,6 +14,7 @@ you will end up with a command-line command called `atheros`. If you inspect it 
 The Command-Line Interface
 --------------------------
 
+
 The command-line interface is built using python's `argparse <http://docs.python.org/2/library/argparse.html>`_. To get a listing of the available options you use the ``-h`` or ``--help`` options::
 
    atheros --help
@@ -66,14 +67,16 @@ You should see something like:
 
 I'll explain the sub-commands in the next section so for now just look at the top sections (`usage` and `optional arguments`).
 
+.. '
+
 The Usage Help
 ~~~~~~~~~~~~~~
 
-.. include:: help_output.rst
-   :start-after: ATHEROS_OPTIONS_START
-   :end-before: ATHEROS_OPTIONS_END
+.. literalinclude:: help_output.rst
+   :start-after: APCOMMAND_OPTIONS_START
+   :end-before: APCOMMAND_OPTIONS_END
 
-The `usage` line is telling you what you would type at the command line to use the `atheros`. Anything in square brackets ([]) is optional and is given more detail under the `optional arguments` section. The things in curly braces ({}) are sub-commands (see below). The `hostname`, `username`, and `password` are set for the Atheros AR5KAP:
+The `usage` line is telling you what you would type at the command line to use the `atheros`. Anything in square brackets ([]) is optional and is given more detail under the `optional arguments` section. The things in curly braces ({}) are sub-commands (see below). The `hostname`, `username`, and `password` for the Atheros AR5KAP are set as defaults:
 
 .. csv-table:: Atheros Telnet Defaults
    :header: Option, Value
@@ -82,13 +85,12 @@ The `usage` line is telling you what you would type at the command line to use t
    username,root
    password,5up
 
-You shouldn't have to change them but if you do need to pass them in *before* the subcommand::
+You shouldn't have to change them but if you do pass them in *before* the subcommand. For example, to change the *hostname* for the AP and get its status::
 
-   atheros --hostname 192.168.10.65 <subcommand>
+   atheros --hostname 192.168.10.65 status
 
-Where <subcommand> is one of those listed in the curly-braces.
 
-The only other option you might want to use is ``--debug`` (or equivalently ``-d``). This will send the output from the AP's command line to standard out -- by default it is being saved to a log file but since it's so noisy it isn't emitted unless you ask for it. The first few times you run it you might want to use this option, as it takes a while to actually change the AP's settings and might feel as though it's hung up (or you can just tail the log -- ``tail -f atheros.log``).
+The only other option you might want to use is ``--debug`` (or equivalently ``-d``). This will send the output from the AP's command line to standard out -- by default it is being saved to a log file but since it's so noisy it isn't emitted unless you ask for it. The first few times you run it you might want to use this option, as it takes a while to actually change the AP's settings and it might feel as though it's hung up so this will give you some feedback (alternatively, you can tail the log -- ``tail -f atheros.log``).
 
 .. _atheros-subcommands:
 
@@ -106,7 +108,7 @@ As mentioned above the `atheros` interface is built around `argparse` and in par
 up and down
 ~~~~~~~~~~~
 
-The `up` and `down` subcommands execute the :ref:`apup <apup-code>` and :ref:`apdown <apdown-code>` commands on the AP. 
+The `up` and `down` subcommands execute the `apup` and `apdown` commands on the AP. 
 
 So::
 
@@ -123,6 +125,8 @@ destroy
 
 The `destroy` subcommand takes down a VAP that you pass it. It uses `wlanconfig` so it only works on Virtual AP's. I added it because I accidentally turned on both the 5 GHz and 2.4 GHz bands at the same time and needed to destroy the extra VAP (*ath1*) that was created. 
 
+.. '
+
 Doing this::
 
    atheros destroy ath1
@@ -131,11 +135,26 @@ Is the equivalent of logging on to the AP and typing::
 
    wlanconfig ath1 destroy
    
-The help output:
+This is help output for the `destroy` sub-command:
 
-.. include:: help_output.rst
-   :start-after: DESTROY_HELP_START
-   :end-before: DESTROY_HELP_END 
+.. .. include:: help_output.rst
+..    :start-after: DESTROY_HELP_START
+..    :end-before: DESTROY_HELP_END
+
+
+.. code::
+
+    usage: atheros destroy [-h] interface
+    
+    positional arguments:
+      interface   The VAP name (e.g. ath0)
+    
+    optional arguments:
+      -h, --help  show this help message and exit
+    
+    
+
+
 
 .. _status-subcommand:
 
@@ -154,9 +173,25 @@ Is the equivalent of logging on to the AP and typing::
 
 The `status -h` output:
 
-.. include:: help_output.rst
-   :start-after: STATUS_HELP_START
-   :end-before: STATUS_HELP_END
+.. .. include:: help_output.rst
+..    :start-after: STATUS_HELP_START
+..    :end-before: STATUS_HELP_END
+
+
+.. code::
+
+    usage: atheros status [-h] [interface]
+    
+    positional arguments:
+      interface   the name of the interface to query (default=ath0) (use 'all' for
+                  all interfaces)
+    
+    optional arguments:
+      -h, --help  show this help message and exit
+    
+    
+
+
 
 .. _reset-subcommand:
 
@@ -174,20 +209,35 @@ is the equivalent of logging on to the AP and entering::
 
 The `reset -h` output:
 
-.. include:: help_output.rst
-   :start-after: RESET_HELP_START
-   :end-before: RESET_HELP_END
+.. .. include:: help_output.rst
+..    :start-after: RESET_HELP_START
+..    :end-before: RESET_HELP_END
 
-.. warning:: The `band` argument is misleading -- you are resetting both bands, this option specifies which band to bring back up after resetting the AP.
 
-If you want to see the defaults you can inspect the :ref:`/etc/ath/apcfg <apcfg-code>` file.
+.. code::
+
+    usage: atheros reset [-h] [band]
+    
+    positional arguments:
+      band        2.4 or 5 (default=2.4)
+    
+    optional arguments:
+      -h, --help  show this help message and exit
+    
+    
+
+
+
+.. warning:: The `band` argument might be misleading -- you are resetting both bands, but this option specifies which band to bring back up after resetting the AP.
+
+If you want to see the defaults you can inspect the `/etc/ath/apcfg` file.
 
 .. _channel-subcommand:
 
 channel
 ~~~~~~~
 
-This changes the channel using the default bandwidths decided on by Taka::
+This changes the channel using the default bandwidths chosen::
 
    atheros channel 1
 
@@ -203,9 +253,27 @@ sets the channel to 40 and the bandwidth to HT40-, and so on.
 
 The `channel -h` output:
 
-.. include:: help_output.rst
-   :start-after: CHANNEL_HELP_START
-   :end-before: CHANNEL_HELP_END
+.. .. include:: help_output.rst
+..    :start-after: CHANNEL_HELP_START
+..    :end-before: CHANNEL_HELP_END
+
+
+.. code::
+
+    usage: atheros channel [-h] [--mode MODE] [--bandwidth BANDWIDTH] channel
+    
+    positional arguments:
+      channel               Channel to set
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --mode MODE           Mode (e.g. 11NG)
+      --bandwidth BANDWIDTH
+                            Bandwidth (e.g. HT40PLUS)
+    
+    
+
+
 
 .. _ssid-subcommand:
 
@@ -218,9 +286,25 @@ This sets the broadcast SSID for the AP::
 
 The ``ssid -h`` output:
 
-.. include:: help_output.rst
-   :start-after: SSID_HELP_START
-   :end-before: SSID_HELP_END
+.. .. include:: help_output.rst
+..    :start-after: SSID_HELP_START
+..    :end-before: SSID_HELP_END
+
+
+.. code::
+
+    usage: atheros ssid [-h] ssid [band]
+    
+    positional arguments:
+      ssid        The SSID to use
+      band        2.4 or 5 (default=2.4)
+    
+    optional arguments:
+      -h, --help  show this help message and exit
+    
+    
+
+
 
 .. _security-subcommand:
 

@@ -3,15 +3,6 @@ The Telnet Connection
 
 .. currentmodule:: apcommand.connections.telnetconnection
 
-Contents:
-
- * :ref:`TelnetConnection <telnet-connection>`
-
- * :ref:`TelnetAdapter <telnet-adapter>`
-
- * :ref:`TelnetOutput <telnet-output>`
-
- * :ref:`TelnetConnectionBuilder <telnet-connection-builder>`
 
 The `TelnetConnection` takes the command-line command as a property and the arguments to the command as parameters.
 
@@ -23,6 +14,10 @@ For Example::
         print line
 
 Prints the output of the `ls -l` command line command.
+
+
+
+
 
 
 
@@ -42,6 +37,7 @@ This acts as a file-like object that traps socket timeouts so that users do not 
 
    OutputFile -|> ValidatingOutput
    OutputFile : readline(timeout)
+
 
 
 
@@ -67,6 +63,10 @@ The `TelnetAdapter` adapts the built-in python `telnetlib <http://docs.python.or
 
 
 
+
+
+
+
 .. _telnet-output:
 
 TelnetOutput
@@ -86,6 +86,7 @@ The `TelnetOutput` adapts the :ref:`TelnetAdapter <telnet-adapter>` output to ap
    TelnetOutput : readlines()
    TelnetOutput : read()
    TelnetOutput : __iter__()
+
 
 
 
@@ -123,6 +124,7 @@ The TelnetConnection Class
    
 
 
+
 .. _telnet-connection-builder:
 
 The TelnetConnectionBuilder
@@ -141,6 +143,7 @@ The TelnetConnectionBuilder
 
 
 
+
 Testing the TelnetConnectionBuilder
 -----------------------------------
 
@@ -148,6 +151,11 @@ Testing the TelnetConnectionBuilder
    :toctree: api
 
    TestTelnetConnectionBuilder
+
+
+
+
+
 
 
 
