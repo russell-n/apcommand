@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.broadcom.broadcom &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.broadcom.broadcom</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">import</span> <span class="nn">apcommand.connections.httpconnection</span> <span class="kn">as</span> <span class="nn">httpconnection</span>
+
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">BroadcomRadioData</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">BandEnumeration</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">SSID</span><span class="p">,</span> <span class="n">SSID_PAGE</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">set_24_data</span><span class="p">,</span> <span class="n">set_5_data</span><span class="p">,</span> <span class="n">ssid_page</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.querier</span> <span class="kn">import</span> <span class="n">BroadcomRadioQuerier</span><span class="p">,</span> <span class="n">BroadcomSSIDQuerier</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.querier</span> <span class="kn">import</span> <span class="n">BroadcomLANQuerier</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.firmware</span> <span class="kn">import</span> <span class="n">BroadcomFirmwareQuerier</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.macros</span> <span class="kn">import</span> <span class="n">ChannelChanger</span>
+
+<span class="c1"># for some reason Pweave sometimes accepts relative paths, sometimes not</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commands</span> <span class="kn">import</span> <span class="n">DisableInterface</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commands</span> <span class="kn">import</span> <span class="n">EnableInterface</span>
+
+<span class="n">BAND_STRING</span> <span class="o">=</span> <span class="s1">&#39;{0} GHz:&#39;</span>
+<span class="n">CHANNEL_STRING</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Channel: {0}&#39;</span>
+<span class="n">SSID_STRING</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">SSID: {0}&#39;</span>
+<span class="n">STATE_STRING</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">State: {0}&#39;</span>
+<span class="n">SIDEBAND_STRING</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Sideband: {0}&#39;</span>
+<span class="n">DHCP_STRING</span> <span class="o">=</span> <span class="s1">&#39;DHCP: {0}&#39;</span>
+<span class="n">BOOTLOADER_STRING</span> <span class="o">=</span> <span class="s1">&#39;Bootloader Version: {0}&#39;</span>
+<span class="n">OS_STRING</span> <span class="o">=</span> <span class="s1">&#39;OS Version: {0}&#39;</span>
+<span class="n">WL_DRIVER_STRING</span> <span class="o">=</span> <span class="s1">&#39;WL Driver Version: {0}&#39;</span>
+
+<div class="viewcode-block" id="RadioPageConnection"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection">[docs]</a><span class="k">class</span> <span class="nc">RadioPageConnection</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A context manager for connecting to the radio.asp page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RadioPageConnection.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        RadioPageConnection constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: Connection to the broadcom</span>
+<span class="sd">         - `sleep`: Time to sleep before exiting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RadioPageConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep</span> <span class="o">=</span> <span class="n">sleep</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="RadioPageConnection.__enter__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__enter__.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the path and returns the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting the connection.path to &quot;{0}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">radio_page</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">radio_page</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span></div>
+
+<div class="viewcode-block" id="RadioPageConnection.__exit__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__exit__.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Sleeping for {0} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep</span><span class="p">))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+<span class="c1"># end RadioPageConnection</span>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR">[docs]</a><span class="k">class</span> <span class="nc">BroadcomBCM94718NR</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to control and query the Broadcom BCM94718NR</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomBCM94718NR.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomBCM94718NR Constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `hostname`: address of the AP</span>
+<span class="sd">         - `username`: login username (use empty string if none)</span>
+<span class="sd">         - `password`: login password (use empty string if none)</span>
+<span class="sd">         - `sleep`: seconds to sleep after a call to the web server</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomBCM94718NR</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep</span> <span class="o">=</span> <span class="n">sleep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># aggregated classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel_changer</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssid_query</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lan_query</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_firmware_query</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">firmware_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A BroadcomFirmwareQuery</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firmware_query</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_firmware_query</span> <span class="o">=</span> <span class="n">BroadcomFirmwareQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firmware_query</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lan_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A BroadcomLANQuery </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lan_query</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lan_query</span> <span class="o">=</span> <span class="n">BroadcomLANQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lan_query</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disable_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A command to disable a wireless interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="o">=</span> <span class="n">DisableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enable_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a commanad to enable a wireless interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel_changer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A BroadcomChannelChanger</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_changer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel_changer</span> <span class="o">=</span> <span class="n">ChannelChanger</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_changer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A Broadcom Querier band:reader dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;2&#39;</span><span class="p">:</span><span class="n">BroadcomRadioQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">),</span>
+                             <span class="s1">&#39;5&#39;</span><span class="p">:</span><span class="n">BroadcomRadioQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                      <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssid_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A Broadcom SSID Querier band:reader dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssid_query</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ssid_query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;2&#39;</span><span class="p">:</span><span class="n">BroadcomSSIDQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">),</span>
+                                                    <span class="s1">&#39;5&#39;</span><span class="p">:</span><span class="n">BroadcomSSIDQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                      <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssid_query</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A connection to the AP (right now this acts as an HTTPConnection builder)</span>
+
+<span class="sd">        :return: HTTPConnection for the DUT (set to radio.asp pgae)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">httpconnection</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                             <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                                                             <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+                                                             <span class="n">rest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep</span><span class="p">,</span>
+                                                             <span class="n">path</span><span class="o">=</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">radio_page</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
+
+    <span class="nd">@ssid_page</span>
+    <span class="k">def</span> <span class="nf">set_5_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ssid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the 5 Ghz band SSID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">set_5_data</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">SSID</span><span class="p">]</span> <span class="o">=</span> <span class="n">ssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nd">@ssid_page</span>
+    <span class="k">def</span> <span class="nf">set_24_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ssid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the 2.4 Ghz band SSID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">set_24_data</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">SSID</span><span class="p">]</span> <span class="o">=</span> <span class="n">ssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.get_ssid"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_ssid">[docs]</a>    <span class="k">def</span> <span class="nf">get_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the ssid for the interface matching the band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssid_query</span><span class="p">[</span><span class="n">band</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">ssid</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.set_channel"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel">[docs]</a>    <span class="k">def</span> <span class="nf">set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the wifi channel</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: wifi channel to set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel_changer</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.get_channel"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the channel for the given band (uses only first character)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">band</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">channel</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.print_and_log"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.print_and_log.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.print_and_log">[docs]</a>    <span class="k">def</span> <span class="nf">print_and_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends the string to stdout and the logger (debug)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="BroadcomBCM94718NR.get_status"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_status.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_status">[docs]</a>    <span class="k">def</span> <span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Outputs and logs the status of the AP</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `band`: &#39;2.4&#39;, &#39;5&#39;, or &#39;both&#39;</span>
+
+<span class="sd">        :postcondition: status strings sent to stdout and logged</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">BandEnumeration</span><span class="o">.</span><span class="n">both</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_status</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">(</span><span class="n">BandEnumeration</span><span class="o">.</span><span class="n">two_point_four</span><span class="p">,</span> <span class="n">BandEnumeration</span><span class="o">.</span><span class="n">five</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_status</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">DHCP_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lan_query</span><span class="o">.</span><span class="n">dhcp_state</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">BOOTLOADER_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firmware_query</span><span class="o">.</span><span class="n">bootloader_version</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">OS_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firmware_query</span><span class="o">.</span><span class="n">os_version</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">WL_DRIVER_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firmware_query</span><span class="o">.</span><span class="n">wl_driver_version</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.log_status"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.log_status.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.log_status">[docs]</a>    <span class="k">def</span> <span class="nf">log_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints and logs the status for a single band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">BAND_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">CHANNEL_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_channel</span><span class="p">(</span><span class="n">band</span><span class="p">)))</span>            
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">SSID_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_ssid</span><span class="p">(</span><span class="n">band</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">STATE_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">band</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">print_and_log</span><span class="p">(</span><span class="n">SIDEBAND_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">band</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">sideband</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.unset_channel"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.unset_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.unset_channel">[docs]</a>    <span class="k">def</span> <span class="nf">unset_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calls an undo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel_changer</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.disable"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable">[docs]</a>    <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the disable command&#39;s band and calls it.</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `band`: a wireless band (2.4 or 5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBCM94718NR.enable"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable">[docs]</a>    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the enable command&#39;s band and calls it</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `band`: The band of the interface to enable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_command</span><span class="p">()</span>
+        <span class="k">return</span></div></div>
+<span class="c1"># end Class BroadcomBCM94718NR</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

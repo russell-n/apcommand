@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.atheros.subcommands &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.atheros.subcommands</h1><div class="highlight"><pre>
+<span></span>
+<div class="viewcode-block" id="try_except"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.try_except.html#apcommand.atheros.subcommands.try_except">[docs]</a><span class="k">def</span> <span class="nf">try_except</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A decorator method to catch Exceptions</span>
+
+<span class="sd">    :param:</span>
+
+<span class="sd">     - `func`: A function to call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+            <span class="n">log</span> <span class="o">=</span> <span class="n">BaseClass</span><span class="p">()</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">wrapped</span></div>
+
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">import</span> <span class="nn">apcommand.accesspoints.atheros</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">ArgumentError</span>
+
+
+<div class="viewcode-block" id="SubCommand"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.html#apcommand.atheros.subcommands.SubCommand">[docs]</a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A holder of sub-commands</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SubCommand.__init__"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.html#apcommand.atheros.subcommands.SubCommand.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SubCommand Constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SubCommand</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="SubCommand.access_point"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.access_point.html#apcommand.atheros.subcommands.SubCommand.access_point">[docs]</a>    <span class="k">def</span> <span class="nf">access_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        The Access point controller</span>
+
+<span class="sd">        :return: AP Controller</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># assume that the accesspoint class has valuable defaults</span>
+        <span class="c1"># only pass in parameters that have been set by the arguments</span>
+        <span class="n">apargs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;hostname&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)</span>
+        <span class="n">apvalues</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">apargs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">apkeys</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">apargs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">apkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">apkeys</span><span class="p">,</span> <span class="n">apvalues</span><span class="p">))</span>
+
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">apcommand</span><span class="o">.</span><span class="n">accesspoints</span><span class="o">.</span><span class="n">atheros</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="p">(</span><span class="o">**</span><span class="n">apkwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ap</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.up"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.up.html#apcommand.atheros.subcommands.SubCommand.up">[docs]</a>    <span class="k">def</span> <span class="nf">up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The AP up sub-command</span>
+
+<span class="sd">        :postcondition: ap.up() called</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">up</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.down"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.down.html#apcommand.atheros.subcommands.SubCommand.down">[docs]</a>    <span class="k">def</span> <span class="nf">down</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The AP Down sub-command</span>
+
+<span class="sd">        :postcondition: ap.down() called on ap from access_point(args)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">down</span><span class="p">()</span>
+        <span class="k">return</span></div>
+    
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.destroy"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.destroy.html#apcommand.atheros.subcommands.SubCommand.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Destroys an interface</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `interface` attribute</span>
+<span class="sd">        </span>
+<span class="sd">        :postcondition: ap.destroy(interface) is called</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.status"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.status.html#apcommand.atheros.subcommands.SubCommand.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access-point control&#39;s status method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with &#39;interface&#39; attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.reset"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.reset.html#apcommand.atheros.subcommands.SubCommand.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access point&#39;s reset method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `interface` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.channel"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.channel.html#apcommand.atheros.subcommands.SubCommand.channel">[docs]</a>    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access point&#39;s set_channel method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `channel`, `mode`, and `bandwidth` attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">set_channel</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span>
+                       <span class="n">mode</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                       <span class="n">bandwidth</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.ssid"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.ssid.html#apcommand.atheros.subcommands.SubCommand.ssid">[docs]</a>    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access point&#39;s set_ssid method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `band` and `ssid` attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">set_ssid</span><span class="p">(</span><span class="n">ssid</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">ssid</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.security"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.security.html#apcommand.atheros.subcommands.SubCommand.security">[docs]</a>    <span class="k">def</span> <span class="nf">security</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calls the AP&#39;s set_security method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `type` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">set_security</span><span class="p">(</span><span class="n">security_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.command"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.command.html#apcommand.atheros.subcommands.SubCommand.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the AP&#39;s exec_command method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `command` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.ipaddress"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.SubCommand.ipaddress.html#apcommand.atheros.subcommands.SubCommand.ipaddress">[docs]</a>    <span class="k">def</span> <span class="nf">ipaddress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the AP&#39;s ip address</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `ipaddress`, `subnetmask` attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">set_ip</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">ipaddress</span><span class="p">,</span>
+                  <span class="n">mask</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">subnetmask</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+
+
+<span class="k">class</span> <span class="nc">TestSubCommand</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span> <span class="o">=</span> <span class="n">SubCommand</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TestSubCommand.test_args"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_args.html#apcommand.atheros.subcommands.TestSubCommand.test_args">[docs]</a>    <span class="k">def</span> <span class="nf">test_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the correct set of arguments get passed to the ap</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s1">&#39;mike&#39;</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s1">&#39;bob&#39;</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;me&#39;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap</span><span class="p">):</span>
+            <span class="c1"># 000</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                <span class="n">username</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                                                <span class="n">password</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c1"># 001</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                <span class="n">username</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c1"># 011</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hostname</span><span class="p">)</span>
+            
+            <span class="n">args</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;cow&#39;</span>
+            <span class="c1"># 010</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                <span class="n">password</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">hostname</span><span class="o">=</span><span class="bp">None</span>
+            <span class="c1"># 110</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">password</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c1"># 111</span>
+            <span class="n">access_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>            
+        <span class="k">return</span></div>
+        
+
+<div class="viewcode-block" id="TestSubCommand.test_up"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_up.html#apcommand.atheros.subcommands.TestSubCommand.test_up">[docs]</a>    <span class="k">def</span> <span class="nf">test_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it have the up-method and will it catch exception?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="p">,</span> <span class="s1">&#39;up&#39;</span><span class="p">))</span>
+        <span class="n">ap_up</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_up</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;this is an error&quot;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">up</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_up</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">up</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">up</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestSubCommand.test_down"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_down.html#apcommand.atheros.subcommands.TestSubCommand.test_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it have the down-method and will it catch exception?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="p">,</span> <span class="s1">&#39;down&#39;</span><span class="p">))</span>
+        <span class="n">ap_down</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_down</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;this is an error&quot;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">down</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_down</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">down</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">down</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestSubCommand.test_destroy"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_destroy.html#apcommand.atheros.subcommands.TestSubCommand.test_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">test_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it have a method to destroy a (virtual) interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="p">,</span> <span class="s1">&#39;destroy&#39;</span><span class="p">))</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="c1"># args.channel has to be deleted or hasattr will return True</span>
+        <span class="k">del</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;ath0&#39;</span>
+        <span class="n">ap_destroy</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_destroy</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;this is an error&quot;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">destroy</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_destroy</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">destroy</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestSubCommand.test_status"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_status.html#apcommand.atheros.subcommands.TestSubCommand.test_status">[docs]</a>    <span class="k">def</span> <span class="nf">test_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the sub-command call the ap&#39;s status method?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">))</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;ath0&#39;</span>
+        <span class="n">ap_status</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_status</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;this is an error&quot;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_status</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">test_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the set_channel method get called correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;11NG&#39;</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">bandwidth</span><span class="o">=</span><span class="s1">&#39;HT20&#39;</span>
+        <span class="n">ap_channel</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_channel</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s1">&#39;channel setting error&#39;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">set_channel</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_channel</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">set_channel</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                                       <span class="n">bandwidth</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TestSubCommand.test_security"><a class="viewcode-back" href="../../../atheros/api/apcommand.atheros.subcommands.TestSubCommand.test_security.html#apcommand.atheros.subcommands.TestSubCommand.test_security">[docs]</a>    <span class="k">def</span> <span class="nf">test_security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the set_security method get called correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s1">&#39;open&#39;</span>
+        <span class="n">ap_module</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">ap_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">apcommand</span><span class="o">.</span><span class="n">accesspoints</span><span class="o">.</span><span class="n">atheros</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="p">)</span>
+        <span class="n">ap_module</span><span class="o">.</span><span class="n">AtherosAR5KAP</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">ap_instance</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s1">&#39;security setting error&#39;</span>
+        <span class="n">ap_instance</span><span class="o">.</span><span class="n">set_security</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros&#39;</span><span class="p">,</span> <span class="n">ap_module</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub_command</span><span class="o">.</span><span class="n">security</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">ap_instance</span><span class="o">.</span><span class="n">set_security</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">security_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">return</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

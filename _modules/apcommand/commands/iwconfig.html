@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.commands.iwconfig &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.commands.iwconfig</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1">#python standard library</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1">#this package</span>
+<span class="kn">import</span> <span class="nn">apcommand.commons.oatbran</span> <span class="kn">as</span> <span class="nn">oatbran</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">CommandError</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+
+
+<div class="viewcode-block" id="IwconfigEnums"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigEnums.html#apcommand.commands.iwconfig.IwconfigEnums">[docs]</a><span class="k">class</span> <span class="nc">IwconfigEnums</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">ssid</span> <span class="o">=</span> <span class="s2">&quot;ssid&quot;</span>
+    <span class="n">bssid</span> <span class="o">=</span> <span class="s2">&quot;bssid&quot;</span>
+    <span class="n">rssi</span> <span class="o">=</span> <span class="s2">&quot;rssi&quot;</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="s1">&#39;noise&#39;</span>
+    <span class="n">bitrate</span> <span class="o">=</span> <span class="s1">&#39;bitrate&#39;</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="s1">&#39;frequency&#39;</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="s1">&#39;protocol&#39;</span>
+    <span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;interface&#39;</span></div>
+<span class="c1"># end class IwconfigEnums</span>
+
+
+<div class="viewcode-block" id="IwconfigCommand"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand">[docs]</a><span class="k">class</span> <span class="nc">IwconfigCommand</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    a class to bundle the connection and the iperf lexer</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="IwconfigCommand.__init__"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;wlan0&#39;</span><span class="p">,</span> <span class="n">not_available</span><span class="o">=</span><span class="s2">&quot;NA&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IwconfigCommand constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: connection to the device</span>
+<span class="sd">         - `interface`: name of the interface (e.g. eth0)</span>
+<span class="sd">         - `not_available`: string to return if the information is N/A</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IwconfigCommand</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_available</span> <span class="o">=</span> <span class="n">not_available</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lexer</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bitrate</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rssi</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bssid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_found_interface</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lexer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A lexer for the iwconfig output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lexer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lexer</span> <span class="o">=</span> <span class="n">IwconfigLexer</span><span class="p">(</span><span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lexer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bitrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the bitrate </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span>
+    
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="n">output</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">bitrate</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">bitrate</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the interface ssid (discovered, not passed to constructor)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">ssid</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">ssid</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rssi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the interface&#39;s rssi</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">rssi</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">rssi</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the interface noise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the BSSID (MAC Address) of the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">bssid</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">bssid</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">found_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the interface in the iwconfig output string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">found_interface</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The frequency of the interface       </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the protocol for the interface </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                                 <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">protocol</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">protocol</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IwconfigCommand.output"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the `iwconfig &lt;interface&gt;` command on the self.connection</span>
+
+<span class="sd">        :rtype: namedtuple</span>
+<span class="sd">        :return: output of the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SSID: {s}</span>
+<span class="s2">        BSSID: {b}</span>
+<span class="s2">        RSSI: {r}</span>
+<span class="s2">        Noise: {n}</span>
+<span class="s2">        Bit Rate: {br}</span>
+<span class="s2">        Frequency: {f}</span>
+<span class="s2">        Protocol: {p}</span>
+<span class="s2">        Interface: {i}</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssid</span><span class="p">,</span>
+                   <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bssid</span><span class="p">,</span>
+                   <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rssi</span><span class="p">,</span>
+                   <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span>
+                   <span class="n">br</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bitrate</span><span class="p">,</span>
+                   <span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span>
+                   <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="p">,</span>
+                   <span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">found_interface</span><span class="p">)</span></div>
+        
+
+<span class="c1"># end class IwconfigCommand</span>
+
+
+<div class="viewcode-block" id="IwconfigLexer"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigLexer.html#apcommand.commands.iwconfig.IwconfigLexer">[docs]</a><span class="k">class</span> <span class="nc">IwconfigLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to extract `iwconfig` information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IwconfigLexer.__init__"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigLexer.html#apcommand.commands.iwconfig.IwconfigLexer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;wlan0&quot;</span><span class="p">,</span> <span class="n">not_available</span><span class="o">=</span><span class="s2">&quot;NA&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iwconfig constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `interface`: the name of the wireless interface</span>
+<span class="sd">         - `not_available`: token to return if the field isn&#39;t found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_available</span> <span class="o">=</span> <span class="n">not_available</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bssid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rssi</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bitrate</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_found_interface</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">found_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Named regular expression to match the found_interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_found_interface</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_found_interface</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Boundaries</span><span class="o">.</span><span class="n">string_start</span> <span class="o">+</span> 
+                                                    <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+                                                                  <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">letters</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">Numbers</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_found_interface</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expression to extract the protocol (e.g. &#39;na&#39; from &#39;IEEE 802.11na&#39;)</span>
+
+<span class="sd">        :return: compiled regular expression with named expression IwconfigEnums.protocol</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;IEEE&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s1">r&#39;802\.11&#39;</span> <span class="o">+</span>
+                                                    <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">protocol</span><span class="p">,</span>
+                                                                  <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">CharacterClass</span><span class="o">.</span><span class="n">character_class</span><span class="p">(</span><span class="s1">&#39;abgn&#39;</span><span class="p">)</span><span class="o">+</span>
+                                                                  <span class="n">oatbran</span><span class="o">.</span><span class="n">Quantifier</span><span class="o">.</span><span class="n">one_or_more</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Named expression to match the frequency</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> <span class="s1">r&#39;(:|=)&#39;</span> <span class="o">+</span>
+                                                    <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> 
+                                                    <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span>
+                                                                  <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Numbers</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s1">&#39;GHz&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span>
+
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bitrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitrate</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+	   <span class="bp">self</span><span class="o">.</span><span class="n">_bitrate</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Bit&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> 
+                                                  <span class="s2">&quot;Rate&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> <span class="s1">r&#39;(:|=)&#39;</span> <span class="o">+</span>
+                                                  <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> 
+                                                  <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">bitrate</span><span class="p">,</span>
+                                                                <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Numbers</span><span class="o">.</span><span class="n">integer</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">everything</span> <span class="o">+</span> <span class="s1">&#39;b/s&#39;</span><span class="p">)</span> <span class="o">+</span>
+                                                  <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitrate</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Noise&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> 
+                                               <span class="s2">&quot;level&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> 
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span>
+                                                             <span class="n">expression</span><span class="o">=</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">Number</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span><span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPattern</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s1">&#39;dBm&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rssi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: compiled regular expression to match the rssi value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rssi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rssi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Signal&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s2">&quot;level&quot;</span><span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">optional_spaces</span> <span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">rssi</span><span class="p">,</span>
+                                                             <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Numbers</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="o">+</span>
+                                               <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s2">&quot;dBm&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rssi</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: compiled regular expression to match the SSID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;ESSID:\&quot;{0}\&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">ssid</span><span class="p">,</span>
+                                                                                     <span class="n">expression</span><span class="o">=</span><span class="s1">&#39;[^&quot;]&#39;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">Quantifier</span><span class="o">.</span><span class="n">one_or_more</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: compiled regular expression to match the BSSID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bssid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bssid</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;Access&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span> <span class="s2">&quot;Point:&quot;</span> <span class="o">+</span> <span class="n">oatbran</span><span class="o">.</span><span class="n">CommonPatterns</span><span class="o">.</span><span class="n">spaces</span> <span class="o">+</span>
+                                                <span class="n">oatbran</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">IwconfigEnums</span><span class="o">.</span><span class="n">bssid</span><span class="p">,</span>
+                                                              <span class="n">expression</span><span class="o">=</span><span class="n">oatbran</span><span class="o">.</span><span class="n">Networking</span><span class="o">.</span><span class="n">mac_address</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bssid</span>
+    
+<div class="viewcode-block" id="IwconfigLexer.search"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigLexer.html#apcommand.commands.iwconfig.IwconfigLexer.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        searches lines for the expression</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `lines`: iterable output of iwconfig command</span>
+<span class="sd">         - `expression`: regular expression to match desired field</span>
+<span class="sd">         - `name`: the name of the group in the expression to return</span>
+
+<span class="sd">        :return: matched sub-string or not_available</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_available</span></div>
+        
+<div class="viewcode-block" id="IwconfigLexer.validate"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.IwconfigLexer.html#apcommand.commands.iwconfig.IwconfigLexer.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks the line for &#39;No such device&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `line`: A string of output from the `iwconfig` command</span>
+
+<span class="sd">        :raise: CommandError if the interface wasn&#39;t found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;No such device&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CommandError</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
+<span class="c1"># end class IwconfigLexer</span>
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.randomizer</span> <span class="kn">import</span> <span class="n">Randomizer</span>
+<span class="kn">from</span> <span class="nn">apcommand.connections.nonlocalconnection</span> <span class="kn">import</span> <span class="n">OutputError</span>
+
+
+<span class="n">EMPTY_TUPLE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">sample_output</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">iwconfig ath0</span>
+<span class="s2">ath0      IEEE 802.11ng  ESSID:&quot;whentwovowelsgoawalking&quot;</span>
+<span class="s2">          Mode:Master  Frequency:2.462 GHz  Access Point: 00:03:7F:12:3A:0F</span>
+<span class="s2">          Bit Rate:130 Mb/s   Tx-Power:15 dBm</span>
+<span class="s2">          RTS thr:off   Fragment thr:off</span>
+<span class="s2">          Encryption key:off</span>
+<span class="s2">          Power Management:off</span>
+<span class="s2">          Link Quality=63/94  Signal level=-72 dBm  Noise level=-95 dBm</span>
+<span class="s2">          Rx invalid nwid:26742  Rx invalid crypt:0  Rx invalid frag:0</span>
+<span class="s2">          Tx excessive retries:0  Invalid misc:0   Missed beacon:0</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SAMPLE_BITRATE</span> <span class="o">=</span> <span class="s1">&#39;130 Mb/s&#39;</span>
+<span class="n">SAMPLE_SSID</span> <span class="o">=</span> <span class="s1">&#39;whentwovowelsgoawalking&#39;</span>
+<span class="n">SAMPLE_RSSI</span> <span class="o">=</span> <span class="s1">&#39;-72&#39;</span>
+<span class="n">SAMPLE_NOISE</span> <span class="o">=</span> <span class="s1">&#39;-95&#39;</span>
+<span class="n">SAMPLE_MAC</span> <span class="o">=</span> <span class="s1">&#39;00:03:7F:12:3A:0F&#39;</span>
+<span class="n">SAMPLE_FREQUENCY</span> <span class="o">=</span> <span class="s1">&#39;2.462&#39;</span>
+<span class="n">SAMPLE_PROTOCOL</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span>
+<span class="n">SAMPLE_INTERFACE</span> <span class="o">=</span> <span class="s1">&#39;ath0&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">TestIwconfig</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">random_letters</span><span class="p">(</span><span class="n">maximum</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Randomizer</span><span class="o">.</span><span class="n">random_integer</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">na</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">random_string</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span> <span class="o">=</span> <span class="n">IwconfigCommand</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                 <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+                                 <span class="n">not_available</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">na</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TestIwconfig.test_constructor"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_constructor.html#apcommand.commands.iwconfig.TestIwconfig.test_constructor">[docs]</a>    <span class="k">def</span> <span class="nf">test_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the constructor take the expected arguments?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">na</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">not_available</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">setup_sample_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">sample_output</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">o_e</span> <span class="o">=</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">o_e</span>
+        <span class="k">return</span>
+    
+<div class="viewcode-block" id="TestIwconfig.test_bitrate"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_bitrate.html#apcommand.commands.iwconfig.TestIwconfig.test_bitrate">[docs]</a>    <span class="k">def</span> <span class="nf">test_bitrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the iwconfig make the correct call to the connection?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">bitrate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">bitrate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_BITRATE</span><span class="p">,</span> <span class="n">bitrate</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestIwconfig.test_ssid"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_ssid.html#apcommand.commands.iwconfig.TestIwconfig.test_ssid">[docs]</a>    <span class="k">def</span> <span class="nf">test_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dose it get the sample SSID?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">ssid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">ssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_SSID</span><span class="p">,</span> <span class="n">ssid</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestIwconfig.test_rssi"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_rssi.html#apcommand.commands.iwconfig.TestIwconfig.test_rssi">[docs]</a>    <span class="k">def</span> <span class="nf">test_rssi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the correct RSSI?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">rssi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">rssi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_RSSI</span><span class="p">,</span> <span class="n">rssi</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestIwconfig.test_noise"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_noise.html#apcommand.commands.iwconfig.TestIwconfig.test_noise">[docs]</a>    <span class="k">def</span> <span class="nf">test_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the correct noise?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">noise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_NOISE</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestIwconfig.test_bssid"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_bssid.html#apcommand.commands.iwconfig.TestIwconfig.test_bssid">[docs]</a>    <span class="k">def</span> <span class="nf">test_bssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the right MAC Address?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">bssid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">bssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_MAC</span><span class="p">,</span> <span class="n">bssid</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestIwconfig.test_frequency"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_frequency.html#apcommand.commands.iwconfig.TestIwconfig.test_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">test_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the right frequency?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_FREQUENCY</span><span class="p">,</span> <span class="n">frequency</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+    
+<div class="viewcode-block" id="TestIwconfig.test_protocol"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_protocol.html#apcommand.commands.iwconfig.TestIwconfig.test_protocol">[docs]</a>    <span class="k">def</span> <span class="nf">test_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the protocol?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">protocol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_PROTOCOL</span><span class="p">,</span> <span class="n">protocol</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+
+<div class="viewcode-block" id="TestIwconfig.test_interface"><a class="viewcode-back" href="../../../commands/api/apcommand.commands.iwconfig.TestIwconfig.test_interface.html#apcommand.commands.iwconfig.TestIwconfig.test_interface">[docs]</a>    <span class="k">def</span> <span class="nf">test_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it match the interface string?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="n">interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">found_interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">SAMPLE_INTERFACE</span><span class="p">,</span> <span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">TestIwconfigLexer</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span> <span class="o">=</span> <span class="n">IwconfigLexer</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the expression match the frequency?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">example</span> <span class="o">=</span> <span class="s1">&#39;Frequency:2.437 GHz&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRegexpMatches</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">test_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the expression match the protocol?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="s2">&quot;IEEE 802.11bgn&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRegexpMatches</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">protocol</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">test_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it match the interface string?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="s1">&#39;ath0 IEEE 802.11ng ESSID:ath0ap&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRegexpMatches</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">found_interface</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotRegexpMatches</span><span class="p">(</span><span class="s1">&#39;ESSID:ath0&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">found_interface</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.atheros &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.atheros</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractproperty</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">apcommand.connections.telnetconnection</span> <span class="kn">import</span> <span class="n">TelnetConnection</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">CommandError</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">ArgumentError</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.arbitrarycommand</span> <span class="kn">import</span> <span class="n">ArbitraryCommand</span>
+<span class="kn">from</span> <span class="nn">apcommand.commands.settingsvalidator</span> <span class="kn">import</span> <span class="n">SettingsValidator</span>
+
+<span class="n">EMPTY_STRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">FIVE_GHZ_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_2&#39;</span>
+
+<span class="n">TWO_POINT_FOUR</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+<span class="n">FIVE</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span>
+<span class="n">BAND_ID</span> <span class="o">=</span> <span class="p">{</span><span class="n">TWO_POINT_FOUR</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="n">FIVE</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="n">G_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT20&#39;</span>
+<span class="n">A_LOWER_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT40PLUS&#39;</span>
+<span class="n">A_UPPER_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT40MINUS&#39;</span>
+
+<div class="viewcode-block" id="LineLogger"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.LineLogger.html#apcommand.accesspoints.atheros.LineLogger">[docs]</a><span class="k">class</span> <span class="nc">LineLogger</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to log lines of output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LineLogger.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.LineLogger.html#apcommand.accesspoints.atheros.LineLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        LineLogger constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LineLogger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="LineLogger.__call__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.LineLogger.__call__.html#apcommand.accesspoints.atheros.LineLogger.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">error_substring</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send lines from output to debug log</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `output`: iterable collection of strings</span>
+<span class="sd">         - `error_substring`: string that raises CommandError if matches</span>
+
+<span class="sd">        :postcondition: lines from output sent to debug logger</span>
+<span class="sd">        :raises: CommandError if error_substring found in output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="s1">&#39;info&#39;</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">error_substring</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">error_substring</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">CommandError</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">logger</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="Configure"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.Configure.html#apcommand.accesspoints.atheros.Configure">[docs]</a><span class="k">class</span> <span class="nc">Configure</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A context manager for configure commands on the Atheros</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Configure.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.Configure.html#apcommand.accesspoints.atheros.Configure.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">radio_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Configure constructor </span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: connection to AP&#39;s command-line interface</span>
+<span class="sd">         - `radio_id`: the id (0 for 2.4ghz 1 for 5GHz)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Configure</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radio_id</span> <span class="o">=</span> <span class="n">radio_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">connection</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;radio id: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">radio_id</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A logger of output lines</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="n">LineLogger</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span>
+
+<div class="viewcode-block" id="Configure.__enter__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.Configure.__enter__.html#apcommand.accesspoints.atheros.Configure.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes down the AP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># turn off the wifi interface</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="c1"># tell it which radio to set up (0=2.4GHz, 1=5GHz)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_RADIO_ID={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="c1"># tell it to only start up the current radio, not both ath0 and ath1</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_STARTMODE=standard&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span></div>
+
+<div class="viewcode-block" id="Configure.__exit__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.Configure.__exit__.html#apcommand.accesspoints.atheros.Configure.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Commits the configuration and brings up the AP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># commit the configuration changes        </span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="c1"># bring up the AP</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.html#apcommand.accesspoints.atheros.AtherosAR5KAP">[docs]</a><span class="k">class</span> <span class="nc">AtherosAR5KAP</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A controller for the Atheros AR5KAP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AtherosAR5KAP.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.html#apcommand.accesspoints.atheros.AtherosAR5KAP.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;10.10.10.21&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;5up&#39;</span><span class="p">,</span>
+                 <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ath0&#39;</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The AtherosAR5KAP constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `hostname`: the hostname (IP address) of the AP&#39;s telnet interface</span>
+<span class="sd">         - `username`: the user-login to the AP command-line interface</span>
+<span class="sd">         - `password`: the password for the AP command-line interface</span>
+<span class="sd">         - `interface`: the settings validator needs the VAP name</span>
+<span class="sd">         - `connection`: overrides the TelnetConnection creation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtherosAR5KAP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_command_executor</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A settings validator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span> <span class="o">=</span> <span class="n">SettingsValidator</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">command_executor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An executor of arbitrary commands (just dumps output to screen)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_executor</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_command_executor</span> <span class="o">=</span> <span class="n">ArbitraryCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_executor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A LineLogger to log lines of output</span>
+
+<span class="sd">        :return: line-logging object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="n">LineLogger</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The telnet connection to the AP</span>
+
+<span class="sd">        :return: TelnetConnection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">TelnetConnection</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                                                <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
+        
+<div class="viewcode-block" id="AtherosAR5KAP.up"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.up.html#apcommand.accesspoints.atheros.AtherosAR5KAP.up">[docs]</a>    <span class="k">def</span> <span class="nf">up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Brings the AP up</span>
+
+<span class="sd">        :postcondition: `apup` called on the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.down"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.down.html#apcommand.accesspoints.atheros.AtherosAR5KAP.down">[docs]</a>    <span class="k">def</span> <span class="nf">down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes the AP down</span>
+
+<span class="sd">        :postcondition: `apdown` called on the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.destroy"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.destroy.html#apcommand.accesspoints.atheros.AtherosAR5KAP.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes down a VAP</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `interface`: name of VAP</span>
+
+<span class="sd">        :postcondition: wlanconfig destroy called on connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">wlanconfig</span><span class="p">(</span><span class="s2">&quot;{0} destroy&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interface</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">error_substring</span><span class="o">=</span><span class="s1">&#39;No such device&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.status"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.status.html#apcommand.accesspoints.atheros.AtherosAR5KAP.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ath0&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        iwconfig, ifconfig, iwlist for interface (use &#39;all&#39; for all interfaces)</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `interface`: name of network interface (e.g. ath0)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">interface</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="p">(</span><span class="n">interface</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">error_substring</span><span class="o">=</span><span class="s1">&#39;No such device&#39;</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ifconfig</span><span class="p">(</span><span class="s2">&quot;{0} | grep &#39;inet addr&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interface</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">error_substring</span><span class="o">=</span><span class="s1">&#39;Device not found&#39;</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="p">(</span><span class="s2">&quot;{0} channel | grep Current&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interface</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CommandError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;interface {0} seems to be down&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interface</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.reset"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.reset.html#apcommand.accesspoints.atheros.AtherosAR5KAP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the AP configuration back to the factory defaults</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `band`: 2.4 or 5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">radio</span> <span class="o">=</span> <span class="n">BAND_ID</span><span class="p">[</span><span class="n">band</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">radio_id</span><span class="o">=</span><span class="n">radio</span><span class="p">):</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-x&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.set_ssid"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_ssid.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_ssid">[docs]</a>    <span class="k">def</span> <span class="nf">set_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ssid</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the SSID</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `band`: 2.4 or 5 (they share the SSID, but this will decide which comes up)</span>
+<span class="sd">         - `ssid`: string name to set the ssid to </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">radio_id</span><span class="o">=</span><span class="n">BAND_ID</span><span class="p">[</span><span class="n">band</span><span class="p">]):</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_SSID={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ssid</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.set_ip"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_ip.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_ip">[docs]</a>    <span class="k">def</span> <span class="nf">set_ip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="s1">&#39;10.10.10.21&#39;</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="s1">&#39;255.255.255.0&#39;</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the AP&#39;s IP address</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `address`: the IP address to use</span>
+<span class="sd">         - `mask`: the subnet mask</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">radio_id</span><span class="o">=</span><span class="n">BAND_ID</span><span class="p">[</span><span class="n">band</span><span class="p">]):</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_IPADDR={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_NETMASK={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.set_channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_channel.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_channel">[docs]</a>    <span class="k">def</span> <span class="nf">set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the channel on the AP</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: A valid 802.11 channel</span>
+<span class="sd">         - `mode`: optional mode (e.g. 11NG)</span>
+<span class="sd">         - `bandwidth`: bandwidth for the mode (e.g. HT40PLUS)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">changer</span> <span class="o">=</span> <span class="n">AtherosChannelChanger</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">changer</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.set_security"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_security.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_security">[docs]</a>    <span class="k">def</span> <span class="nf">set_security</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">security_type</span><span class="o">=</span><span class="s1">&#39;open&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the security on the access point</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `security_type`: one of {open, WEP, WPA, WPA2}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">security_type</span> <span class="o">==</span> <span class="s1">&#39;open&#39;</span><span class="p">:</span>
+            <span class="n">setter_class</span> <span class="o">=</span> <span class="n">AtherosOpen</span>
+        <span class="n">setter</span> <span class="o">=</span> <span class="n">setter_class</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">setter</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosAR5KAP.exec_command"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosAR5KAP.exec_command.html#apcommand.accesspoints.atheros.AtherosAR5KAP.exec_command">[docs]</a>    <span class="k">def</span> <span class="nf">exec_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send command to the connection and dump output to the screen</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command_executor</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="AtherosSecuritySetter"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosSecuritySetter.html#apcommand.accesspoints.atheros.AtherosSecuritySetter">[docs]</a><span class="k">class</span> <span class="nc">AtherosSecuritySetter</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A base-class to change the AP&#39;s security</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+<div class="viewcode-block" id="AtherosSecuritySetter.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosSecuritySetter.html#apcommand.accesspoints.atheros.AtherosSecuritySetter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AtherosSecuritySetter Constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: connection to the AP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtherosSecuritySetter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A logger to get lines from output and log them</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="n">LineLogger</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AtherosSecuritySetter.__call__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosSecuritySetter.__call__.html#apcommand.accesspoints.atheros.AtherosSecuritySetter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main interface to the changers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="AtherosOpen"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosOpen.html#apcommand.accesspoints.atheros.AtherosOpen">[docs]</a><span class="k">class</span> <span class="nc">AtherosOpen</span><span class="p">(</span><span class="n">AtherosSecuritySetter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setter for open-security</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AtherosOpen.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosOpen.html#apcommand.accesspoints.atheros.AtherosOpen.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AtherosOpen constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtherosOpen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosOpen.__call__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosOpen.__call__.html#apcommand.accesspoints.atheros.AtherosOpen.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sets the security mode to open</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;setting the security to open&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">):</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_SECMODE=None&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="AtherosChannelChanger"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.html#apcommand.accesspoints.atheros.AtherosChannelChanger">[docs]</a><span class="k">class</span> <span class="nc">AtherosChannelChanger</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A channel changer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AtherosChannelChanger.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.html#apcommand.accesspoints.atheros.AtherosChannelChanger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ath0&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AtherosChannelChanger constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: the connection to the AP</span>
+<span class="sd">         - `interface`: name of the network interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtherosChannelChanger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel_to_bandwidth</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_lower_channels</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_upper_channels</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_channels</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel_mode_map</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of the acceptable 2.4 and 5 GHz channels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channels</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">g_channelS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of 2.4 GHz channels (as strings)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">a_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of the 5 GHz channels (without DFS channels)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_a_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_lower_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_upper_channels</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_channels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">a_lower_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of the 5 GHz channels that form a lower-bound</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_lower_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_a_lower_channels</span> <span class="o">=</span> <span class="s1">&#39;36 44 149 157&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_lower_channels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">a_upper_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of the 5 GHz channels that form an upper-bound</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_upper_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_a_upper_channels</span> <span class="o">=</span> <span class="s2">&quot;40 48 153 161&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_upper_channels</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel_to_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A map from a channel to the default bandwidth</span>
+
+<span class="sd">        :rtype: DictType</span>
+<span class="sd">        :return: channel:bandwidth string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_to_bandwidth</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            
+            <span class="n">g_bandwidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">G_BANDWIDTH</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g_channels</span><span class="p">))]</span>
+            <span class="n">a_lower_bandwidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">A_LOWER_BANDWIDTH</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a_lower_channels</span><span class="p">))]</span>
+            <span class="n">a_upper_bandwidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">A_UPPER_BANDWIDTH</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a_upper_channels</span><span class="p">))]</span>
+
+            <span class="n">bandwidths</span> <span class="o">=</span> <span class="n">g_bandwidths</span> <span class="o">+</span> <span class="n">a_lower_bandwidths</span> <span class="o">+</span> <span class="n">a_upper_bandwidths</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel_to_bandwidth</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">bandwidths</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_to_bandwidth</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A logger of lines</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span> <span class="o">=</span> <span class="n">LineLogger</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_lines</span>
+
+<div class="viewcode-block" id="AtherosChannelChanger.bandwidth"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.bandwidth.html#apcommand.accesspoints.atheros.AtherosChannelChanger.bandwidth">[docs]</a>    <span class="k">def</span> <span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a mode appropriate for the channel, based on T/H&#39;s defaults</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: integer (or string) WiFi channel (e.g. 11)</span>
+
+<span class="sd">        :return: string of form &#39;HT(20|40)[MINUS|PLUS]</span>
+<span class="sd">        :raise: ArgumentError if invalid (DFS channels not allowed)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_to_bandwidth</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;Invalid Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosChannelChanger.mode"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.mode.html#apcommand.accesspoints.atheros.AtherosChannelChanger.mode">[docs]</a>    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The mode appropriate for the channel (e.g. 11NA)</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: 2.4 GHz or 5GHz channels</span>
+
+<span class="sd">        :return: string of the form `11N(G|A)`</span>
+<span class="sd">        :raises: ArgumentError if channel invalid (DFS considered invalid too)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;11NG&quot;</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;11NA&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;Invalid Channel ({0})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosChannelChanger.parameter_suffix"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.html#apcommand.accesspoints.atheros.AtherosChannelChanger.parameter_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The suffix for cfg -a parameter names</span>
+
+<span class="sd">        :return: (&#39;&#39;|&#39;_2&#39;)</span>
+<span class="sd">        :raises: ArgumentError for invalid channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EMPTY_STRING</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FIVE_GHZ_SUFFIX</span>
+        <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;Invalid Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span> </div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">g_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a list of valid channels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_channels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">a_channels_mode_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A map from a</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_channels_mode_map</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">set_1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">4</span><span class="p">)]</span>
+                <span class="c1"># Henry W says to ignore DFS Channels</span>
+                <span class="c1">#set_2 = [str(j) for j in range(100,141,4)]</span>
+            <span class="n">set_3</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">149</span><span class="p">,</span><span class="mi">166</span><span class="p">,</span><span class="mi">4</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="o">=</span> <span class="n">set_1</span> <span class="o">+</span> <span class="n">set_3</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span>
+
+<div class="viewcode-block" id="AtherosChannelChanger.band"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.band.html#apcommand.accesspoints.atheros.AtherosChannelChanger.band">[docs]</a>    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the band for the channel</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: non-DFS 802.11 channel</span>
+<span class="sd">        </span>
+<span class="sd">        :return: (2.4|5)</span>
+<span class="sd">        :raises: ArgumentError if the channel is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">TWO_POINT_FOUR</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FIVE</span>
+        <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;Invalid Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="AtherosChannelChanger.__call__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.__call__.html#apcommand.accesspoints.atheros.AtherosChannelChanger.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        method to set the channel on the AP</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: string or integer in valid_channels</span>
+<span class="sd">         - `mode`: 11NA, 11NG, 11A, 11G, 11B</span>
+<span class="sd">         - `bandwidth`: HT20, HT40, HT40PLUS, HT40MINUS (valid for mode)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bandwidth</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+
+        <span class="n">parameter_suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_suffix</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+
+        <span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">radio_id</span><span class="o">=</span><span class="n">BAND_ID</span><span class="p">[</span><span class="n">band</span><span class="p">]):</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_CHMODE{1}={0}{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span>
+                                                                                 <span class="n">parameter_suffix</span><span class="p">,</span>
+                                                                                 <span class="n">bandwidth</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_PRIMARY_CH{1}={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span>
+                                                                                 <span class="n">parameter_suffix</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_lines</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AtherosChannelChanger.validate_channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.AtherosChannelChanger.validate_channel.html#apcommand.accesspoints.atheros.AtherosChannelChanger.validate_channel">[docs]</a>    <span class="k">def</span> <span class="nf">validate_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check to see if the channel is acceptible</span>
+
+<span class="sd">        :raises: ArgumentError if not a valid 2.4 GHz channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;Invalid Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span></div></div>
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="c1"># third party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">call</span><span class="p">,</span> <span class="n">patch</span>
+<span class="kn">from</span> <span class="nn">nose.tools</span> <span class="kn">import</span> <span class="n">raises</span>
+
+<span class="n">ENTER_CALLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">apdown</span><span class="p">(),</span> <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_RADIO_ID=0&#39;</span><span class="p">),</span>
+               <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_STARTMODE=standard&#39;</span><span class="p">)]</span>
+<span class="n">EXIT_CALLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">),</span> <span class="n">call</span><span class="o">.</span><span class="n">apup</span><span class="p">()]</span>
+
+<span class="n">EMPTY_TUPLE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">TestAR5KAP</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span> <span class="o">=</span> <span class="n">AtherosAR5KAP</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">_validate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">set_context_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="k">return</span>
+    
+<div class="viewcode-block" id="TestAR5KAP.test_constructor"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_constructor.html#apcommand.accesspoints.atheros.TestAR5KAP.test_constructor">[docs]</a>    <span class="k">def</span> <span class="nf">test_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the constructor set the correct defaults?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;10.10.10.21&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">hostname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;5up&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_up"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_up.html#apcommand.accesspoints.atheros.TestAR5KAP.test_up">[docs]</a>    <span class="k">def</span> <span class="nf">test_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the AP controller bring the ap up correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">up</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_down"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_down.html#apcommand.accesspoints.atheros.TestAR5KAP.test_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the AP controller bring the AP down?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">down</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_destroy"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_destroy.html#apcommand.accesspoints.atheros.TestAR5KAP.test_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">test_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the controller bring the VAP down?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">wlanconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">destroy</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">wlanconfig</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;ath0 destroy&quot;</span><span class="p">)</span>
+
+        <span class="c1"># vap not up</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">wlanconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;wlanconfig: ioctl: No such device</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">CommandError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">destroy</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ath0&#39;</span><span class="p">])</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_status"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_status.html#apcommand.accesspoints.atheros.TestAR5KAP.test_status">[docs]</a>    <span class="k">def</span> <span class="nf">test_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the controller query iwconfig and ifconfig?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ifconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;ath0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ifconfig</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;ath0 | grep &#39;inet addr&#39;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;ath0 channel | grep Current&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;ath0: No such device</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1">#self.assertRaises(CommandError, self.ap.status, [&#39;ath0&#39;])</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_ifconfig_fail"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_ifconfig_fail.html#apcommand.accesspoints.atheros.TestAR5KAP.test_ifconfig_fail">[docs]</a>    <span class="k">def</span> <span class="nf">test_ifconfig_fail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does a missing interface not raise an error?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ifconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;ifconfig: ath0: error fetching interface information: Device not found</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1">#self.assertRaises(CommandError, self.ap.status, [&#39;ath0&#39;])</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_reset"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_reset.html#apcommand.accesspoints.atheros.TestAR5KAP.test_reset">[docs]</a>    <span class="k">def</span> <span class="nf">test_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the reset clear the configuration?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="n">ENTER_CALLS</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-x&#39;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_set_ssid"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_ssid.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_ssid">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the control set the ssid correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>        
+        <span class="n">ssid</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">printable</span><span class="p">)</span> <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">set_ssid</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">,</span> <span class="n">ssid</span><span class="o">=</span><span class="n">ssid</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="n">ENTER_CALLS</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_SSID={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ssid</span><span class="p">))]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_set_channel_24"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_24.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_24">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_channel_24</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the controller get the right channel changer and call it?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">changer</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">changer_call</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">changer</span><span class="o">.</span><span class="n">__call__</span> <span class="o">=</span> <span class="n">changer_call</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros.AtherosChannelChanger&#39;</span><span class="p">,</span> <span class="n">changer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">set_channel</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="n">changer</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_set_channel_5"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_5.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_5">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_channel_5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the controller get the right (5GHz) channel changer and call it?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="c1">#set_1 = [str(i) for i in range(36,65,4)]</span>
+        <span class="c1">#set_2 = [str(j) for j in range(100,141,4)]</span>
+        <span class="c1">#set_3 = [str(k) for k in range(149,166,4)]</span>
+        <span class="c1">#channels = set_1 + set_2 + set_3</span>
+        <span class="c1"># the the number of used channels was reduced</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="s1">&#39;36 44 149 157 40 48 153 161&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span>
+        <span class="n">changer</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros.AtherosChannelChanger&#39;</span><span class="p">,</span> <span class="n">changer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">set_channel</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="n">changer</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAR5KAP.test_set_security"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_security.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_security">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the controller get the right setter and call it?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="n">security_type</span> <span class="o">=</span> <span class="s1">&#39;open&#39;</span>
+        <span class="n">setter</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.atheros.AtherosOpen&#39;</span><span class="p">,</span> <span class="n">setter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">set_security</span><span class="p">(</span><span class="n">security_type</span><span class="o">=</span><span class="n">security_type</span><span class="p">)</span>
+        <span class="n">setter</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="n">ENTER_CALLS</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_SECMODE=None&#39;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">test_set_ip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it call the connection correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="n">expected_ip</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">))</span> <span class="k">for</span> <span class="n">octet</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)])</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="s1">&#39;255.&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">((</span><span class="s1">&#39;255&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">octet</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">expected_ip</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ap</span><span class="o">.</span><span class="n">set_ip</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">expected_ip</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="n">ENTER_CALLS</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_IPADDR={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected_ip</span><span class="p">)),</span>
+                               <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_NETMASK={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mask</span><span class="p">))]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestConfigure</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests the Configure context manager</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radio_id</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure</span> <span class="o">=</span> <span class="n">Configure</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                   <span class="n">radio_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radio_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">set_context_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TestConfigure.test_constructor"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestConfigure.test_constructor.html#apcommand.accesspoints.atheros.TestConfigure.test_constructor">[docs]</a>    <span class="k">def</span> <span class="nf">test_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the configure have the right constructor?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="o">.</span><span class="n">radio_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radio_id</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestConfigure.test_enter"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestConfigure.test_enter.html#apcommand.accesspoints.atheros.TestConfigure.test_enter">[docs]</a>    <span class="k">def</span> <span class="nf">test_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the context manager take down the ap?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s1">&#39;ath0&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestConfigure.test_exit"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestConfigure.test_exit.html#apcommand.accesspoints.atheros.TestConfigure.test_exit">[docs]</a>    <span class="k">def</span> <span class="nf">test_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the context manager commit the configuration and bring the AP up?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        
+        <span class="k">with</span> <span class="n">Configure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">apdown</span><span class="p">(),</span> <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_RADIO_ID=0&#39;</span><span class="p">),</span>
+                 <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_STARTMODE=standard&#39;</span><span class="p">),</span>
+                 <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">),</span> <span class="n">call</span><span class="o">.</span><span class="n">apup</span><span class="p">()]</span>
+                 <span class="c1">#call.wlanconfig(&quot;ath1 destroy&quot;)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<span class="k">class</span> <span class="nc">TestAtheros24</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span> <span class="o">=</span> <span class="n">AtherosChannelChanger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">set_context_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">g_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">bad_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TestAtheros24.test_bandwidth"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros24.test_bandwidth.html#apcommand.accesspoints.atheros.TestAtheros24.test_bandwidth">[docs]</a>    <span class="k">def</span> <span class="nf">test_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer get an appropriate bandwidth for the channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channel</span><span class="p">()</span>
+        <span class="n">bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">G_BANDWIDTH</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bad_channel</span><span class="p">())</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAtheros24.test_parameter_suffix"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros24.test_parameter_suffix.html#apcommand.accesspoints.atheros.TestAtheros24.test_parameter_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">test_parameter_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer get the appropriate parameter suffix for the channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channel</span><span class="p">()</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">parameter_suffix</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">EMPTY_STRING</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">parameter_suffix</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">bad_channel</span><span class="p">())</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros24.test_mode"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros24.test_mode.html#apcommand.accesspoints.atheros.TestAtheros24.test_mode">[docs]</a>    <span class="k">def</span> <span class="nf">test_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the mode method get the right mode based on the channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channel</span><span class="p">()</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s1">&#39;11NG&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">bad_channel</span><span class="p">())</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros24.test_band"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros24.test_band.html#apcommand.accesspoints.atheros.TestAtheros24.test_band">[docs]</a>    <span class="k">def</span> <span class="nf">test_band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer get the 2.4 band?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channel</span><span class="p">()</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="s1">&#39;2.4&#39;</span><span class="p">)</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bad_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">band</span><span class="p">,</span> <span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros24.test_set_channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros24.test_set_channel.html#apcommand.accesspoints.atheros.TestAtheros24.test_set_channel">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the ap configure set the channel correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="n">ENTER_CALLS</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_CHMODE=11NGHT20&#39;</span><span class="p">),</span>
+                                    <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_PRIMARY_CH={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<span class="k">class</span> <span class="nc">TestAtheros5GHz</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span> <span class="o">=</span> <span class="n">AtherosChannelChanger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enter_calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">apdown</span><span class="p">(),</span> <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_RADIO_ID=1&#39;</span><span class="p">),</span>
+               <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_STARTMODE=standard&#39;</span><span class="p">)]</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">set_context_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">dfs_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span><span class="mi">141</span><span class="p">,</span><span class="mi">4</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">a_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">4</span><span class="p">)]</span> <span class="o">+</span>
+                            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">149</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">4</span><span class="p">)])</span>
+
+<div class="viewcode-block" id="TestAtheros5GHz.test_band"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_band.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_band">[docs]</a>    <span class="k">def</span> <span class="nf">test_band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer get the 5 ghz band?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channel</span><span class="p">()</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">FIVE</span><span class="p">,</span> <span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros5GHz.test_bandwidth"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_bandwidth.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_bandwidth">[docs]</a>    <span class="k">def</span> <span class="nf">test_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer select the correct 5ghz bandwidth?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channel</span><span class="p">()</span>
+        <span class="n">bandwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="s1">&#39;40 48 153 161&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">A_UPPER_BANDWIDTH</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">A_LOWER_BANDWIDTH</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">)</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dfs_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">,</span> <span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros5GHz.test_parameter_suffix"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_parameter_suffix.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_parameter_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">test_parameter_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer return the cfg -a parameter suffix for 5GHZ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channel</span><span class="p">()</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">parameter_suffix</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;_2&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dfs_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">parameter_suffix</span><span class="p">,</span> <span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="TestAtheros5GHz.test_mode"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_mode.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_mode">[docs]</a>    <span class="k">def</span> <span class="nf">test_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer return the default 5GHz mode?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channel</span><span class="p">()</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>                                 
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s1">&#39;11NA&#39;</span><span class="p">)</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dfs_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+        <span class="k">return</span></div>
+    
+        
+<div class="viewcode-block" id="TestAtheros5GHz.test_set_channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_set_channel.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_set_channel">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the ap configure set the channel correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="s1">&#39;40 48 153 161&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">A_UPPER_BANDWIDTH</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">A_LOWER_BANDWIDTH</span>
+
+        <span class="n">calls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enter_calls</span> <span class="o">+</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_CHMODE_2=11NA{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">)),</span>
+                                    <span class="n">call</span><span class="o">.</span><span class="n">cfg</span><span class="p">(</span><span class="s1">&#39;-a AP_PRIMARY_CH_2={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))]</span> <span class="o">+</span> <span class="n">EXIT_CALLS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">method_calls</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestAtheros5GHz.test_validate_channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_validate_channel.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_validate_channel">[docs]</a>    <span class="k">def</span> <span class="nf">test_validate_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the changer raise an ArgumentError for an invalid channel?&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dfs_channel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ArgumentError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">changer</span><span class="o">.</span><span class="n">validate_channel</span><span class="p">,</span> <span class="p">[</span><span class="n">channel</span><span class="p">])</span>
+        <span class="k">return</span></div>
+
+<span class="k">class</span> <span class="nc">TestAtherosOpen</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_context_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apdown</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">apup</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">EMPTY_TUPLE</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setter</span> <span class="o">=</span> <span class="n">AtherosOpen</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TestAtherosOpen.test_call"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.accesspoints.atheros.TestAtherosOpen.test_call.html#apcommand.accesspoints.atheros.TestAtherosOpen.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the __call__ issue the correct commands?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_context_connection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setter</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

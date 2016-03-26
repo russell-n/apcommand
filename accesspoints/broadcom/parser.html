@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Broadcom BCM94718NR Parser &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="The Broadcom Modules" href="index.html" />
+    <link rel="next" title="apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup" href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html" />
+    <link rel="prev" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Broadcom BCM94718NR Parser</a><ul>
+<li><a class="reference internal" href="#the-radio-asp-html">The <cite>radio.asp</cite> HTML</a><ul>
+<li><a class="reference internal" href="#radio-state">Radio State</a></li>
+<li><a class="reference internal" href="#the-selected-case">The Selected Case</a></li>
+<li><a class="reference internal" href="#the-wireless-interface">The Wireless Interface</a></li>
+<li><a class="reference internal" href="#the-grammar">The Grammar</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-souperror">The SoupError</a></li>
+<li><a class="reference internal" href="#the-broadcombasesoup">The BroadcomBaseSoup</a></li>
+<li><a class="reference internal" href="#the-broadcomradiosoup">The BroadcomRadioSoup</a><ul>
+<li><a class="reference internal" href="#the-soup-queries">The Soup Queries</a><ul>
+<li><a class="reference internal" href="#find">Find</a></li>
+<li><a class="reference internal" href="#tag-attributes">Tag Attributes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#text">Text</a><ul>
+<li><a class="reference internal" href="#user-client-api">User (client) API</a></li>
+<li><a class="reference internal" href="#developer-api">Developer API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-broadcomlansoup">The BroadcomLANSoup</a></li>
+<li><a class="reference internal" href="#the-broadcomssidsoup">The BroadcomSSIDSoup</a></li>
+<li><a class="reference internal" href="#some-cases">Some Cases</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__.html" title="Previous Chapter: apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.acc...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html" title="Next Chapter: apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.acc... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/accesspoints/broadcom/parser.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-broadcom-bcm94718nr-parser">
+<h1>The Broadcom BCM94718NR Parser<a class="headerlink" href="#the-broadcom-bcm94718nr-parser" title="Permalink to this headline">¶</a></h1>
+<p>This is a module to hold an interpreter to pull information from the Broadcom html pages. It uses <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> to break the html tree apart and then regular expressions to extract the specific bits of text.</p>
+<div class="section" id="the-radio-asp-html">
+<h2>The <cite>radio.asp</cite> HTML<a class="headerlink" href="#the-radio-asp-html" title="Permalink to this headline">¶</a></h2>
+<p>I know very little about HTML and web scraping and am making this empirically so I will use this as a lab-report as much as a code-module.</p>
+<div class="section" id="radio-state">
+<h3>Radio State<a class="headerlink" href="#radio-state" title="Permalink to this headline">¶</a></h3>
+<p>Assuming that there is a <cite>response</cite> object that was returned from a &#8216;GET&#8217; request to the <cite>radio.asp</cite> page, the
+state of the radio can be pulled using beautiful soup:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>The <cite>state</cite> variable now should have some text like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;select name=&quot;wl_radio&quot;&gt;
+&lt;option selected value=&quot;0&quot;&gt;Disabled&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Enabled&lt;/option&gt;
+&lt;/select&gt;
+</pre></div>
+</div>
+<p>If you look at the <cite>soup.find</cite> parameters you can see that it chose the sub-tree that had a tag attribute matching the dictionary I passed in (i.e. I passed in <code class="docutils literal"><span class="pre">{'name'='wl_radio'}</span> <span class="pre">and</span> <span class="pre">it</span> <span class="pre">pulled</span> <span class="pre">the</span> <span class="pre">subtree</span> <span class="pre">whose</span> <span class="pre">parent</span> <span class="pre">has</span> <span class="pre">the</span> <span class="pre">attribute</span> <span class="pre">``name=&quot;wl_radio&quot;</span></code>).</p>
+<p>The lines with the <cite>option</cite> tags can be interpreted this way:</p>
+<blockquote>
+<div><ul class="simple">
+<li>if it has <code class="docutils literal"><span class="pre">selected</span></code> then that is the current state of the Wireless Interface that the user would see if this were in a browser</li>
+<li>If the <code class="docutils literal"><span class="pre">selected</span></code> text is &#8216;Disabled&#8217;, the radio is off, if &#8216;Enabled&#8217; the radio is on</li>
+</ul>
+</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Although it looks like a string when you print the output of <cite>soup.find</cite> what you actually get is a <cite>bs4.element.Tag</cite> object.</p>
+</div>
+<p>The previous warning means that you cannot search it directly with a regular expression or string search, but you can cast it to a string:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">state_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It also means that you can use the <cite>find</cite> method to burrow your way down to the right child without regular expressions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">select</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">})</span>
+<span class="n">radio_state</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span>
+<span class="n">state_string</span> <span class="o">=</span> <span class="n">radio_state</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>The variable <cite>state_string</cite> now contains the (unicode) string &#8216;Disabled&#8217;. You could also do it as one line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">state_string</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>One thing that is not mentioned here is which interface we&#8217;re looking at. It turns out that you can&#8217;t tell just by looking at most of the sub-trees. Only the &#8216;wl_unit&#8217; sub-tree can tell you &#8211; whichever interface it says is selected is the interface whose values are being shown in &#8216;wl_radio&#8217;.</p>
+<p><strong>But</strong> it turns out that the previous code does not work... well, it does, it is just meaningless. To know which interface is disabled you need to find the &#8216;selected&#8217; tag &#8211; all I did was find the text in the first entry in the drop-down menu, not which item is currently selected. As an example of pulling text it works, so I will leave it in, but see the next section to find out how to get the actual state.</p>
+</div>
+<div class="section" id="the-selected-case">
+<h3>The Selected Case<a class="headerlink" href="#the-selected-case" title="Permalink to this headline">¶</a></h3>
+<p>So, it appears that the Broadcom web interface adds a <code class="docutils literal"><span class="pre">selected=&quot;&quot;</span></code> tag to drop-down options that are currently selected. You can get the surrounding tags but BeautifulSoup seems to not be able to find the <cite>selected</cite> attribute (or it returns the wrong tag). I have not figured out why, but this may be where switching to string searches and regular expressions would make sense.</p>
+<p>A rough sketch to match it might be:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;anything&gt; = ?anything in the alphabet?
+&lt;everything&gt; = {&lt;anything&gt;}
+&lt;boundary&gt; = ?word boundary?
+&lt;selected&gt; = &lt;boundary&gt; + &#39;selected&#39; + &lt;boundary&gt; + &lt;everything&gt; + &#39;&gt;&#39; + (&lt;everything&gt;) + &#39;&lt;&#39;
+</pre></div>
+</div>
+<p>The use of &lt;everything&gt; following the literal &#8216;selected&#8217; might seem too aggressive, but I have found that the tags change over time (the attributes appear in different order). There is probably a more specific way to do it, but I&#8217;m also re-using the expression on multiple pages and exhaustively testing it seems impratical (plus I don&#8217;t feel like it).</p>
+<p>In the code I use a named expression:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">SELECTED_EXPRESSION</span> <span class="o">=</span> <span class="s1">r&#39;\bselected\b.*&gt;(?P&lt;{0}&gt;.*)&lt;&#39;</span>
+</pre></div>
+</div>
+<p>So, for instance, to get the current state of the Wireless Interface chosen when you pulled the html, feed it to a BeautfulSoup instance (call it <code class="docutils literal"><span class="pre">soup</span></code>) and do something like this to get the current state:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">wifi_state</span> <span class="o">=</span> <span class="n">SELECTED_EXPRESSION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;wifi_state&#39;</span><span class="p">)</span>
+<span class="n">radio_state_menu</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">})</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">wifi_state</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">radio_state_menu</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;wifi_state&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-wireless-interface">
+<h3>The Wireless Interface<a class="headerlink" href="#the-wireless-interface" title="Permalink to this headline">¶</a></h3>
+<p>This is the drop-down that selects the current interface shown to the user (and which is what you need to choose if you are making changes or queries that are specific to a band).</p>
+<p>The output of <code class="docutils literal"><span class="pre">soup.find(attrs={'name':'wl_unit'})</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;select name=&quot;wl_unit&quot; onchange=&quot;submit();&quot;&gt;
+&lt;option selected value=&quot;0&quot;&gt;(00:90:4C:09:11:03)&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;(00:90:4C:13:11:03)&lt;/option&gt;
+&lt;/select&gt;
+</pre></div>
+</div>
+<p>The extraction of the enabled interface (indicated by the <code class="docutils literal"><span class="pre">selected</span></code> attribute) is slightly different in this case from the previous. Here we want the right-hand-side of the &#8216;value&#8217; expression. There might be other ways of getting it, but the two ways I figured out:</p>
+<p>Pure python:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">expression</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;value=&quot;(?P&lt;interface&gt;0|1)&quot;&#39;</span><span class="p">)</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">}))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">match</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="s1">&#39;selected&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">enabled_interface</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;interface&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This works, but I also explored getting it using <a class="reference external" href="http://pyparsing.wikispaces.com/">pyparsing</a> so I am going to document it here.</p>
+</div>
+<div class="section" id="the-grammar">
+<h3>The Grammar<a class="headerlink" href="#the-grammar" title="Permalink to this headline">¶</a></h3>
+<p>A sketch of the part of the text we are interested in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">selected_literal</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+<span class="n">value_equal</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;value=&#39;</span><span class="p">)</span>
+<span class="n">quote</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">oneOf</span><span class="p">(</span><span class="s1">&#39;0 1&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">selected_literal</span> <span class="o">&amp;</span> <span class="n">value_equal</span> <span class="o">+</span> <span class="n">quote</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">setResultName</span><span class="p">(</span><span class="s1">&#39;interface&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">quote</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">}))</span>
+<span class="n">enabled_interface</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">searchString</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">interface</span>
+</pre></div>
+</div>
+<p>The reason why this is an improvement over a pure-regular expression version (not the previous example with a for-loop) is that the <code class="docutils literal"><span class="pre">&amp;</span></code> symbol in pyparsing means look for both the left-hand-side and right-hand-side expressions but in any order, ignoring whitespace (e.g. <code class="docutils literal"><span class="pre">A</span> <span class="pre">&amp;</span> <span class="pre">B</span></code> matches both &#8216;A B&#8217; and &#8216;B A&#8217; but not just &#8216;B&#8217; or &#8216;A&#8217; and not &#8216;A C B&#8217;). For one example it might not seem like it is an improvement over the for-loop style of searching, but presumably if many different types of searches need to be made, a grammar would be built and the <cite>pyparsing</cite> method more closely resembles one and so might reduce errors.</p>
+</div>
+</div>
+<div class="section" id="the-souperror">
+<h2>The SoupError<a class="headerlink" href="#the-souperror" title="Permalink to this headline">¶</a></h2>
+<p>Right now I am not sure what kind of errors are going to come up, but for runtime errors that I anticipate I will raise a <cite>SoupError</cite> to try and make it more obvious what happened.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-c15423150f1c9a08a5c3a73409f233800f646a5a.png" alt="SoupError -|&gt; RuntimeError" />
+</p>
+</div>
+<div class="section" id="the-broadcombasesoup">
+<h2>The BroadcomBaseSoup<a class="headerlink" href="#the-broadcombasesoup" title="Permalink to this headline">¶</a></h2>
+<p>Although I have decided to move to aggregation over inheritance, the soups seem to have some common code that is just easier with inheritance &#8211; so here we go again once more for the last time.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup" title="apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseSoup</span></code></a>([html])</td>
+<td>A base-class to hold some code common to the soups</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html" title="apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseSoup.html</span></code></a></td>
+<td>The html for soup</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.soup.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.soup" title="apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.soup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseSoup.soup</span></code></a></td>
+<td>A beautiful soup object created from self.html</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.selected_expression.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.selected_expression" title="apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.selected_expression"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseSoup.selected_expression</span></code></a></td>
+<td>Compiled regex to get text from selected option (use SELECTED as name for group)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-broadcomradiosoup">
+<h2>The BroadcomRadioSoup<a class="headerlink" href="#the-broadcomradiosoup" title="Permalink to this headline">¶</a></h2>
+<p>This is a class to hold BeautifulSoup for the Broadcom Access point <code class="docutils literal"><span class="pre">radio.asp</span></code> page. I had hoped to do a single class for the Broadcom Web Interface but inspecting the pages reveals that the names have conflicts which would likely make it too confusing (the exception being the SSID which is on a different page but gets thrown in here anyway).</p>
+<div class="section" id="the-soup-queries">
+<h3>The Soup Queries<a class="headerlink" href="#the-soup-queries" title="Permalink to this headline">¶</a></h3>
+<p>There are different kinds of queries going on in the BroadcomRadioSoup and since I&#8217;m already having trouble remembering what is going on, I&#8217;ll document some of them here.</p>
+<div class="section" id="find">
+<h4>Find<a class="headerlink" href="#find" title="Permalink to this headline">¶</a></h4>
+<p>The query:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Returns a <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/#tag">tag</a> which is an HTML sub-tree whose root has the name attribute that was passed in to the <code class="docutils literal"><span class="pre">find</span></code> call (&#8216;wl_unit&#8217; in this case). See the <a class="reference internal" href="#broadcom-parser-wireless-interface"><span>Wireless Interface</span></a> section above for a sample output. Because it is a tag, you can do further searches within it. <em>Use the ``find`` method to narrow the HTML tree down to just the part you are interested in.</em></p>
+</div>
+<div class="section" id="tag-attributes">
+<h4>Tag Attributes<a class="headerlink" href="#tag-attributes" title="Permalink to this headline">¶</a></h4>
+<p>The query:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_country_code&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>First uses find to narrow the tree down to the subtree:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;select name=&quot;wl_country_code&quot; onchange=&quot;wl_recalc();&quot;&gt;
+&lt;option selected value=&quot;US&quot;&gt;&lt;/option&gt;
+&lt;/select&gt;
+</pre></div>
+</div>
+<p>Within this sub-tree the tag named <cite>option</cite>  has an attribute  named <cite>value</cite>, so the <code class="docutils literal"><span class="pre">.option['value']</span></code> returns the right-hand-side of <code class="docutils literal"><span class="pre">value=&quot;US&quot;</span></code>. <em>Use this syntax to get text from tag-attributes (as opposed to text between tags).</em></p>
+</div>
+</div>
+<div class="section" id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>This query:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>First uses <code class="docutils literal"><span class="pre">find</span></code> to narrow the HTML tree down to the &#8216;wl_radio&#8217; subtree (a BeautifulSoup tag):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;select name=&quot;wl_radio&quot;&gt;
+&lt;option selected value=&quot;0&quot;&gt;Disabled&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Enabled&lt;/option&gt;
+&lt;/select&gt;
+</pre></div>
+</div>
+<p>Then it uses <code class="docutils literal"><span class="pre">find</span></code> again to get the <code class="docutils literal"><span class="pre">option</span></code> tag that has the <code class="docutils literal"><span class="pre">value=&quot;0&quot;</span></code> attribute (the &#8216;0&#8217; indicates this is the first item in the drop-down menu):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;option selected value=&quot;0&quot;&gt;Disabled&lt;/option&gt;
+</pre></div>
+</div>
+<p>Then uses <code class="docutils literal"><span class="pre">.text</span></code> to get the state of the interface:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Disabled</span>
+</pre></div>
+</div>
+<p><em>Use ``.text`` to get the text between tags.</em></p>
+<p class="plantuml">
+<img src="../../_images/plantuml-56b31cc5ff5d95e407505589a65f296aef5af5a6.png" alt="BroadcomRadioSoup -|&gt; BaseClass" />
+</p>
+<div class="section" id="user-client-api">
+<h4>User (client) API<a class="headerlink" href="#user-client-api" title="Permalink to this headline">¶</a></h4>
+<p>This is the interface for those who want to use this to get text from an html input.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A holder of BeautifulSoup</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.html</span></code></a></td>
+<td>The html for soup</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_24_ghz.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_24_ghz" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_24_ghz"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.mac_24_ghz</span></code></a></td>
+<td>The 2.4 GHz MAC address text from the wl_unit</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_5_ghz.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_5_ghz" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.mac_5_ghz"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.mac_5_ghz</span></code></a></td>
+<td>The 5 GHz MAC address text from the wl_unit tag</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.country.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.country" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.country"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.country</span></code></a></td>
+<td>Gets the current country setting</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.interface_state.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.interface_state" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.interface_state"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.interface_state</span></code></a></td>
+<td>Get the state of currently selected radio (enabled or disabled)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.channel.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.channel" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.channel</span></code></a></td>
+<td>Gets the channel for the currently selected interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.bandwidth.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.bandwidth" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.bandwidth</span></code></a></td>
+<td>The bandwidth setting (for both bands)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.sideband.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.sideband" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.sideband"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.sideband</span></code></a></td>
+<td>Gets the sideband (only for 40GHz)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="developer-api">
+<h4>Developer API<a class="headerlink" href="#developer-api" title="Permalink to this headline">¶</a></h4>
+<p>This is the interface for those who want to add to the Soup.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-9762d31861ef0a70b39e690df03c10d4026dc700.png" alt="BroadcomRadioSoup -|&gt; BroadcomBaseSoup" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A holder of BeautifulSoup</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.wireless_interface.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.wireless_interface" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.wireless_interface"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.wireless_interface</span></code></a></td>
+<td>The <cite>wl_unit</cite> sub-tree</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_one.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_one" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_one"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.get_value_one</span></code></a>(tag)</td>
+<td>Gets the value=&#8216;1&#8217; tag from a tag (subtree)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_zero.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_zero" title="apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_zero"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioSoup.get_value_zero</span></code></a>(tag)</td>
+<td>Gets the first value=&#8216;0&#8217; tag from a tag (subtree)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="the-broadcomlansoup">
+<h2>The BroadcomLANSoup<a class="headerlink" href="#the-broadcomlansoup" title="Permalink to this headline">¶</a></h2>
+<p>Since the Radio Soup is getting so big I am going back to the idea of one soup per page. The only interesting thing I can think of for this page is the DHCP server state (to make sure it is off). I was going to get the IP address but since you need the IP address to get to the server to ask it its IP address I decided not to.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-b6f4f5a769adc51c9921019d1e88a2af86f1dc31.png" alt="BroadcomLANSoup -|&gt; BroadcomBaseSoup" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomLANSoup" title="apcommand.accesspoints.broadcom.parser.BroadcomLANSoup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomLANSoup</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A soup for the lan.asp page</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.dhcp_state.html#apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.dhcp_state" title="apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.dhcp_state"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomLANSoup.dhcp_state</span></code></a></td>
+<td>The selected DHCP state</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-broadcomssidsoup">
+<h2>The BroadcomSSIDSoup<a class="headerlink" href="#the-broadcomssidsoup" title="Permalink to this headline">¶</a></h2>
+<p>Continuing with the one-class one-page pattern...</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-5347ba0d866a2de1e0e63f8a40d362ee78e7b9d2.png" alt="BroadcomSSIDSoup -|&gt; BroadcomBaseSoup" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup" title="apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomSSIDSoup</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A soup for the ssid.asp page</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.ssid.html#apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.ssid" title="apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomSSIDSoup.ssid</span></code></a></td>
+<td>Gets the SSID for the currently selected interface</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="some-cases">
+<h2>Some Cases<a class="headerlink" href="#some-cases" title="Permalink to this headline">¶</a></h2>
+<p>This is a scratchpad for BeautfulSoup commands to get specific things.</p>
+<p>To get the <cite>DHCP</cite> state (from <code class="docutils literal"><span class="pre">lan.asp</span></code>) (for the internal network, use <code class="docutils literal"><span class="pre">lan1_proto</span></code> for the guest network):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">selected_expression</span> <span class="o">=</span> <span class="s1">r&#39;\bselected\b=.*&gt;(?P&lt;{0}&gt;.*)&lt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;DHCP&#39;</span><span class="p">)</span>
+
+<span class="n">lan_proto</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;lan_proto&#39;</span><span class="p">})</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">selected_expression</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">lan_proto</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;DHCP&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>This is one of those cases where you need to find the &#8216;selected&#8217; keyword in the tag to figure out which of the drop-down-menu choices is the current one (thus the regular expression)</li>
+<li>State should be one of <code class="docutils literal"><span class="pre">Enabled</span></code> or <code class="docutils literal"><span class="pre">Disabled</span></code>.</li>
+<li>The expression is set up in this module as a constant named SELECTED_EXPRESSION</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

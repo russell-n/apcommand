@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.connections.telnetconnection &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.connections.telnetconnection</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1">#python Libraries</span>
+<span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">telnetlib</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">apcommand.commands</span> <span class="kn">import</span> <span class="n">changeprompt</span>
+
+<span class="c1"># connections</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.readoutput</span> <span class="kn">import</span> <span class="n">ValidatingOutput</span>
+<span class="kn">from</span> <span class="nn">nonlocalconnection</span> <span class="kn">import</span> <span class="n">NonLocalConnection</span><span class="p">,</span> <span class="n">NonLocalConnectionBuilder</span>
+<span class="kn">from</span> <span class="nn">localconnection</span> <span class="kn">import</span> <span class="n">OutputError</span>
+
+
+<span class="n">NEWLINE</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="n">SPACER</span> <span class="o">=</span> <span class="s1">&#39;{0} {1}&#39;</span>
+<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;Unknown command: &quot;</span>
+<span class="n">EMPTY_STRING</span> <span class="o">=</span> <span class="n">EOF</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">PLUGIN_NAME</span> <span class="o">=</span> <span class="s1">&#39;telnet&#39;</span>
+
+
+<div class="viewcode-block" id="OutputFile"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.OutputFile.html#apcommand.connections.telnetconnection.OutputFile">[docs]</a><span class="k">class</span> <span class="nc">OutputFile</span><span class="p">(</span><span class="n">ValidatingOutput</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle the ssh output files</span>
+
+<span class="sd">    This traps socket timeouts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="OutputFile.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.OutputFile.html#apcommand.connections.telnetconnection.OutputFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">OutputFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="OutputFile.readline"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.OutputFile.html#apcommand.connections.telnetconnection.OutputFile.readline">[docs]</a>    <span class="k">def</span> <span class="nf">readline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `timeout`: The length of time to wait for output</span>
+
+<span class="sd">        :return: line from readline, EOF or None (in event of timeout)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="n">EOF</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">line</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;socket.timeout&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">SPACE</span>
+        <span class="k">return</span> <span class="n">EOF</span></div></div>
+<span class="c1"># end class OutputFile</span>
+
+
+<div class="viewcode-block" id="TelnetAdapter"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetAdapter.html#apcommand.connections.telnetconnection.TelnetAdapter">[docs]</a><span class="k">class</span> <span class="nc">TelnetAdapter</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A TelnetAdapter Adapts the telnetlib.Telnet to this libraries interfaces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TelnetAdapter.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetAdapter.html#apcommand.connections.telnetconnection.TelnetAdapter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">end_of_line</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                 <span class="n">login_prompt</span><span class="o">=</span><span class="s2">&quot;login:&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `host`: The address of the telnet server</span>
+<span class="sd">         - `prompt`: The prompt used on the device</span>
+<span class="sd">         - `port`: The port of the telnet server</span>
+<span class="sd">         - `login`: The login (if needed)</span>
+<span class="sd">         - `timeout`: The timeout for blocking methods</span>
+<span class="sd">         - `end_of_line`: The end of line string used by the device.</span>
+<span class="sd">         - `login_prompt`: The prompt to look for when starting a connection.</span>
+<span class="sd">         - `password`: if given tries to login</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TelnetAdapter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_of_line</span> <span class="o">=</span> <span class="n">end_of_line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_prompt</span> <span class="o">=</span> <span class="n">login_prompt</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tries to login before returning.</span>
+
+<span class="sd">        :rtype: telnetlib.Telnet</span>
+<span class="sd">        :return: The telnet client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">telnetlib</span><span class="o">.</span><span class="n">Telnet</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">possibilities</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_prompt</span><span class="p">]</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">possibilities</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">+</span> <span class="n">NEWLINE</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="s2">&quot;Password: &quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">+</span> <span class="n">NEWLINE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span>
+
+<div class="viewcode-block" id="TelnetAdapter.exec_command"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetAdapter.html#apcommand.connections.telnetconnection.TelnetAdapter.exec_command">[docs]</a>    <span class="k">def</span> <span class="nf">exec_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main interface.</span>
+
+<span class="sd">        Since I&#39;m hiding the client from users, this will do a read_very_eager before continuing.</span>
+<span class="sd">        The read is intended to try and flush the output</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `command`: The command to execute on the device</span>
+<span class="sd">         - `timeout`: The readline timeout</span>
+
+<span class="sd">        :return: TelnetOutput with the this object&#39;s as client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;In queue: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">read_very_eager</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending the command: &quot;</span> <span class="o">+</span> <span class="n">command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeline</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TelnetOutput</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">,</span>
+                            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">end_of_line</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">end_of_line</span><span class="p">)</span></div>
+                           
+    
+<div class="viewcode-block" id="TelnetAdapter.writeline"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetAdapter.html#apcommand.connections.telnetconnection.TelnetAdapter.writeline">[docs]</a>    <span class="k">def</span> <span class="nf">writeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `message`: A message to send to the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">NEWLINE</span><span class="p">)</span> <span class="o">+</span> <span class="n">NEWLINE</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span></div>
+<span class="c1"># end class TelnetAdapter</span>
+
+
+<span class="n">MATCH_INDEX</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">MATCHING_STRING</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<div class="viewcode-block" id="TelnetOutput"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput">[docs]</a><span class="k">class</span> <span class="nc">TelnetOutput</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The TelnetOutput converts the telnet output to a file-like object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TelnetOutput.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">end_of_line</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        TelnetOutput constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `client` : a connected telnet client</span>
+<span class="sd">         - `prompt`: The current prompt on the client</span>
+<span class="sd">         - `end_of_line`: Then end of line character</span>
+<span class="sd">         - `timeout`: The readline timeout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TelnetOutput</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_of_line</span> <span class="o">=</span> <span class="n">end_of_line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endings</span> <span class="o">=</span> <span class="p">[</span><span class="n">end_of_line</span><span class="p">,</span> <span class="n">prompt</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_ending_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TelnetOutput.readline"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput.readline">[docs]</a>    <span class="k">def</span> <span class="nf">readline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a single line of output from the output</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `timeout`: The readline timeout</span>
+<span class="sd">         </span>
+<span class="sd">        :return: The next line of text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endings</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EOF</span>
+        <span class="k">elif</span> <span class="n">output</span><span class="p">[</span><span class="n">MATCH_INDEX</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_ending_index</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span><span class="p">[</span><span class="n">MATCHING_STRING</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># matched the prompt, this output is finished</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping on : &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">[</span><span class="n">MATCHING_STRING</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="n">EOF</span></div>
+
+<div class="viewcode-block" id="TelnetOutput.next"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator of lines</span>
+<span class="sd">        </span>
+<span class="sd">        :yield: the next line</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TelnetOutput.readlines"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput.readlines">[docs]</a>    <span class="k">def</span> <span class="nf">readlines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts output to a list of lines</span>
+<span class="sd">        </span>
+<span class="sd">        :return: A list of lines</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">while</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lines</span></div>
+
+<div class="viewcode-block" id="TelnetOutput.read"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts output to a string</span>
+
+<span class="sd">        :return: String of output        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EMPTY_STRING</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span></div>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterator over output (this is an alias of next())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span></div>
+<span class="c1"># end TelnetOutput</span>
+
+
+<div class="viewcode-block" id="TelnetConnection"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.connections.telnetconnection.TelnetConnection.html#apcommand.connections.telnetconnection.TelnetConnection">[docs]</a><span class="k">class</span> <span class="nc">TelnetConnection</span><span class="p">(</span><span class="n">NonLocalConnection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A TelnetConnection executes commands over a Telnet Connection</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TelnetConnection.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.connections.telnetconnection.TelnetConnection.html#apcommand.connections.telnetconnection.TelnetConnection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">end_of_line</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                 <span class="n">mangle_prompt</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">login_wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        TelnetConnection constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `hostname`: The IP Address or hostname</span>
+<span class="sd">         - `port`: The telnet port </span>
+<span class="sd">         - `username`: The login name</span>
+<span class="sd">         - `prompt`: The prompt to expect</span>
+<span class="sd">         - `timeout`: The readline timeout</span>
+<span class="sd">         - `end_of_line`: The string indicating the end of a line.</span>
+<span class="sd">         - `mangle_prompt`: If True, change the prompt</span>
+<span class="sd">         - `login_wait`: time to wait after logging in</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TelnetConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_of_line</span> <span class="o">=</span> <span class="n">end_of_line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mangle_prompt</span> <span class="o">=</span> <span class="n">mangle_prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login_wait</span> <span class="o">=</span> <span class="n">login_wait</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The port for the telnet server</span>
+
+<span class="sd">        :rtype: Integer</span>
+<span class="sd">        :return: port number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="mi">23</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+
+    <span class="nd">@port.setter</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the port for the telnet server</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `port`: integer port number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="k">return</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: TelnetAdapter for the telnet connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">TelnetAdapter</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> 
+                                         <span class="n">login</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                                         <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+                                         <span class="n">end_of_line</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">end_of_line</span><span class="p">,</span>
+                                         <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+                                         <span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mangle_prompt</span><span class="p">:</span>
+                <span class="n">changer</span> <span class="o">=</span> <span class="n">changeprompt</span><span class="o">.</span><span class="n">ChangePrompt</span><span class="p">(</span><span class="n">adapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">changer</span><span class="o">.</span><span class="n">run</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Sleeping for {0} seconds to let the login complete&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login_wait</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login_wait</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span>
+    
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Despite its name, this isn&#39;t intended to be run.</span>
+<span class="sd">        The . notation is the expected interface.</span>
+<span class="sd">        </span>
+<span class="sd">        runs the SimpleClient exec_command and puts lines of output on the Queue</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `command`: The shell command.</span>
+<span class="sd">         - `arguments`: A string of command arguments.</span>
+<span class="sd">         - `timeout`: readline timeout</span>
+
+<span class="sd">        :postcondition: OutputError with output and error file-like objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;calling &#39;client.exec_command({0})&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">SPACER</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="p">),</span>
+                                          <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Completed &#39;client.exec_command({0})&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>       
+
+        <span class="n">stderr</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">OutputFile</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">),</span> <span class="n">stderr</span><span class="p">)</span>
+
+    <span class="n">exec_command</span> <span class="o">=</span> <span class="n">_main</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="k">return</span></div>
+<span class="c1"># end TelnetConnection</span>
+
+
+<div class="viewcode-block" id="TelnetConnectionBuilder"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetConnectionBuilder.html#apcommand.connections.telnetconnection.TelnetConnectionBuilder">[docs]</a><span class="k">class</span> <span class="nc">TelnetConnectionBuilder</span><span class="p">(</span><span class="n">NonLocalConnectionBuilder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements a builder for the TelnetConnection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TelnetConnectionBuilder.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TelnetConnectionBuilder.html#apcommand.connections.telnetconnection.TelnetConnectionBuilder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        TelnetConnectionBuilder Constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `parameters`: namedtuple of parameters to build the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TelnetConnectionBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Port for the Telnet-server</span>
+
+<span class="sd">        :return: the ConnectionParameters.port value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">port</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">operating_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: parameters.operating_system</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operating_system</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_operating_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">operating_system</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Operating System not found in: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operating_system</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">library_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: LD_LIBRARY_PATH value(s) or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">library_path</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: additions to the PATH</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hostname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The hostname parameter extracted from the parameters</span>
+<span class="sd">        </span>
+<span class="sd">        :rtype: StringType</span>
+<span class="sd">        :return: The hostname (I.P.) to connect to</span>
+<span class="sd">        :raise: ConfigurationError if not set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">hostname</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">address</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;`hostname` is a required parameter for the TelnetConnection&quot;</span>
+                    <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConfigurationError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :rtype: StringType</span>
+<span class="sd">        :return: user login name</span>
+<span class="sd">        :raise: ConfigurationError if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">username</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">login</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConfigurationError</span><span class="p">(</span><span class="s2">&quot;`username` is a required parameter for the TELNETConnection&quot;</span><span class="p">)</span>                
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: the password for the connection (sets to None if not given in the parameters)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">password</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">product</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implements the builder.product attribute</span>
+<span class="sd">        </span>
+<span class="sd">        :return: a Telnetconnection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_product</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating the telnet connection.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_product</span> <span class="o">=</span> <span class="n">TelnetConnection</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                                           <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                                                           <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+                                                           <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                                                           <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                                                           <span class="n">library_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library_path</span><span class="p">,</span>
+                                                           <span class="n">operating_system</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operating_system</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_product</span></div>
+<span class="c1"># end class TelnetConnectionBuilder</span>
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">StringType</span>
+
+
+<span class="kn">from</span> <span class="nn">nonlocalconnection</span> <span class="kn">import</span> <span class="n">ConnectionParameters</span>
+
+
+<div class="viewcode-block" id="TestTelnetConnectionBuilder"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.telnetconnection.TestTelnetConnectionBuilder.html#apcommand.connections.telnetconnection.TestTelnetConnectionBuilder">[docs]</a><span class="k">class</span> <span class="nc">TestTelnetConnectionBuilder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+<span class="c1">#    import curses.ascii</span>
+<span class="c1">#    arguments = &quot;-l&quot;</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">TelnetConnection</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;10.10.10.21&quot;</span><span class="p">,</span>
+                          <span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span>
+                          <span class="n">password</span><span class="o">=</span><span class="s1">&#39;5up&#39;</span><span class="p">)</span>
+<span class="c1">#    sc.client.writeline(curses.ascii.crtl(&quot;c&quot;))</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">iwconfig</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">ifconfig</span><span class="p">(</span><span class="s1">&#39;ath0&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+<span class="c1">#    output = sc.iwconfig(&#39;ath0&#39;)</span>
+<span class="c1">#</span>
+<span class="c1">#    for x in output.output:</span>
+<span class="c1">#        print x</span>
+        
+<span class="c1">#</span>
+<span class="c1">#    from time import sleep</span>
+<span class="c1">#    sleep(0.1)</span>
+<span class="c1">#    print &quot;Testing ping&quot;</span>
+<span class="c1">#    output = sc.ping(arguments=&quot;-c 10 192.168.10.1&quot;, timeout=1)</span>
+<span class="c1">#    for x in output.output:</span>
+<span class="c1">#        print x</span>
+<span class="c1">#</span>
+<span class="c1">#    sleep(0.1)</span>
+<span class="c1">#    print &quot;Testing iperf&quot;</span>
+<span class="c1">#    output = sc.iperf(&#39;-i 1 -c 192.168.10.51&#39;)</span>
+<span class="c1">#    for line in output.output:</span>
+<span class="c1">#        print line</span>
+<span class="c1">#</span>
+<span class="c1">#    sleep(0.1)</span>
+<span class="c1">#    print &quot;Checking iperf version&quot;</span>
+<span class="c1">#    output = sc.iperf(&#39;-v&#39;)</span>
+<span class="c1">#</span>
+<span class="c1">#    print output.output.read()</span>
+<span class="c1">#    print output.error.read()</span>
+<span class="c1">#</span>
+<span class="c1">#    ta = TelnetAdapter(host=&quot;192.168.10.172&quot;)</span>
+<span class="c1">#    for line in ta.exec_command(&quot;iperf -c 192.168.10.51 -i 1&quot;):</span>
+<span class="c1">#        print line</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

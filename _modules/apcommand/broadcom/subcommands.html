@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.broadcom.subcommands &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.broadcom.subcommands</h1><div class="highlight"><pre>
+<span></span>
+<div class="viewcode-block" id="try_except"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.try_except.html#apcommand.broadcom.subcommands.try_except">[docs]</a><span class="k">def</span> <span class="nf">try_except</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A decorator method to catch Exceptions</span>
+
+<span class="sd">    :param:</span>
+
+<span class="sd">     - `func`: A function to call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+            <span class="n">log</span> <span class="o">=</span> <span class="n">BaseClass</span><span class="p">()</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">wrapped</span></div>
+
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">import</span> <span class="nn">apcommand.accesspoints.broadcom.broadcom</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">ArgumentError</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">BandEnumeration</span>
+
+
+<div class="viewcode-block" id="SubCommand"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.html#apcommand.broadcom.subcommands.SubCommand">[docs]</a><span class="k">class</span> <span class="nc">SubCommand</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A holder of sub-commands</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SubCommand.__init__"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.html#apcommand.broadcom.subcommands.SubCommand.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SubCommand Constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SubCommand</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="SubCommand.access_point"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.access_point.html#apcommand.broadcom.subcommands.SubCommand.access_point">[docs]</a>    <span class="k">def</span> <span class="nf">access_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        The Access point controller</span>
+
+<span class="sd">        :return: AP Controller</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># assume that the accesspoint class has valuable defaults</span>
+        <span class="c1"># only pass in parameters that have been set by the arguments</span>
+        <span class="n">apargs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;hostname&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;sleep&#39;</span><span class="p">)</span>
+        <span class="n">apvalues</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">apargs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">apkeys</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">apargs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">apkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">apkeys</span><span class="p">,</span> <span class="n">apvalues</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating BroadcomBCM94718NR with: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">apkwargs</span><span class="p">))</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">apcommand</span><span class="o">.</span><span class="n">accesspoints</span><span class="o">.</span><span class="n">broadcom</span><span class="o">.</span><span class="n">broadcom</span><span class="o">.</span><span class="n">BroadcomBCM94718NR</span><span class="p">(</span><span class="o">**</span><span class="n">apkwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ap</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.status"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.status.html#apcommand.broadcom.subcommands.SubCommand.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access-point control&#39;s status method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with &#39;interface&#39; attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;getting status for band: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">))</span>
+        <span class="n">ap</span><span class="o">.</span><span class="n">get_status</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.channel"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.channel.html#apcommand.broadcom.subcommands.SubCommand.channel">[docs]</a>    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access point&#39;s set_channel method (unless channel not set, then get_channel)</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `channel` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">undo</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Calling undo&#39;</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">unset_channel</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">channel</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting channel info&quot;</span><span class="p">)</span>
+            <span class="n">out_string</span> <span class="o">=</span> <span class="s2">&quot;{0} GHz Channel: {1} {3} ({2})&quot;</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="s1">&#39;2.4 5&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                <span class="k">print</span> <span class="s2">&quot;{0} GHz:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">band</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">channel</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">channel</span>
+                <span class="k">print</span> <span class="s2">&quot;   Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">state</span>
+                <span class="k">print</span> <span class="s2">&quot;  {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">sideband</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">query</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">sideband</span>
+                <span class="k">if</span> <span class="n">sideband</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">sideband</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">print</span> <span class="s1">&#39;   {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sideband</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">out_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">sideband</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting Channel: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">channel</span><span class="p">))</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">set_channel</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.disable"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.disable.html#apcommand.broadcom.subcommands.SubCommand.disable">[docs]</a>    <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disables the wireless interface</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with &#39;band&#39; property</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="n">BandEnumeration</span><span class="o">.</span><span class="n">both</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Disabling 2.4 GHz&quot;</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">BandEnumeration</span><span class="o">.</span><span class="n">two_point_four</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Disabling 5GHz&quot;</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">BandEnumeration</span><span class="o">.</span><span class="n">five</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Disabling {0} GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">))</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>        
+        <span class="k">return</span></div>
+
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.enable"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.enable.html#apcommand.broadcom.subcommands.SubCommand.enable">[docs]</a>    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enables an AP interface</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `band` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="n">BandEnumeration</span><span class="o">.</span><span class="n">both</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Enabling 2.4 GHz&quot;</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">BandEnumeration</span><span class="o">.</span><span class="n">two_point_four</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Enabling 5GHz&quot;</span><span class="p">)</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">BandEnumeration</span><span class="o">.</span><span class="n">five</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Enabling {0} GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">))</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>        
+        <span class="k">return</span></div>
+    
+    <span class="nd">@try_except</span>
+<div class="viewcode-block" id="SubCommand.ssid"><a class="viewcode-back" href="../../../broadcom/api/apcommand.broadcom.subcommands.SubCommand.ssid.html#apcommand.broadcom.subcommands.SubCommand.ssid">[docs]</a>    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the access point&#39;s set_ssid method</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `args`: namespace with `band` and `ssid` attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_point</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">band</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ssid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s2">&quot;Need band to change ssid&quot;</span>
+                <span class="k">return</span>
+            <span class="k">print</span> <span class="s2">&quot;2.4 GHz:&quot;</span>
+            <span class="k">print</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">ap</span><span class="o">.</span><span class="n">get_ssid</span><span class="p">(</span><span class="s1">&#39;2.4&#39;</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s2">&quot;5 GHz:&quot;</span>
+            <span class="k">print</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">ap</span><span class="o">.</span><span class="n">get_ssid</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">ssid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;{0} GHz:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">ap</span><span class="o">.</span><span class="n">get_ssid</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">set_ssid</span><span class="p">(</span><span class="n">ssid</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">ssid</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+        
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Broadcom Commands &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="The Broadcom Modules" href="index.html" />
+    <link rel="next" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.html" />
+    <link rel="prev" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Broadcom Commands</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#the-base-data">The Base Data</a></li>
+<li><a class="reference internal" href="#the-broadcom-base-command">The Broadcom Base Command</a></li>
+<li><a class="reference internal" href="#statedata">StateData</a></li>
+<li><a class="reference internal" href="#enable-interface">Enable Interface</a><ul>
+<li><a class="reference internal" href="#disable-interface">Disable Interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-channel-setter">The Channel Setter</a></li>
+<li><a class="reference internal" href="#set-sideband">Set Sideband</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable.html" title="Previous Chapter: apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.acc...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.html" title="Next Chapter: apcommand.accesspoints.broadcom.commands.BroadcomBaseData"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.acc... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/accesspoints/broadcom/commands.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-broadcom-commands">
+<h1>The Broadcom Commands<a class="headerlink" href="#the-broadcom-commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<span id="broadcom-commands-introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>I have decided to break the commands sent to the Broadcom into smaller actions. If they are run separately this will actually make them inefficient time-wise, as you need to put about a half-second pause between each call to the server or it will occasionally not respond, but my guess is that I will not have access to the Broadcom again for a while and this might turn into a code-maintenance nightmare if things aren&#8217;t broken down. To ameliorate the knowledge-gain, knowledge-lost cycle I am trying to make the broadcom-specific part of the code as simple as possible at the possible expense of execution efficiency. Of course, one could argue that an explosion of classes does not simplify anything but I am hopeful that once the pattern of implementation is recognized only the relevant classes need be found and examined and so smaller will be better.</p>
+<p>To allow for the aggregation of commands each command class implements the <code class="docutils literal"><span class="pre">+</span></code> operation which will allow other commands to be added to their data-dictionary. This way the <cite>Apply</cite> action only needs to be called once per page. There are too many things on the pages for me to check if they make sense, though, so user-beware.</p>
+<p>A hypothetical example &#8211; setting the 2.4 GHz channel and disabling the 5 GHz channel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">connection</span> <span class="o">=</span> <span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;radio.asp&#39;</span><span class="p">)</span>
+<span class="n">set_channel</span> <span class="o">=</span> <span class="n">Set24GHzChannel</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+<span class="n">disable</span> <span class="o">=</span> <span class="n">Disable5GHz</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+<span class="n">set_channel</span> <span class="o">+=</span> <span class="n">disable</span>
+<span class="n">set_channel</span><span class="p">(</span><span class="s1">&#39;11&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This should have the equivalent effect of:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">set_channnel</span><span class="p">(</span><span class="s1">&#39;11&#39;</span><span class="p">)</span>
+<span class="n">disable</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>But the second case will access the server twice (once to set the channel, once to disable the 5 GHz interface) while the first case only accesses the server once it should be faster. Also, if  you want to remove commands (in this case the <code class="docutils literal"><span class="pre">disable</span></code> data) from the <code class="docutils literal"><span class="pre">set_channel</span></code> data you can use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">set_channel</span> <span class="o">-=</span> <span class="n">disable</span>
+</pre></div>
+</div>
+<p>With this simple example it would probably be better to re-create the <code class="docutils literal"><span class="pre">set_channel</span></code> instead of removing the <code class="docutils literal"><span class="pre">disable</span></code>, but conceivably you could chain together many commands and there might be a reason to remove just one part of it.</p>
+</div>
+<div class="section" id="the-base-data">
+<span id="broadcom-base-data"></span><h2>The Base Data<a class="headerlink" href="#the-base-data" title="Permalink to this headline">¶</a></h2>
+<p>A <em>command</em> is data sent to the server. At a minimum the server is sent the interface information as data so that the <a class="reference internal" href="parser.html#broadcom-radio-soup"><span>Soup</span></a> can find values in the html. The Base Data classes hold the Wireless Interface data for the specific bands. I was going to create it as a real class so it could be re-used but I think it makes more sense for the commands to use it once and throw it away so it is created with classmethods so that the actual object does not have to be created (although it can be if needed). I still have not quite worked out the logic of how this all fits together.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-807a97cf6445a824f7531cf1ce823dec1e61255f.png" alt="BroadcomBaseData -|&gt; BaseClass" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData</span></code></a>()</td>
+<td>The base-data to hold the data-dict</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData.base_data</span></code></a>()</td>
+<td>Returns data dictionary that only has action:Apply</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_24_ghz_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_24_ghz_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_24_ghz_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData.base_24_ghz_data</span></code></a>()</td>
+<td>data-dictionary to choose the 2.4 GHz interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_5_ghz_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_5_ghz_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_5_ghz_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData.base_5_ghz_data</span></code></a>()</td>
+<td>data-dictionary to chose the 5 Ghz interface</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData.data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData.data</span></code></a>([action,&nbsp;band])</td>
+<td>Builds a data-dict based on action and band</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__repr__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__repr__" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__repr__"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseData.__repr__</span></code></a>()</td>
+<td>Returns a representation of the data</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-broadcom-base-command">
+<h2>The Broadcom Base Command<a class="headerlink" href="#the-broadcom-base-command" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned above, a <cite>command</cite> is a bundle of data to send to the web-server and the connection to send the data over. The assumption is that there will be 6 cases to build the BaseCommand &#8211; cases where no data is sent, cases where an interface has to be chosen but no action, cases with an interface and an action, and cases with an action but no interface. An action has to be sent if something is being changed, but should not be sent just to read the html. An interface needs to be chosen for pages dealing with wireless, but not for some of the pages not specific to wireless (e.g. the <cite>LAN</cite> page).</p>
+<p>To make this closer to a <em>Command</em> in the Design Patterns sense, each command also needs a Querier so that it can check the state prior to making a change. I still need to figure out how an undo would work if the data was aggregated... maybe have an undo flag that changes the behavior of the operators... but for now calls to a command will only undo its action (and calling a command will only get it&#8217;s previous state, not the states of all the other commands whose data has been added to it). I don&#8217;t know if this makes sense yet, but since this is meant to be used at the command-line it will probably never get used, it is an exercise as much as anything else.</p>
+<p>The data-dictionaries that need to be built will then meet the following cases (0 mean does not have this data, 1 mean has this data):</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Base Data Dictionaries</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Action</th>
+<th class="head">2.4 GHz</th>
+<th class="head">5 GHz</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>There are six rather than eight cases because you can only choose one Interface from the drop-down menu, not both. Also, on reflection I realized that the <code class="docutils literal"><span class="pre">action=False</span></code> case is actually covered by the <a class="reference internal" href="querier.html#broadcom-queriers"><span>Broadcom Queriers</span></a> so there really are only three cases.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-99cfffbefb903f17fd1a879f4e41c3f558399c21.png" alt="BaseClass &lt;|-- BroadcomBaseCommand
+BroadcomBaseCommand o- HTTPConnection" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand</span></code></a>(connection[,&nbsp;band])</td>
+<td>A base-class for the commands that change settings</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.asp_page.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.asp_page" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.asp_page"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.asp_page</span></code></a></td>
+<td>The page for the decorators to use (e.g.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_key.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_key" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_key"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.shelf_key</span></code></a></td>
+<td>a key to use for the cases where there&#8217;s only one object to shelve</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_objects.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_objects" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_objects"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.shelf_objects</span></code></a></td>
+<td>The key:object dictionary to save (defaults to current singular-data)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_name.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_name" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.shelf_name"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.shelf_name</span></code></a></td>
+<td>A name to use for any shelves created</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.querier.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.querier" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.querier"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.querier</span></code></a></td>
+<td>A querier to get the previous state for the undo.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.band.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.band" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.band"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.band</span></code></a></td>
+<td>the band (2.4, 5, or None)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.base_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.base_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.base_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.base_data</span></code></a></td>
+<td>A data-dictionary to add commands to</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.singular_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.singular_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.singular_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.singular_data</span></code></a></td>
+<td>A data dictionary with the command-specific data (or empty if querying)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.added_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.added_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.added_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.added_data</span></code></a></td>
+<td>Maintains data added from other commands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.non_base_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.non_base_data" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.non_base_data"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.non_base_data</span></code></a></td>
+<td>The singular data updated with any added data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__iadd__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__iadd__" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__iadd__"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.__iadd__</span></code></a>(other)</td>
+<td>Adds the other&#8217;s non_base_data to this added_data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__add__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__add__" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__add__"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.__add__</span></code></a>(other)</td>
+<td>Adds the other&#8217;s non_base_data to this added_data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__sub__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__sub__" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__sub__"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.__sub__</span></code></a>(other)</td>
+<td>Removes the other&#8217;s non-base data from added_data in new object</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__call__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__call__" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__call__"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.__call__</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.undo.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.undo" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.undo"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.undo</span></code></a>()</td>
+<td>This is an attempt to start bringing this into line with the Command Pattern</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.store.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.store" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.store"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.store</span></code></a>()</td>
+<td>shelve data from this class (use in __call__, not meant for public)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.load.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.load" title="apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.load"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBaseCommand.load</span></code></a>()</td>
+<td>Loads the shelved data for the undo method</td>
+</tr>
+</tbody>
+</table>
+<p>This is getting a little convoluted so I will try and explain the data-dictionaries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">base_data</span></code>: this is set based on the band and action parameters and never changes</li>
+<li><code class="docutils literal"><span class="pre">singular_data</span></code>: This is data added for a specific command to change settings</li>
+<li><code class="docutils literal"><span class="pre">added_data</span></code>: this will be changed by the add and subtract operators</li>
+<li><code class="docutils literal"><span class="pre">non_base_data</span></code>: this is <code class="docutils literal"><span class="pre">singular_data</span></code> updated by <code class="docutils literal"><span class="pre">added_data</span></code></li>
+<li><code class="docutils literal"><span class="pre">data</span></code>: this is <code class="docutils literal"><span class="pre">base_data</span></code> updated by <code class="docutils literal"><span class="pre">non_base_data</span></code></li>
+</ul>
+</div></blockquote>
+<p>The reason for all these data-dictionaries is so that commands can be composed from other commands. <code class="docutils literal"><span class="pre">base_data</span></code> and <code class="docutils literal"><span class="pre">singular_data</span></code> are part of the command-definition and so never change. <code class="docutils literal"><span class="pre">non_base_data</span></code> and <code class="docutils literal"><span class="pre">data</span></code> are generated every time <code class="docutils literal"><span class="pre">added_data</span></code> is changed (using the operators, if the <code class="docutils literal"><span class="pre">added_data</span></code> is changed directly then <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">non_base_data</span></code> will need to be reset). Only <code class="docutils literal"><span class="pre">added_data</span></code> is intended to change, and it is only changed using the other command&#8217;s <code class="docutils literal"><span class="pre">non_base_data</span></code> so it will not change the original&#8217;s Wireless Interface.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I have come to the conclusion that I have gone too far with inheritance (trying to mock these things is getting really hard) and will be trying to convert this code (and my habit of coding) from inheritance to aggregation, so this will look like an odd duck for a while.</p>
+</div>
+</div>
+<div class="section" id="statedata">
+<h2>StateData<a class="headerlink" href="#statedata" title="Permalink to this headline">¶</a></h2>
+<p>Since the EnableInterface and DisableInterface have to undo what they did, I created a class to hold the keys for their shelving dictionary. I was going to use named-tuples but they are not pickleable.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">StateData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;state&#39;</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;band&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-interface">
+<h2>Enable Interface<a class="headerlink" href="#enable-interface" title="Permalink to this headline">¶</a></h2>
+<p>This is a command implementation to enable the wireless interface.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-71c823149386bb799e8105b34ed7df1b40e6c603.png" alt="EnableInterface -|&gt; BroadcomBaseCommand" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.html#apcommand.accesspoints.broadcom.commands.EnableInterface" title="apcommand.accesspoints.broadcom.commands.EnableInterface"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>An interface enabler</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.asp_page.html#apcommand.accesspoints.broadcom.commands.EnableInterface.asp_page" title="apcommand.accesspoints.broadcom.commands.EnableInterface.asp_page"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.asp_page</span></code></a></td>
+<td>radio.asp</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.disable.html#apcommand.accesspoints.broadcom.commands.EnableInterface.disable" title="apcommand.accesspoints.broadcom.commands.EnableInterface.disable"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.disable</span></code></a></td>
+<td>An interface disabler</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.shelf_objects.html#apcommand.accesspoints.broadcom.commands.EnableInterface.shelf_objects" title="apcommand.accesspoints.broadcom.commands.EnableInterface.shelf_objects"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.shelf_objects</span></code></a></td>
+<td>A dictionary of shelf_key: band</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.undo.html#apcommand.accesspoints.broadcom.commands.EnableInterface.undo" title="apcommand.accesspoints.broadcom.commands.EnableInterface.undo"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.undo</span></code></a>()</td>
+<td>Disable the interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.__call__.html#apcommand.accesspoints.broadcom.commands.EnableInterface.__call__" title="apcommand.accesspoints.broadcom.commands.EnableInterface.__call__"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.__call__</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.singular_data.html#apcommand.accesspoints.broadcom.commands.EnableInterface.singular_data" title="apcommand.accesspoints.broadcom.commands.EnableInterface.singular_data"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.singular_data</span></code></a></td>
+<td>The data to enable the interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.enable_5_data.html#apcommand.accesspoints.broadcom.commands.EnableInterface.enable_5_data" title="apcommand.accesspoints.broadcom.commands.EnableInterface.enable_5_data"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.enable_5_data</span></code></a></td>
+<td>The data to send to the connection to enable 5 GHz</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.enable_24_data.html#apcommand.accesspoints.broadcom.commands.EnableInterface.enable_24_data" title="apcommand.accesspoints.broadcom.commands.EnableInterface.enable_24_data"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface.enable_24_data</span></code></a></td>
+<td>The data to send to the connection to enable 2.4 GHz</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="disable-interface">
+<h3>Disable Interface<a class="headerlink" href="#disable-interface" title="Permalink to this headline">¶</a></h3>
+<p>This is a command implementation to disable a wireless interface.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-36d7b5c6666a9ab853653bd3ea11b20b92cbd6b2.png" alt="DisableInterface -|&gt; BroadcomBaseCommand" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.html#apcommand.accesspoints.broadcom.commands.DisableInterface" title="apcommand.accesspoints.broadcom.commands.DisableInterface"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>An interface enabler</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.__call__.html#apcommand.accesspoints.broadcom.commands.DisableInterface.__call__" title="apcommand.accesspoints.broadcom.commands.DisableInterface.__call__"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface.__call__</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.singular_data.html#apcommand.accesspoints.broadcom.commands.DisableInterface.singular_data" title="apcommand.accesspoints.broadcom.commands.DisableInterface.singular_data"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface.singular_data</span></code></a></td>
+<td>The data to enable the interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.disable_5_data.html#apcommand.accesspoints.broadcom.commands.DisableInterface.disable_5_data" title="apcommand.accesspoints.broadcom.commands.DisableInterface.disable_5_data"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface.disable_5_data</span></code></a></td>
+<td>The data to send to the connection to disable 5 GHz</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.disable_24_data.html#apcommand.accesspoints.broadcom.commands.DisableInterface.disable_24_data" title="apcommand.accesspoints.broadcom.commands.DisableInterface.disable_24_data"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface.disable_24_data</span></code></a></td>
+<td>The data to send to the connection to enable 2.4 GHz</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="the-channel-setter">
+<h2>The Channel Setter<a class="headerlink" href="#the-channel-setter" title="Permalink to this headline">¶</a></h2>
+<p>This is an implementation of a channel setter for the AP.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-70b035b12a2e52c84a02ef96559299a046276c45.png" alt="SetChannel -|&gt; BroadcomBaseCommand" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.SetChannel.html#apcommand.accesspoints.broadcom.commands.SetChannel" title="apcommand.accesspoints.broadcom.commands.SetChannel"><code class="xref py py-obj docutils literal"><span class="pre">SetChannel</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A channel setter for the AP</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.SetChannel.channel.html#apcommand.accesspoints.broadcom.commands.SetChannel.channel" title="apcommand.accesspoints.broadcom.commands.SetChannel.channel"><code class="xref py py-obj docutils literal"><span class="pre">SetChannel.channel</span></code></a></td>
+<td>returns the channel</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.SetChannel.channel_map.html#apcommand.accesspoints.broadcom.commands.SetChannel.channel_map" title="apcommand.accesspoints.broadcom.commands.SetChannel.channel_map"><code class="xref py py-obj docutils literal"><span class="pre">SetChannel.channel_map</span></code></a></td>
+<td>Map of channel to data-dictionary</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="set-sideband">
+<h2>Set Sideband<a class="headerlink" href="#set-sideband" title="Permalink to this headline">¶</a></h2>
+<p>Sets the sideband &#8211; assumes that it has to be 5GHz.</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-6284d1b2998fa97b4ba16b0ba81739fcb1678db2.png" alt="SetSideband -|&gt; BroadcomBaseCommand" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.SetSideband.html#apcommand.accesspoints.broadcom.commands.SetSideband" title="apcommand.accesspoints.broadcom.commands.SetSideband"><code class="xref py py-obj docutils literal"><span class="pre">SetSideband</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A side-band (&#8216;upper&#8217; or &#8216;lower&#8217;) setter</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

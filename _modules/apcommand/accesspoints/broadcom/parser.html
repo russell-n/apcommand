@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.broadcom.parser &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.broadcom.parser</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">import</span> <span class="nn">bs4</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.oatbran</span> <span class="kn">import</span> <span class="n">Group</span><span class="p">,</span> <span class="n">Boundaries</span><span class="p">,</span> <span class="n">CommonPatterns</span>
+
+<span class="k">class</span> <span class="nc">SoupError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raise if something is detected at run-time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BroadcomBaseSoup"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup">[docs]</a><span class="k">class</span> <span class="nc">BroadcomBaseSoup</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A base-class to hold some code common to the soups</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomBaseSoup.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomBaseSoup.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomBaseSoup constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `html`: html text for the soup to parse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomBaseSoup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_html</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">html</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c1"># regular expressions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_expression</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The html for soup        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_html</span>
+
+    <span class="nd">@html.setter</span>
+    <span class="k">def</span> <span class="nf">html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_html</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sets the html, resets the soup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># henry&#39;s machines don&#39;t have their locale setup</span>
+        <span class="c1"># so they are returning strange non-us unicode</span>
+        <span class="c1"># so cast to a string to be safe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_html</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_html</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A beautiful soup object created from self.html</span>
+
+<span class="sd">        :return: BeautifulSoup with self.html loaded</span>
+<span class="sd">        :raise: SoupError if something went wrong</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="n">bs4</span><span class="o">.</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">SoupError</span><span class="p">(</span><span class="s2">&quot;unable to create soup from {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">selected_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compiled regex to get text from selected option (use SELECTED as name for group)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_expression</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_expression</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">SELECTED_EXPRESSION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_expression</span></div>
+
+<span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;name&#39;</span>
+<span class="n">VALUE</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span>
+<span class="n">ZERO</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+<span class="n">ONE</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+<span class="n">VALUE_ZERO</span> <span class="o">=</span> <span class="p">{</span><span class="n">VALUE</span><span class="p">:</span><span class="n">ZERO</span><span class="p">}</span>
+<span class="n">VALUE_ONE</span> <span class="o">=</span> <span class="p">{</span><span class="n">VALUE</span><span class="p">:</span><span class="n">ONE</span><span class="p">}</span>
+<span class="n">WIRELESS_INTERFACE</span> <span class="o">=</span> <span class="s1">&#39;wl_unit&#39;</span>
+<span class="n">INTERFACE</span> <span class="o">=</span> <span class="s1">&#39;wl_radio&#39;</span>
+<span class="n">COUNTRY</span> <span class="o">=</span> <span class="s1">&#39;wl_country_code&#39;</span>
+<span class="n">CHANNEL</span> <span class="o">=</span> <span class="s1">&#39;wl_channel&#39;</span>
+<span class="n">BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;wl_nbw_cap&#39;</span>
+<span class="n">everything</span> <span class="o">=</span> <span class="n">CommonPatterns</span><span class="o">.</span><span class="n">everything</span>
+<span class="n">word</span> <span class="o">=</span> <span class="n">Boundaries</span><span class="o">.</span><span class="n">word</span>
+
+<span class="n">SELECTED_EXPRESSION</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">everything</span> <span class="o">+</span>
+                       <span class="s1">r&#39;&gt;&#39;</span> <span class="o">+</span>
+                       <span class="n">Group</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;{0}&#39;</span><span class="p">,</span> <span class="n">expression</span><span class="o">=</span><span class="n">everything</span><span class="p">)</span> <span class="o">+</span>
+                       <span class="s1">r&#39;&lt;&#39;</span><span class="p">)</span>
+<span class="n">SELECTED</span> <span class="o">=</span> <span class="s1">&#39;selected&#39;</span>
+<span class="n">GENERIC_SELECTED_EXPRESSION</span> <span class="o">=</span> <span class="n">SELECTED_EXPRESSION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">)</span>
+<span class="n">BANDWIDTH_EXPRESSION</span> <span class="o">=</span> <span class="n">SELECTED_EXPRESSION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">BANDWIDTH</span><span class="p">)</span>
+<span class="n">SIDEBAND</span> <span class="o">=</span> <span class="s1">&#39;wl_nctrlsb&#39;</span>
+<span class="n">SIDEBAND_EXPRESSION</span> <span class="o">=</span> <span class="n">SELECTED_EXPRESSION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SIDEBAND</span><span class="p">)</span>
+<span class="n">SSID</span> <span class="o">=</span> <span class="s1">&#39;wl_ssid&#39;</span>
+
+<div class="viewcode-block" id="BroadcomRadioSoup"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup">[docs]</a><span class="k">class</span> <span class="nc">BroadcomRadioSoup</span><span class="p">(</span><span class="n">BroadcomBaseSoup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A holder of BeautifulSoup</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomRadioSoup.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Broadcom soup constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `html`: a file-object or string to pass to BeautifulSoup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomRadioSoup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># the sub-trees and text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wireless_interface</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mac_24_ghz</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mac_5_ghz</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bandwidth</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sideband</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wireless_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The `wl_unit` sub-tree</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">WIRELESS_INTERFACE</span><span class="p">})</span>
+
+<div class="viewcode-block" id="BroadcomRadioSoup.get_value_one"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_one.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_one">[docs]</a>    <span class="k">def</span> <span class="nf">get_value_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the value=&#39;1&#39; tag from a tag (subtree) </span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `tag`: bs4.element.Tag with value=&#39;1&#39; tag in it</span>
+
+<span class="sd">        :return: tag with value=&#39;1&#39; in it</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="n">VALUE_ONE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BroadcomRadioSoup.get_value_zero"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_zero.html#apcommand.accesspoints.broadcom.parser.BroadcomRadioSoup.get_value_zero">[docs]</a>    <span class="k">def</span> <span class="nf">get_value_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the first value=&#39;0&#39; tag from a tag (subtree) </span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `tag`: bs4.element.Tag with value=&#39;0&#39; tag in it</span>
+
+<span class="sd">        :return: bs4.element.Tag child of original tag </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="n">VALUE_ZERO</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mac_24_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The 2.4 GHz MAC address text from the wl_unit</span>
+
+<span class="sd">        :return: (&lt;MAC ADDRESS&gt;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_zero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mac_5_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The 5 GHz MAC address text from the wl_unit tag</span>
+
+<span class="sd">        :return: (&lt;5 GHz MAC Address&gt;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_one</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the current country setting</span>
+
+<span class="sd">        :return: Country Code (e.g. &#39;US&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">COUNTRY</span><span class="p">})</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">VALUE</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interface_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the state of currently selected radio (enabled or disabled)</span>
+
+<span class="sd">        :return: &#39;Enabled&#39; or &#39;Disabled&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;wl_radio&#39;</span><span class="p">}):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">)</span>
+                
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the channel for the currently selected interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">CHANNEL</span><span class="p">})</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">VALUE</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">CHANNEL</span><span class="p">}))</span>
+            <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The bandwidth setting (for both bands)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">BANDWIDTH</span><span class="p">}):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sideband</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the sideband (only for 40GHz)</span>
+
+<span class="sd">        :return: &#39;Upper&#39;, &#39;Lower&#39;, or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">SIDEBAND</span><span class="p">}):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BroadcomLANSoup"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomLANSoup">[docs]</a><span class="k">class</span> <span class="nc">BroadcomLANSoup</span><span class="p">(</span><span class="n">BroadcomBaseSoup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A soup for the lan.asp page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomLANSoup.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomLANSoup.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomLANSoup constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `html`: An initial text to parse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomLANSoup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dhcp_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The selected DHCP state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lan_proto</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;lan_proto&#39;</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lan_proto</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">SELECTED</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BroadcomSSIDSoup"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup">[docs]</a><span class="k">class</span> <span class="nc">BroadcomSSIDSoup</span><span class="p">(</span><span class="n">BroadcomBaseSoup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A soup for the ssid.asp page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomSSIDSoup.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.html#apcommand.accesspoints.broadcom.parser.BroadcomSSIDSoup.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomSSIDSoup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the SSID for the currently selected interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">NAME</span><span class="p">:</span><span class="n">SSID</span><span class="p">})[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span></div>
+<span class="c1"># end class BroadcomSSIDSoup</span>
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">choose</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="n">wl_unit</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;select name=&quot;wl_unit&quot; onchange=&quot;submit();&quot;&gt;</span>
+<span class="s2">&lt;option selected value=&quot;0&quot;&gt;(00:90:4C:09:11:03)&lt;/option&gt;</span>
+<span class="s2">&lt;option value=&quot;1&quot;&gt;(00:90:4C:13:11:03)&lt;/option&gt;</span>
+<span class="s2">&lt;/select&gt;&quot;&quot;&quot;</span>
+
+<span class="k">class</span> <span class="nc">TestBroadcomRadioSoup</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># if you put a file open outside of the class imports will crash</span>
+        <span class="c1"># unless you happen to be running the code in this folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radio_html</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">BroadcomRadioSoup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio_html</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup_5</span> <span class="o">=</span> <span class="n">BroadcomRadioSoup</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_5_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it the constructor set the right parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio_html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does BeautfulSoup get passed the html attribute?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;bs4.BeautifulSoup&#39;</span><span class="p">,</span> <span class="n">soup</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">soup</span>
+        <span class="n">soup</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+
+        <span class="c1"># now get rid of the html</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="c1"># beautiful soup takes html at construction, changing html should reset soup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">_soup</span><span class="p">)</span>
+
+        <span class="c1"># if the html isn&#39;t set, how will you make soup?</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SoupError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">soup</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the wireless interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># wl_unit is defined in the explanatory text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wl_unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">))</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_get_band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the band option from a tag?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band_24</span> <span class="o">=</span> <span class="s1">&#39;&lt;option selected value=&quot;0&quot;&gt;(00:90:4C:09:11:03)&lt;/option&gt;&#39;</span>
+        <span class="n">band_5</span> <span class="o">=</span> <span class="s1">&#39;&lt;option value=&quot;1&quot;&gt;(00:90:4C:13:11:03)&lt;/option&gt;&#39;</span>
+
+        <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">wireless_interface</span>
+        <span class="n">outcome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">get_value_zero</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">outcome</span><span class="p">),</span> <span class="n">band_24</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">get_value_one</span><span class="p">(</span><span class="n">tag</span><span class="p">)),</span> <span class="n">band_5</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the 2.4 GHz and 5 GHz MAC Addresses?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band_24</span> <span class="o">=</span> <span class="s1">&#39;(00:90:4C:09:11:03)&#39;</span>
+        <span class="n">band_5</span> <span class="o">=</span> <span class="s1">&#39;(00:90:4C:13:11:03)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">mac_24_ghz</span><span class="p">,</span> <span class="n">band_24</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">mac_5_ghz</span><span class="p">,</span> <span class="n">band_5</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_country_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it extract the current country?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="s1">&#39;US&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_radio_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it correctly get the state of the radio?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">interface_state</span><span class="p">,</span> <span class="s1">&#39;Disabled&#39;</span><span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s1">&#39;Enabled&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup_5</span><span class="o">.</span><span class="n">interface_state</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span>
+                         <span class="s1">&#39;Soup 5: expected: {0}, actual: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">soup_5</span><span class="o">.</span><span class="n">interface_state</span><span class="p">))</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the current channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># unlike other parts of the page this only lists the channel for the current interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="s1">&#39;36&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the bandwidth?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the Broadcom sets values for both bands</span>
+        <span class="c1"># you need to pair this outcome with the current interface to get</span>
+        <span class="c1"># current bandwidth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">,</span> <span class="s2">&quot;20MHz in 2.4G Band and 40MHz in 5G Band&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_sideband</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the right sideband (5GHz only)?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">sideband</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup_5</span><span class="o">.</span><span class="n">sideband</span><span class="p">,</span> <span class="s1">&#39;Lower&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestBroadcomLANSoup</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lan_html</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;lan_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">BroadcomLANSoup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lan_html</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_disabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Disabled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">dhcp_state</span><span class="p">)</span>
+
+        <span class="c1"># test the case where the `selected` attribute is out of order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;lan_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Disabled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">dhcp_state</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dhcp_enabled.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Enabled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">dhcp_state</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestBroadcomSSIDSoup</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;ssid_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">BroadcomSSIDSoup</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the SSID?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;hownowbrowndog&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">ssid</span><span class="p">)</span>
+        <span class="k">return</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

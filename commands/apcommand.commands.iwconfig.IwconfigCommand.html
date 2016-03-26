@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.commands.iwconfig.IwconfigCommand &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">apcommand.commands.iwconfig.IwconfigCommand</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/commands/apcommand.commands.iwconfig.IwconfigCommand.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="apcommand-commands-iwconfig-iwconfigcommand">
+<h1>apcommand.commands.iwconfig.IwconfigCommand<a class="headerlink" href="#apcommand-commands-iwconfig-iwconfigcommand" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand">
+<em class="property">class </em><code class="descclassname">apcommand.commands.iwconfig.</code><code class="descname">IwconfigCommand</code><span class="sig-paren">(</span><em>connection</em>, <em>interface='wlan0'</em>, <em>not_available='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apcommand/commands/iwconfig.html#IwconfigCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>a class to bundle the connection and the iperf lexer</p>
+<p>IwconfigCommand constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body"><ul class="first last simple">
+<li><cite>connection</cite>: connection to the device</li>
+<li><cite>interface</cite>: name of the interface (e.g. eth0)</li>
+<li><cite>not_available</cite>: string to return if the information is N/A</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>connection</em>, <em>interface='wlan0'</em>, <em>not_available='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apcommand/commands/iwconfig.html#IwconfigCommand.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>IwconfigCommand constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body"><ul class="first last simple">
+<li><cite>connection</cite>: connection to the device</li>
+<li><cite>interface</cite>: name of the interface (e.g. eth0)</li>
+<li><cite>not_available</cite>: string to return if the information is N/A</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.__init__" title="apcommand.commands.iwconfig.IwconfigCommand.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(connection[,&nbsp;interface,&nbsp;not_available])</td>
+<td>IwconfigCommand constructor</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.output" title="apcommand.commands.iwconfig.IwconfigCommand.output"><code class="xref py py-obj docutils literal"><span class="pre">output</span></code></a>()</td>
+<td>Calls the <cite>iwconfig &lt;interface&gt;</cite> command on the self.connection</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.bitrate" title="apcommand.commands.iwconfig.IwconfigCommand.bitrate"><code class="xref py py-obj docutils literal"><span class="pre">bitrate</span></code></a></td>
+<td>Gets the bitrate</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.bssid" title="apcommand.commands.iwconfig.IwconfigCommand.bssid"><code class="xref py py-obj docutils literal"><span class="pre">bssid</span></code></a></td>
+<td>the BSSID (MAC Address) of the interface</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.found_interface" title="apcommand.commands.iwconfig.IwconfigCommand.found_interface"><code class="xref py py-obj docutils literal"><span class="pre">found_interface</span></code></a></td>
+<td>the interface in the iwconfig output string</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.frequency" title="apcommand.commands.iwconfig.IwconfigCommand.frequency"><code class="xref py py-obj docutils literal"><span class="pre">frequency</span></code></a></td>
+<td>The frequency of the interface</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.lexer" title="apcommand.commands.iwconfig.IwconfigCommand.lexer"><code class="xref py py-obj docutils literal"><span class="pre">lexer</span></code></a></td>
+<td>A lexer for the iwconfig output</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.logger" title="apcommand.commands.iwconfig.IwconfigCommand.logger"><code class="xref py py-obj docutils literal"><span class="pre">logger</span></code></a></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">A logging object.</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.noise" title="apcommand.commands.iwconfig.IwconfigCommand.noise"><code class="xref py py-obj docutils literal"><span class="pre">noise</span></code></a></td>
+<td>the interface noise</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.protocol" title="apcommand.commands.iwconfig.IwconfigCommand.protocol"><code class="xref py py-obj docutils literal"><span class="pre">protocol</span></code></a></td>
+<td>the protocol for the interface</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.rssi" title="apcommand.commands.iwconfig.IwconfigCommand.rssi"><code class="xref py py-obj docutils literal"><span class="pre">rssi</span></code></a></td>
+<td>the interface&#8217;s rssi</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commands.iwconfig.IwconfigCommand.html#apcommand.commands.iwconfig.IwconfigCommand.ssid" title="apcommand.commands.iwconfig.IwconfigCommand.ssid"><code class="xref py py-obj docutils literal"><span class="pre">ssid</span></code></a></td>
+<td>Gets the interface ssid (discovered, not passed to constructor)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.output">
+<code class="descname">output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apcommand/commands/iwconfig.html#IwconfigCommand.output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the <cite>iwconfig &lt;interface&gt;</cite> command on the self.connection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">namedtuple</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output of the connection</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.bitrate">
+<code class="descname">bitrate</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.bitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the bitrate</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.bssid">
+<code class="descname">bssid</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.bssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>the BSSID (MAC Address) of the interface</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.found_interface">
+<code class="descname">found_interface</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.found_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>the interface in the iwconfig output string</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.frequency">
+<code class="descname">frequency</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>The frequency of the interface</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.lexer">
+<code class="descname">lexer</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.lexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A lexer for the iwconfig output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.logger">
+<code class="descname">logger</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.logger" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A logging object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.noise">
+<code class="descname">noise</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>the interface noise</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.protocol">
+<code class="descname">protocol</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.protocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>the protocol for the interface</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.rssi">
+<code class="descname">rssi</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.rssi" title="Permalink to this definition">¶</a></dt>
+<dd><p>the interface&#8217;s rssi</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apcommand.commands.iwconfig.IwconfigCommand.ssid">
+<code class="descname">ssid</code><a class="headerlink" href="#apcommand.commands.iwconfig.IwconfigCommand.ssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the interface ssid (discovered, not passed to constructor)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Command Pattern &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Developer Documentation" href="../index.html" />
+    <link rel="next" title="Shelving Objects" href="shelve.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Command Pattern</a><ul>
+<li><a class="reference internal" href="#encapsulating-requests">Encapsulating Requests</a></li>
+<li><a class="reference internal" href="#parameterize-other-objects">Parameterize Other Objects</a></li>
+<li><a class="reference internal" href="#undo">Undo</a></li>
+<li><a class="reference internal" href="#queing">Queing</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
+<li><a class="reference internal" href="#macrocommand">MacroCommand</a></li>
+<li><a class="reference internal" href="#python-implementation">Python Implementation</a><ul>
+<li><a class="reference internal" href="#command">Command</a></li>
+<li><a class="reference internal" href="#macro">Macro</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="shelve.html" title="Next Chapter: Shelving Objects"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Shelving Objects &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../../_sources/documentation/developer/appendices/command.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-command-pattern">
+<h1>The Command Pattern<a class="headerlink" href="#the-command-pattern" title="Permalink to this headline">¶</a></h1>
+<p>This is just a bunch of notes so it can&#8217;t really be read, but it&#8217;s a reference for the <code class="docutils literal"><span class="pre">Commands</span></code>.</p>
+<p class="plantuml" id="command-pattern">
+<img src="../../../_images/plantuml-99865895a8e908708e65daa43e899fd83a0efef6.png" alt="Client -&gt; Receiver
+
+Invoker -&gt; Command
+ConcreteCommand ..&gt; Command
+ConcreteCommand -&gt; Receiver
+Client -&gt; ConcreteCommand
+
+Invoker : set_command()
+Command : execute()
+Command : undo()
+Command : store()
+Command : load()
+
+Receiver : action()
+ConcreteCommand : execute()
+ConcreteCommand : undo()
+ConcreteCommand : store()
+ConcreteCommand : load()" />
+</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">command</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Class</th>
+<th class="head">Property</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Client</td>
+<td>Creates ConcreteCommand</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Sets ConcreteCommand&#8217;s Receiver</td>
+</tr>
+<tr class="row-even"><td>Invoker</td>
+<td>Holds Command</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>calls the Command&#8217;s execute method</td>
+</tr>
+<tr class="row-even"><td>Receiver</td>
+<td>Knows how to do the actions in the Commands execute</td>
+</tr>
+<tr class="row-odd"><td>ConcreteCommand</td>
+<td>Maps execute to a sequence of receiver actions</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>Encapsulates a request as an object</li>
+<li>Lets you parameterize other objects with different requests</li>
+<li>Allows you to que or log requests</li>
+<li>Supports undo-able operations</li>
+</ul>
+<div class="section" id="encapsulating-requests">
+<h2>Encapsulating Requests<a class="headerlink" href="#encapsulating-requests" title="Permalink to this headline">¶</a></h2>
+<p>THe <em>Command</em> packages multiple action on a Receiver but only exposes the <cite>execute</cite> method.</p>
+</div>
+<div class="section" id="parameterize-other-objects">
+<h2>Parameterize Other Objects<a class="headerlink" href="#parameterize-other-objects" title="Permalink to this headline">¶</a></h2>
+<p>Because only the execute is exposed, you can create different commands that call a different sequence of actions and substitute them.</p>
+</div>
+<div class="section" id="undo">
+<h2>Undo<a class="headerlink" href="#undo" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>Invoker.set_command</cite> method should take three parameters:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a unique identifier (index if invoker holds a list of commands or key if it uses a dictionary)</li>
+<li>a command</li>
+<li>a command that undoes the command</li>
+</ul>
+</div></blockquote>
+<p>Whenever the invoker&#8217;s method is called it sets the last command so that if the undo is called it knows what to call to undo it.</p>
+<p>An alternative is to use a list of commands called so that you can do multiple undos.</p>
+</div>
+<div class="section" id="queing">
+<h2>Queing<a class="headerlink" href="#queing" title="Permalink to this headline">¶</a></h2>
+<p>Because a Command bundles a set of actions, you can queue them so that they are executed in sequence. This allows the consumer of the queue to be completely ignorant of how the actual commands work or what they do.</p>
+</div>
+<div class="section" id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>add a store() after each execute() that log&#8217;s the action and parameters</li>
+<li>add a load() method that can read the log entry and call the same action</li>
+</ul>
+</div>
+<div class="section" id="macrocommand">
+<span id="macro-command"></span><h2>MacroCommand<a class="headerlink" href="#macrocommand" title="Permalink to this headline">¶</a></h2>
+<p>If the Invoker needs to call multiple commands, create a MacroCommand that contains a list of commands and calls them in order.</p>
+</div>
+<div class="section" id="python-implementation">
+<h2>Python Implementation<a class="headerlink" href="#python-implementation" title="Permalink to this headline">¶</a></h2>
+<p>The following implementation was taken from <em>Python In Practice</em> (which as of this writing has not been published but is accessible via Safari Books).</p>
+<div class="section" id="command">
+<h3>Command<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
+<p>Instead of using sub-classing it composes functions (called <em>do</em> and <em>undo</em>). It assumes that <em>do</em> is callable and calls it when it is called. The <cite>Command</cite> class is an adapter that aliases the function passed in behind its <cite>__call__</cite> method. It checks the <em>do</em> and <em>undo</em> functions passed in are callable and raises an AssertionError if they are not.</p>
+<p class="plantuml">
+<img src="../../../_images/plantuml-f4ae7d9944db4e08cf70ef73091062b48ce27eaf.png" alt="Command : do
+Command : undo
+Command : __call__()" />
+</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Command adapts functions to the command-pattern</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do</span><span class="p">,</span> <span class="n">undo</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Command constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `do`: callable function</span>
+<span class="sd">         - `undo`: callable function that un-does what do does</span>
+<span class="sd">         - `description`: description of the command</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">do</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Callable</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">undo</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Callable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do</span> <span class="o">=</span> <span class="n">do</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undo</span> <span class="o">=</span> <span class="n">undo</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do</span><span class="p">()</span>
+        <span class="k">return</span>
+<span class="c1"># end class Command</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="macro">
+<span id="macro-pattern"></span><h3>Macro<a class="headerlink" href="#macro" title="Permalink to this headline">¶</a></h3>
+<p>The <em>Macro</em> bundles commands. Besides using the Command as an adapter you can use it as a check by requiring that the <em>Macro</em> only take commands. Then again you can just check that the command is callable.</p>
+<p class="plantuml">
+<img src="../../../_images/plantuml-1bc0236340ee921342e53f6564bcc744fe002438.png" alt="Macro : add(Command)
+Macro : __call__()
+Macro : do()
+Macro : undo()" />
+</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>class Macro(object):
+    &quot;&quot;&quot;
+    A Macro bundles commands.
+    &quot;&quot;&quot;
+    def __init__(self, description=&quot;&quot;):
+        self.description = description
+        self._commands = []
+        return
+
+    def add(self, command):
+        &quot;&quot;&quot;
+        :param:
+
+         - `command`: Command implementation
+        &quot;&quot;&quot;
+        if not(isinstance(command, Command)):
+            raise TypeError(&quot;Expected object of type Command, got {0}&quot;.form
+at(type(Command)))
+        self._commands.append(command)
+        return
+
+    def __call__(self):
+        &quot;&quot;&quot;
+        The main interface -- calls all commands
+        &quot;&quot;&quot;
+        for command in self._commands:
+            command()
+        return
+
+    def undo(self):
+        &quot;&quot;&quot;
+        Calls commands&#39; undos in reverse order
+        &quot;&quot;&quot;
+        for command in reversed(self._commands):
+            command.undo()
+        return
+# end class Macro
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

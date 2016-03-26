@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Sub-Commands &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.atheros.subcommands.try_except" href="api/apcommand.atheros.subcommands.try_except.html" />
+    <link rel="prev" title="apcommand.atheros.argumentparser.Arguments.add_subparsers" href="api/apcommand.atheros.argumentparser.Arguments.add_subparsers.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Sub-Commands</a><ul>
+<li><a class="reference internal" href="#the-try-except-decorator">The try-except Decorator</a></li>
+<li><a class="reference internal" href="#class-subcommand">Class SubCommand</a></li>
+<li><a class="reference internal" href="#testing-the-subcommand">Testing The SubCommand</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.atheros.argumentparser.Arguments.add_subparsers.html" title="Previous Chapter: apcommand.atheros.argumentparser.Arguments.add_subparsers"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.ath...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.atheros.subcommands.try_except.html" title="Next Chapter: apcommand.atheros.subcommands.try_except"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.ath... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/atheros/subcommands.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-sub-commands">
+<h1>The Sub-Commands<a class="headerlink" href="#the-sub-commands" title="Permalink to this headline">¶</a></h1>
+<p>This module holds the sub-commands for the Arguments (methods that it will call).</p>
+<div class="section" id="the-try-except-decorator">
+<h2>The try-except Decorator<a class="headerlink" href="#the-try-except-decorator" title="Permalink to this headline">¶</a></h2>
+<p>Since this is a user-level class (it is part of the command-line interface), exceptions are caught and logged, rather than allowing the interpreter to dump the stack-trace (it still logs and displays the stack-trace). To make this simpler a decorator is used to catch <cite>Exception</cite>.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.try_except.html#apcommand.atheros.subcommands.try_except" title="apcommand.atheros.subcommands.try_except"><code class="xref py py-obj docutils literal"><span class="pre">try_except</span></code></a>(func)</td>
+<td>A decorator method to catch Exceptions</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-subcommand">
+<h2>Class SubCommand<a class="headerlink" href="#class-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>Role: Holds the sub-commands for the Arguments (the methods to actually call base on what the user passed in).</p>
+<p>Collaborators:</p>
+<blockquote>
+<div><ul class="simple">
+<li>AtherosAR5KAP</li>
+</ul>
+</div></blockquote>
+<p class="plantuml">
+<img src="../_images/plantuml-4dfd5a8a1865237e18ec211da6fa108047cf24cc.png" alt="SubCommand o- AtherosAR5KAP" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.html#apcommand.atheros.subcommands.SubCommand" title="apcommand.atheros.subcommands.SubCommand"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand</span></code></a>()</td>
+<td>A holder of sub-commands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.access_point.html#apcommand.atheros.subcommands.SubCommand.access_point" title="apcommand.atheros.subcommands.SubCommand.access_point"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.access_point</span></code></a>(args)</td>
+<td>The Access point controller</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.up.html#apcommand.atheros.subcommands.SubCommand.up" title="apcommand.atheros.subcommands.SubCommand.up"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.up</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.down.html#apcommand.atheros.subcommands.SubCommand.down" title="apcommand.atheros.subcommands.SubCommand.down"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.down</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.destroy.html#apcommand.atheros.subcommands.SubCommand.destroy" title="apcommand.atheros.subcommands.SubCommand.destroy"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.destroy</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.status.html#apcommand.atheros.subcommands.SubCommand.status" title="apcommand.atheros.subcommands.SubCommand.status"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.status</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.reset.html#apcommand.atheros.subcommands.SubCommand.reset" title="apcommand.atheros.subcommands.SubCommand.reset"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.reset</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.channel.html#apcommand.atheros.subcommands.SubCommand.channel" title="apcommand.atheros.subcommands.SubCommand.channel"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.channel</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.ssid.html#apcommand.atheros.subcommands.SubCommand.ssid" title="apcommand.atheros.subcommands.SubCommand.ssid"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.ssid</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.security.html#apcommand.atheros.subcommands.SubCommand.security" title="apcommand.atheros.subcommands.SubCommand.security"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.security</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.command.html#apcommand.atheros.subcommands.SubCommand.command" title="apcommand.atheros.subcommands.SubCommand.command"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.command</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.SubCommand.ipaddress.html#apcommand.atheros.subcommands.SubCommand.ipaddress" title="apcommand.atheros.subcommands.SubCommand.ipaddress"><code class="xref py py-obj docutils literal"><span class="pre">SubCommand.ipaddress</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing-the-subcommand">
+<h2>Testing The SubCommand<a class="headerlink" href="#testing-the-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The sub-command is largely ignorant of what the objects it holds does so this is mainly to check that the methods exist and if called will catch exceptions.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_up.html#apcommand.atheros.subcommands.TestSubCommand.test_up" title="apcommand.atheros.subcommands.TestSubCommand.test_up"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_up</span></code></a>()</td>
+<td>Does it have the up-method and will it catch exception?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_down.html#apcommand.atheros.subcommands.TestSubCommand.test_down" title="apcommand.atheros.subcommands.TestSubCommand.test_down"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_down</span></code></a>()</td>
+<td>Does it have the down-method and will it catch exception?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_destroy.html#apcommand.atheros.subcommands.TestSubCommand.test_destroy" title="apcommand.atheros.subcommands.TestSubCommand.test_destroy"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_destroy</span></code></a>()</td>
+<td>Does it have a method to destroy a (virtual) interface?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_args.html#apcommand.atheros.subcommands.TestSubCommand.test_args" title="apcommand.atheros.subcommands.TestSubCommand.test_args"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_args</span></code></a>()</td>
+<td>Does the correct set of arguments get passed to the ap</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_status.html#apcommand.atheros.subcommands.TestSubCommand.test_status" title="apcommand.atheros.subcommands.TestSubCommand.test_status"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_status</span></code></a>()</td>
+<td>Does the sub-command call the ap&#8217;s status method?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.atheros.subcommands.TestSubCommand.test_security.html#apcommand.atheros.subcommands.TestSubCommand.test_security" title="apcommand.atheros.subcommands.TestSubCommand.test_security"><code class="xref py py-obj docutils literal"><span class="pre">TestSubCommand.test_security</span></code></a>()</td>
+<td>Does the set_security method get called correctly?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

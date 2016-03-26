@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Firmware Exploration &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="The Broadcom Modules" href="index.html" />
+    <link rel="next" title="Broadcom Macros" href="macros.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../documentation/user/index.html">User</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation/developer/index.html">Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Firmware Exploration</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="macros.html" title="Next Chapter: Broadcom Macros"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Broadcom Macros &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/accesspoints/broadcom/firmware_exploration.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="firmware-exploration">
+<h1>Firmware Exploration<a class="headerlink" href="#firmware-exploration" title="Permalink to this headline">¶</a></h1>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+</pre></div>
+</div>
+<p id="id1">The page is structured as a collection of tables and forms (which contain tables):</p>
+<p class="graphviz">
+<img src="../../_images/graphviz-e0294315480862c5824baa41f017afc9c956eead.png" alt="digraph firmware_asp {
+HTML -&gt; Head
+HTML -&gt; Body
+table_1 [label=&quot;Table: Navigation Header&quot;]
+table_2 [label=&quot;Table: Logo, Title&quot;]
+table_4 [label=&quot;Table: Select New Firmware&quot;]
+table_5 [label=&quot;Table: Submit New Firmware&quot;]
+form_2 [label=&quot;Table: Upload NVRAM&quot;]
+form_3 [label=&quot;Table: Submit Upload&quot;]
+tr_1 [label=&quot;Bootloader Version&quot;]
+tr_2 [label=&quot;OS Version&quot;]
+tr_3 [label=&quot;Driver Version&quot;]
+Body -&gt; table_1
+Body -&gt; table_2
+Body -&gt; form_1
+Body -&gt; form_2
+Body -&gt; form_3
+form_1 -&gt; table_0
+table_0 -&gt; tr_1
+table_0 -&gt; tr_2
+table_0 -&gt; tr_3
+form_1 -&gt; table_4
+form_1 -&gt; table_5
+}" />
+</p>
+<p>Looking at the graph it appears that <code class="docutils literal"><span class="pre">table_0</span></code> is the one we are interested here. This is what the html for that table looks like:</p>
+<div class="code html highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">table</span> <span class="na">border</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="na">cellpadding</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="na">cellspacing</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">th</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;310&quot;</span>
+        <span class="na">onMouseOver</span><span class="o">=</span><span class="s">&quot;return overlib(&#39;Displays the current version of Boot Loader.&#39;, LEFT);&quot;</span>
+        <span class="na">onMouseOut</span><span class="o">=</span><span class="s">&quot;return nd();&quot;</span><span class="p">&gt;</span>
+        Boot Loader Version:<span class="ni">&amp;nbsp;&amp;nbsp;</span>
+    <span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span><span class="ni">&amp;nbsp;&amp;nbsp;</span><span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>CFE 5.10.128.2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">th</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;310&quot;</span>
+        <span class="na">onMouseOver</span><span class="o">=</span><span class="s">&quot;return overlib(&#39;Displays the current version of OS.&#39;, LEFT);&quot;</span>
+        <span class="na">onMouseOut</span><span class="o">=</span><span class="s">&quot;return nd();&quot;</span><span class="p">&gt;</span>
+        OS Version:<span class="ni">&amp;nbsp;&amp;nbsp;</span>
+    <span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span><span class="ni">&amp;nbsp;&amp;nbsp;</span><span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Linux  5.70.63.1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">th</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;310&quot;</span>
+        <span class="na">onMouseOver</span><span class="o">=</span><span class="s">&quot;return overlib(&#39;Displays the current version of Wireless Driver.&#39;, LEFT);&quot;</span>
+        <span class="na">onMouseOut</span><span class="o">=</span><span class="s">&quot;return nd();&quot;</span><span class="p">&gt;</span>
+        WL Driver Version:<span class="ni">&amp;nbsp;&amp;nbsp;</span>
+    <span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span><span class="ni">&amp;nbsp;&amp;nbsp;</span><span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>5.60.134 <span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>I had originally hoped to do this as a grammar, but it turns out to be kind of hard and I am apparently losing the AP so this will be brute-force BeautifulSoup:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+</pre></div>
+</div>
+<p>First, we can get the form directly because it has a unique <code class="docutils literal"><span class="pre">action</span></code> attribute:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;firmware_asp.html&#39;</span><span class="p">))</span>
+
+<span class="c1"># find_all returns a list, but since we specified the attrs, we know it has what we want</span>
+<span class="n">form</span> <span class="o">=</span> <span class="n">soup</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;upgrade.cgi&#39;</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">form</span></code> is a BeautfulSoup <code class="docutils literal"><span class="pre">tag</span></code> so it can be searched for the table. There are two ways I thought of to do this. One is to use the fact that we know that the table we want is the first:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">table</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>But that seems to be wrong, somehow, so I prefer to discover it:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">form</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;Version&#39;</span> <span class="ow">in</span> <span class="n">tag</span><span class="o">.</span><span class="n">next</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">table</span><span class="p">(</span><span class="s1">&#39;th&#39;</span><span class="p">)]):</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p>Unfortunately, looking at the table-data, you can see that there is no really nice way to discover information. You either need to used the indices or assume the form of the versions will not change. At this point I will just give up and use the indices.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+<span class="n">extractor</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\s*&lt;[/]*td&gt;&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">])))</span>
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>CFE 5.10.128.2
+Linux  5.70.63.1
+5.60.134
+</pre></div>
+</div>
+<p>Since that was so convoluted I will do it again in one piece using indices:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">version_identifier</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;Bootloader&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;OS&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="s1">&#39;Driver&#39;</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">soup</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;upgrade.cgi&#39;</span><span class="p">})[</span><span class="mi">0</span><span class="p">](</span><span class="s1">&#39;table&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">](</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;{0}: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version_identifier</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                               <span class="n">extractor</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">])))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Bootloader: CFE 5.10.128.2
+OS: Linux  5.70.63.1
+Driver: 5.60.134
+</pre></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

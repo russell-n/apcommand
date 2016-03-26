@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Log Setter &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="index.html" />
+    <link rel="up" title="Developer Documentation" href="documentation/developer/index.html" />
+    <link rel="next" title="apcommand.log_setter.set_logger" href="api/apcommand.log_setter.set_logger.html" />
+    <link rel="prev" title="apcommand.baseclass.BaseThreadClass" href="api/apcommand.baseclass.BaseThreadClass.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Log Setter</a><ul>
+<li><a class="reference internal" href="#api">API</a></li>
+<li><a class="reference internal" href="#cleanup">Cleanup</a></li>
+<li><a class="reference internal" href="#setting-the-logger">Setting the Logger</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.baseclass.BaseThreadClass.html" title="Previous Chapter: apcommand.baseclass.BaseThreadClass"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.bas...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.log_setter.set_logger.html" title="Next Chapter: apcommand.log_setter.set_logger"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.log... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/log_setter.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="log-setter">
+<h1>Log Setter<a class="headerlink" href="#log-setter" title="Permalink to this headline">¶</a></h1>
+<p>This is a module to set the logging level.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Instead of building a class the whole module is used to access the variables and functions within it.</li>
+<li>By default this module uses the package name with <cite>.log</cite> appended to it as the name of the log-file name.</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To make it portable this module uses introspection to get the name of the package. This means that it has to be at the top-level of the package so that modules in sub-folders can use it.</p>
+</div>
+<p class="plantuml">
+<img src="_images/plantuml-fc050def75e57309bd5855a034301f92d224bf46.png" alt="log_setter o-- os
+log_setter o-- logging
+log_setter : set_logger(args)
+log_setter : cleanup()" />
+</p>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.log_setter.set_logger.html#apcommand.log_setter.set_logger" title="apcommand.log_setter.set_logger"><code class="xref py py-obj docutils literal"><span class="pre">set_logger</span></code></a>(args)</td>
+<td>Creates a logger and sets the level based on args.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.log_setter.cleanup.html#apcommand.log_setter.cleanup" title="apcommand.log_setter.cleanup"><code class="xref py py-obj docutils literal"><span class="pre">cleanup</span></code></a>([log_directory,&nbsp;log_name])</td>
+<td>Saves the last log to log-directory</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cleanup">
+<h2>Cleanup<a class="headerlink" href="#cleanup" title="Permalink to this headline">¶</a></h2>
+<p>Since the log-filename is set in this module a <cite>cleanup</cite> function is put here to be accessible outside of the main flow of the system (to allow it to be called even in the event of a crash).</p>
+<blockquote>
+<div><ul class="simple">
+<li>A sub-directory is created (default is &#8220;last_log&#8221;)</li>
+<li>The log is moved to the sub-directory</li>
+</ul>
+</div></blockquote>
+<p>This function was implemented so the log does not continue to grow even as the code is re-run, but there is at least one copy of the log backed-up.</p>
+<p>Example use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">log_setter</span><span class="o">.</span><span class="n">cleanup</span><span class="p">(</span><span class="s2">&quot;output_directory_name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-the-logger">
+<h2>Setting the Logger<a class="headerlink" href="#setting-the-logger" title="Permalink to this headline">¶</a></h2>
+<p>This is the main function to use. It is intended to be used by the ArgumentParser to create sub-commands so it expects a namespace with command-line arguments as attributes. The logging-level is set according to the following:</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Setting the Log-Level</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">debug</th>
+<th class="head">silent</th>
+<th class="head">LogLevel</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>False</td>
+<td>False</td>
+<td>Info</td>
+</tr>
+<tr class="row-odd"><td>False</td>
+<td>True</td>
+<td>Error</td>
+</tr>
+<tr class="row-even"><td>True</td>
+<td>False</td>
+<td>Debug</td>
+</tr>
+<tr class="row-odd"><td>True</td>
+<td>True</td>
+<td>Debug</td>
+</tr>
+</tbody>
+</table>
+<p>Example Use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">log_setter</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

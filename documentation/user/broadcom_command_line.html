@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Broadcom Command Line &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Developer Documentation" href="../developer/index.html" />
+    <link rel="prev" title="Atheros Command Line" href="atheros_command_line.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Broadcom Command Line</a><ul>
+<li><a class="reference internal" href="#the-initial-arguments">The Initial Arguments</a><ul>
+<li><a class="reference internal" href="#the-sleep-option">The sleep option</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-status-subcommand">The Status Subcommand</a></li>
+<li><a class="reference internal" href="#the-channel-subcommand">The channel Subcommand</a></li>
+<li><a class="reference internal" href="#disable-and-enable">disable and enable</a></li>
+<li><a class="reference internal" href="#ssid">ssid</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="atheros_command_line.html" title="Previous Chapter: Atheros Command Line"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Atheros Comma...</span>
+    </a>
+  </li>
+  <li>
+    <a href="../developer/index.html" title="Next Chapter: Developer Documentation"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Developer Doc... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/documentation/user/broadcom_command_line.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-broadcom-command-line">
+<h1>The Broadcom Command Line<a class="headerlink" href="#the-broadcom-command-line" title="Permalink to this headline">¶</a></h1>
+<p>This is a description of the <em>broadcom</em> command that is created when this code is installed. All the commands are issued from a PC that has network-access to the Access Point.</p>
+<p id="broadcom-command-line-interface">The <cite>Broadcom BCM94718NR GigE 802.11n Simultaneous Dual Band Router</cite> controller is accessed at the command line via the <code class="docutils literal"><span class="pre">broadcom</span></code> command. A refresher can be pulled up using the <code class="docutils literal"><span class="pre">broadcom</span> <span class="pre">-h</span></code> option:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: broadcom [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
+                [--username USERNAME] [--password PASSWORD] [--sleep SLEEP]
+                {status,channel,disable,enable,ssid} ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pudb                Run the `pudb` debugger (default=False).
+  --pdb                 Run the `pdb` debugger (default=False).
+  -s, --silent          If True only emit error messages (default=False)
+  -d, --debug           If True emit debug messages (default=False)
+  --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+  --username USERNAME   The user-login for the AP (leave unset for default)
+  --password PASSWORD   The login password for the AP (Leave unset for
+                        default)
+  --sleep SLEEP         Seconds to sleep after web server call (default=0.5)
+
+Broadcom subcommands:
+  Available Sub-Commands
+
+  {status,channel,disable,enable,ssid}
+                        Broadcom sub-commands
+    status              Get some information for an interface
+    channel             Change the AP channel
+    disable             Disable a wireless interface.
+    enable              Enable an interface.
+    ssid                Change the SSID
+</pre></div>
+</div>
+<div class="section" id="the-initial-arguments">
+<h2>The Initial Arguments<a class="headerlink" href="#the-initial-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Most of the initial arguments use the defaults for the router so if you haven&#8217;t changed them you don&#8217;t need to pass them in. The most likely thing to do is change the <cite>hostname</cite> (IP Address). For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom --hostname 192.168.30.23
+</pre></div>
+</div>
+<div class="section" id="the-sleep-option">
+<h3>The sleep option<a class="headerlink" href="#the-sleep-option" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">sleep</span></code> option is there because the broadcom is being controlled via its web-interface and the web-server cannot take requests too soon after making a change. The <code class="docutils literal"><span class="pre">sleep</span></code> is thus a minimum amount of time that the program has to wait between page requests. If you make it too short it might return a socket error and abort (I could trap this but it could return a socket error for other reasons too so I thought it was better to give feedback). If you make it too long it might make the command take a long time but it should still work. The commands that query the AP for information require the least amount of sleeping (the <code class="docutils literal"><span class="pre">status</span></code> subcommand seems to get by with 0 sleep) but the sub-commands that change more than one thing (e.g. if you enable both radios) need at least a little sleep or you will probably get an error (I don&#8217;t think it&#8217;s the server-response-time so much as the saving of the data after a change is applied).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These initial options are meant for the <code class="docutils literal"><span class="pre">broadcom</span></code> command and so have to come before any sub-commands (sub-commands are described below).</p>
+</div>
+<p>The general syntax for the <code class="docutils literal"><span class="pre">broadcom</span></code> command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom &lt;options&gt; &lt;sub-command&gt; &lt;sub-command options&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-status-subcommand">
+<h2>The Status Subcommand<a class="headerlink" href="#the-status-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">status</span></code> gets different state information for the router. The <code class="docutils literal"><span class="pre">broadcom</span> <span class="pre">status</span> <span class="pre">--help</span></code>:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: broadcom status [-h] [band]
+
+positional arguments:
+  band        the band of the interface to query (default=both)
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+<p>If you do not specify a band you should see something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom status
+
+2.4 GHz:
+    Channel: 6
+    SSID: pokerface
+    State: Disabled
+5 GHz:
+    Channel: 157
+    SSID: hownowbrowndog
+    State: Enabled
+    Sideband: Lower
+
+DHCP: Disabled
+Bootloader Version: CFE 5.10.128.2
+OS Version: Linux  5.70.63.1
+WL Driver Version: 5.60.134
+</pre></div>
+</div>
+<p>It also logs the information to the <code class="docutils literal"><span class="pre">apcommand.log</span></code> file so you can check later on what the settings were.</p>
+</div>
+<div class="section" id="the-channel-subcommand">
+<h2>The channel Subcommand<a class="headerlink" href="#the-channel-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>This is the main purpose for the <code class="docutils literal"><span class="pre">broadcom</span></code> as it was created so someone could change the channel in between running tests. To make it behave like the <a class="reference internal" href="apcommand_command_line.html#atheros-cli"><span>atheros channel changer</span></a> it does several things:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Set the channel requested</li>
+<li>Enable the interface for the channel requested (e.g. if 6 is requested, enable 2.4 GHz)</li>
+<li>Disable the other interface (e.g. if 6 is requested, disable 5 GHz)</li>
+<li>If the channel is a 5 GHz channel, set the sideband to &#8216;Lower&#8217; (the &#8216;Upper&#8217; channels are not available)</li>
+</ol>
+</div></blockquote>
+<p>The command does not output anything to the screen by default and because the command affects both interfaces it is affected by the sleep setting (it has to make a call to the server for each interface and will need to wait in-between to prevent the socket timeout metioned earlier) so if you sit and watch it might seem like it has hung, but it might just be a little slow.</p>
+<p>The <code class="docutils literal"><span class="pre">broadcom</span> <span class="pre">channel</span> <span class="pre">--help</span></code>:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: broadcom channel [-h] [--undo] [channel]
+
+positional arguments:
+  channel     Channel to set (none to get current channels)
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --undo      Undo the last channel change.
+</pre></div>
+</div>
+<p>To set a channel (say channel 36) you use the syntax:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom channel 36
+</pre></div>
+</div>
+<p>I also added an <code class="docutils literal"><span class="pre">--undo</span></code> option in case you just want to flip back and forth between two channels. This does <em>not</em> change the interface state, though (since I expose enabling and disabling as independent sub-commands), just the channel so it will really only work on one band (I might fix that if this gets extended to another AP).</p>
+<p>If you call it without passing in any arguments it will return the current channel setting:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom channel
+</pre></div>
+</div>
+<p>The output for this is just a subset of <code class="docutils literal"><span class="pre">status</span></code>.</p>
+</div>
+<div class="section" id="disable-and-enable">
+<h2>disable and enable<a class="headerlink" href="#disable-and-enable" title="Permalink to this headline">¶</a></h2>
+<p>As I mentioned before, setting the channel enables the interface for the channel chosen and disables the other interface. If you want to enable or disable interfaces independent of this you can use the <code class="docutils literal"><span class="pre">enable</span></code> and <code class="docutils literal"><span class="pre">disable</span></code> subcommands. They operate the same way &#8211; specify a band to apply the sub-command to or leave it blank to apply it to both interfaces:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>broadcom enable 2.4
+broadcom disable 5
+broadcom enable
+broadcom disable
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These sub-commands don&#8217;t assume that you only want the specified interface-states (e.g. if you enable 5 GHz it won&#8217;t automatically disable 2.4 GHz).</p>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: broadcom enable [-h] [band]
+
+positional arguments:
+  band        Band of interface to enable (2.4, 5 or both) default=both.
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+</div>
+<div class="section" id="ssid">
+<h2>ssid<a class="headerlink" href="#ssid" title="Permalink to this headline">¶</a></h2>
+<p>This is a querier to get the SSID. Once again, <code class="docutils literal"><span class="pre">status</span></code> has the SSID in it, so the utility is doubtful, but it is a holding place in case an SSID-setter is implemented later.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

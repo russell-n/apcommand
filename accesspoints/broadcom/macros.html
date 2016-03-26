@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Broadcom Macros &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="The Broadcom Modules" href="index.html" />
+    <link rel="next" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command.html" />
+    <link rel="prev" title="Firmware Exploration" href="firmware_exploration.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Broadcom Macros</a><ul>
+<li><a class="reference internal" href="#the-channelchanger">The ChannelChanger</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="firmware_exploration.html" title="Previous Chapter: Firmware Exploration"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Firmware Expl...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command.html" title="Next Chapter: apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.acc... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/accesspoints/broadcom/macros.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="broadcom-macros">
+<h1>Broadcom Macros<a class="headerlink" href="#broadcom-macros" title="Permalink to this headline">¶</a></h1>
+<p>Since the <span class="xref std std-ref">commands</span> have been broken down to do only one thing each (discounting the <cite>undo</cite> methods) in order to get more complex actions they need to be aggregated into what I&#8217;m loosely calling macros (the original intent was to use the Macro Pattern, but that isn&#8217;t working out at the moment).</p>
+<div class="section" id="the-channelchanger">
+<h2>The ChannelChanger<a class="headerlink" href="#the-channelchanger" title="Permalink to this headline">¶</a></h2>
+<p class="plantuml">
+<img src="../../_images/plantuml-898992871e912d2c314c0a58172deedf1640467a.png" alt="ChannelChanger -|&gt; BaseClass" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.html#apcommand.accesspoints.broadcom.macros.ChannelChanger" title="apcommand.accesspoints.broadcom.macros.ChannelChanger"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger</span></code></a>(connection)</td>
+<td>A channel changer for the broadcom</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.enable_command"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.enable_command</span></code></a></td>
+<td>An EnableInterface command (without the band set)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.disable_command.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.disable_command" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.disable_command"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.disable_command</span></code></a></td>
+<td>A DisableInterface command (without the band set)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.set_channel_command.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.set_channel_command" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.set_channel_command"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.set_channel_command</span></code></a></td>
+<td>A SetChannel command</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.set_sideband_command.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.set_sideband_command" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.set_sideband_command"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.set_sideband_command</span></code></a></td>
+<td>A SetSideband command (defaulted &#8216;lower&#8217;)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.undo.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.undo" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.undo"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.undo</span></code></a>()</td>
+<td>right now just undoes the channel as disable/enable might be called elsewhere</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__" title="apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger.__call__</span></code></a>(channel)</td>
+<td>The main interface &#8211; enables the Wireless interface and sets the channel</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

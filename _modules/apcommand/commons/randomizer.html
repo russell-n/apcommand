@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.commons.randomizer &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.commons.randomizer</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span><span class="p">,</span> <span class="n">randrange</span><span class="p">,</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">printable</span><span class="p">,</span> <span class="n">letters</span><span class="p">,</span> <span class="n">digits</span>
+
+
+<span class="n">EMPTY_STRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">ALPHA_NUM</span> <span class="o">=</span> <span class="n">letters</span> <span class="o">+</span> <span class="n">digits</span>
+
+
+<div class="viewcode-block" id="Randomizer"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.html#apcommand.commons.randomizer.Randomizer">[docs]</a><span class="k">class</span> <span class="nc">Randomizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to hold randomizing (static) methods</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Randomizer.string"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.string.html#apcommand.commons.randomizer.Randomizer.string">[docs]</a>    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="n">maximum</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random string composed of printable characters</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `maximum`: Max characters to use</span>
+
+<span class="sd">        :return: random printable str of at least 1 and at most maximum characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">maximum</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maximum</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EMPTY_STRING</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">choice</span><span class="p">(</span><span class="n">printable</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">+</span><span class="mi">1</span><span class="p">))])</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Randomizer.letters"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.letters.html#apcommand.commons.randomizer.Randomizer.letters">[docs]</a>    <span class="k">def</span> <span class="nf">letters</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a string of upper and lowercase letters</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `minimum`: least amount of characters</span>
+<span class="sd">         - `maximum`: most characters allowed</span>
+
+<span class="sd">        :return: random string of at least 1 and at most maximum characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">maximum</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maximum</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EMPTY_STRING</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="o">+</span><span class="mi">1</span><span class="p">))])</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Randomizer.integer"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.integer.html#apcommand.commons.randomizer.Randomizer.integer">[docs]</a>    <span class="k">def</span> <span class="nf">integer</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a random integer from 0 to 100 (inclusive)</span>
+
+<span class="sd">        :return: random integer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">randint</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Randomizer.letters_complement"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.letters_complement.html#apcommand.commons.randomizer.Randomizer.letters_complement">[docs]</a>    <span class="k">def</span> <span class="nf">letters_complement</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a string of random letters none of which are in source</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `source`: string to complement</span>
+<span class="sd">         - `minimum`: minimum length of complement</span>
+<span class="sd">         - `maximum`: maximum length of complement</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">complement</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+                <span class="n">complement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EMPTY_STRING</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">complement</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Randomizer.alphanum"><a class="viewcode-back" href="../../../commons/api/apcommand.commons.randomizer.Randomizer.alphanum.html#apcommand.commons.randomizer.Randomizer.alphanum">[docs]</a>    <span class="k">def</span> <span class="nf">alphanum</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a string of random alpha-numeric characters</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `minimum`: minimum number of characters to generate</span>
+<span class="sd">         - `maximum`: maximum length of string</span>
+<span class="sd">        :return: string of alpha-numeric characters         </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">choice</span><span class="p">(</span><span class="n">ALPHA_NUM</span><span class="p">)</span> <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))])</span></div></div>
+
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">IntType</span><span class="p">,</span> <span class="n">StringType</span>
+
+
+<span class="k">class</span> <span class="nc">TestRandomizer</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+        <span class="n">minimum</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+        <span class="n">maximum</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span>
+
+    <span class="k">def</span> <span class="nf">test_integer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the randomizer return an integer within bounds?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
+                                           <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertGreaterEqual</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">minimum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertLessEqual</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">IntType</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_letters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it create a string of (alphabet) letters?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">letters</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertGreaterEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertLessEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">StringType</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">character</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">letters</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it create a string of printable characters?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">string</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertGreaterEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertLessEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">character</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">printable</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_letters_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it return a random string of letters not in the given</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">letters</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">))</span>
+        <span class="n">complement</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">letters_complement</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">complement</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_alphanum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it return a random alpha-numeric string?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">Randomizer</span><span class="o">.</span><span class="n">alphanum</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">letters</span> <span class="o">+</span> <span class="n">digits</span><span class="p">)</span>
+        <span class="k">return</span>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

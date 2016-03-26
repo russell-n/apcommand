@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTTP Connection &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.connections.httpconnection.EventTimer" href="api/apcommand.connections.httpconnection.EventTimer.html" />
+    <link rel="prev" title="apcommand.connections.telnetconnection.TestTelnetConnectionBuilder" href="api/apcommand.connections.telnetconnection.TestTelnetConnectionBuilder.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">HTTP Connection</a><ul>
+<li><a class="reference internal" href="#example-get">Example Get</a></li>
+<li><a class="reference internal" href="#persistence-of-data">Persistence of Data</a></li>
+<li><a class="reference internal" href="#eventtimer">EventTimer</a></li>
+<li><a class="reference internal" href="#the-wait-decorator">The <code class="docutils literal"><span class="pre">wait</span></code> Decorator</a></li>
+<li><a class="reference internal" href="#the-httpconnection">The HTTPConnection</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.connections.telnetconnection.TestTelnetConnectionBuilder.html" title="Previous Chapter: apcommand.connections.telnetconnection.TestTelnetConnectionBuilder"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.con...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.connections.httpconnection.EventTimer.html" title="Next Chapter: apcommand.connections.httpconnection.EventTimer"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.con... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/connections/httpconnection.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="http-connection">
+<h1>HTTP Connection<a class="headerlink" href="#http-connection" title="Permalink to this headline">¶</a></h1>
+<p>This is a client-connection to communicate with HTTP-servers. Since some of the parameters are reminiscent of telnet and SSH sessions I will model it somewhat after the SSHConnection, but it will primarily act as an interface to the <a class="reference external" href="http://docs.python-requests.org/en/latest/">requests</a> package.</p>
+<div class="section" id="example-get">
+<h2>Example Get<a class="headerlink" href="#example-get" title="Permalink to this headline">¶</a></h2>
+<p>An example use based on the Broadcom BCM94718NR:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">connection</span> <span class="o">=</span> <span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;radio.asp&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span>
+<span class="k">print</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>The previous snippet would have printed the html page associated with the 2.4 GHz radio. The settings were based on Aren&#8217;s Broadcom Code which translates to curl&#8217;s:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>curl -d &#39;wl_unit=0&#39; --user :admin http://192.168.1.1/radio.asp
+</pre></div>
+</div>
+<p>Setting parts of the URL in the HTTPConnection will re-build the URL so you could get the <cite>ssid</cite> page instead of the <cite>radio</cite> page like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># re-using the previous connection</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;ssid.asp&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span>
+<span class="k">print</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>The use of <cite>connection.get</cite> is not a typo, the <code class="docutils literal"><span class="pre">__call__</span></code> is just a &#8216;GET&#8217; call, since I figured it is the most common thing to do, so using it is the same as using <code class="docutils literal"><span class="pre">.get</span></code>. The <cite>response</cite> returned is a <a class="reference external" href="http://docs.python-requests.org/en/latest/user/quickstart/#response-content">requests.Response</a> object so the HTTPConnection doesn&#8217;t act exactly like the other connections (which return standard-out and standard error in a tuple). There&#8217;s more information there so I figured it would be better to return the whole thing rather than throw away stuff.</p>
+</div>
+<div class="section" id="persistence-of-data">
+<h2>Persistence of Data<a class="headerlink" href="#persistence-of-data" title="Permalink to this headline">¶</a></h2>
+<p>Since I tested this a lot using <cite>ipython</cite> I made it so that it will store the <cite>data</cite> attribute and add it automatically when a request is made:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">connection</span> <span class="o">=</span> <span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;radio.asp&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>This should work the same as the first example. If you want to temporarily use a different data-set, pass in the dictionary (using the parameter name explicitly):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>If you want to get rid of the data set it to None, if you want to change it just assign it a new value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># no default data</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c1"># new default data</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In practice I think setting and resetting the <code class="docutils literal"><span class="pre">data</span></code> parameter is probably not a good idea, either you should pass in the data or set it once and leave it, otherwise it gets confusing, but it is there if needed.</p>
+<p>In this initial use I don&#8217;t use parameters so I didn&#8217;t do the same thing for them or any other settings that can be passed in &#8211;</p>
+<blockquote>
+<div><ul class="simple">
+<li>The URL and authentication are always taken from the HTTPConnection properties</li>
+<li>The data will be taken from the HTTPConnection properties if set or from the arguments if passed in</li>
+<li>Everything else needs to be passed in when the connection is called</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="eventtimer">
+<h2>EventTimer<a class="headerlink" href="#eventtimer" title="Permalink to this headline">¶</a></h2>
+<p>If you hit the Broadcom web-server too soon after a previous call to it&#8217;ll return an error or erroneous page. To prevent this I was having the users of this sleep between calls, but that seems inelegant and causes unnecessary waiting sometimes (kind of like taking the bus).</p>
+<p>Instead the HTTPConnection will maintain an EventTimer and block if you try to make a new request too soon (too soon being something that needs to be empirically determined by the user, right now it seems to be a half second).</p>
+<p class="plantuml">
+<img src="../_images/plantuml-3aa1137faf4032c2e28c197f8189eb2d019dc641.png" alt="EventTimer o- threading.Event
+EventTimer o- threading.Timer
+EventTimer -|&gt; BaseClass
+EventTimer : __init__(event, seconds)" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.EventTimer.html#apcommand.connections.httpconnection.EventTimer" title="apcommand.connections.httpconnection.EventTimer"><code class="xref py py-obj docutils literal"><span class="pre">EventTimer</span></code></a>([event,&nbsp;seconds])</td>
+<td>A timer object to set an event</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.EventTimer.set_event.html#apcommand.connections.httpconnection.EventTimer.set_event" title="apcommand.connections.httpconnection.EventTimer.set_event"><code class="xref py py-obj docutils literal"><span class="pre">EventTimer.set_event</span></code></a>()</td>
+<td>Sets the event</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.EventTimer.start.html#apcommand.connections.httpconnection.EventTimer.start" title="apcommand.connections.httpconnection.EventTimer.start"><code class="xref py py-obj docutils literal"><span class="pre">EventTimer.start</span></code></a>()</td>
+<td>The main interface - clears the event then starts the timer</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.EventTimer.clear.html#apcommand.connections.httpconnection.EventTimer.clear" title="apcommand.connections.httpconnection.EventTimer.clear"><code class="xref py py-obj docutils literal"><span class="pre">EventTimer.clear</span></code></a>()</td>
+<td>A convenience method for users to call the event.clear method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.EventTimer.wait.html#apcommand.connections.httpconnection.EventTimer.wait" title="apcommand.connections.httpconnection.EventTimer.wait"><code class="xref py py-obj docutils literal"><span class="pre">EventTimer.wait</span></code></a>([timeout])</td>
+<td>Calls event.wait if timeout not given use self.seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-wait-decorator">
+<h2>The <code class="docutils literal"><span class="pre">wait</span></code> Decorator<a class="headerlink" href="#the-wait-decorator" title="Permalink to this headline">¶</a></h2>
+<p>To make using the <code class="docutils literal"><span class="pre">EventTimer</span></code> easier, a <code class="docutils literal"><span class="pre">wait</span></code> decorator can be used. The procedure:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Call event.wait in case a previous timer is still running</li>
+<li>Clear the event</li>
+<li>Call the decorated method</li>
+<li>Start the timer</li>
+</ol>
+</div></blockquote>
+<p>Basic Use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@wait</span>
+<span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># do something here</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is a method decorator &#8211; it assumes the object it belongs to has a <code class="docutils literal"><span class="pre">self.timer</span></code> property (which is an instance of <code class="docutils literal"><span class="pre">EventTimer</span></code>).</p>
+</div>
+</div>
+<div class="section" id="the-httpconnection">
+<h2>The HTTPConnection<a class="headerlink" href="#the-httpconnection" title="Permalink to this headline">¶</a></h2>
+<p class="plantuml">
+<img src="../_images/plantuml-1d04cc12607615b55fadc745de777858f8274d46.png" alt="HTTPConnection o- requests.Request
+HTTPConnection : GET(*args, **kwargs)" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.HTTPConnection.html#apcommand.connections.httpconnection.HTTPConnection" title="apcommand.connections.httpconnection.HTTPConnection"><code class="xref py py-obj docutils literal"><span class="pre">HTTPConnection</span></code></a>(hostname[,&nbsp;username,&nbsp;...])</td>
+<td>Acts as a client connection to an HTTP server</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.HTTPConnection.__call__.html#apcommand.connections.httpconnection.HTTPConnection.__call__" title="apcommand.connections.httpconnection.HTTPConnection.__call__"><code class="xref py py-obj docutils literal"><span class="pre">HTTPConnection.__call__</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A shortcut for GET requests</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.HTTPConnection.request.html#apcommand.connections.httpconnection.HTTPConnection.request" title="apcommand.connections.httpconnection.HTTPConnection.request"><code class="xref py py-obj docutils literal"><span class="pre">HTTPConnection.request</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.connections.httpconnection.HTTPConnection.__getattr__.html#apcommand.connections.httpconnection.HTTPConnection.__getattr__" title="apcommand.connections.httpconnection.HTTPConnection.__getattr__"><code class="xref py py-obj docutils literal"><span class="pre">HTTPConnection.__getattr__</span></code></a>(method)</td>
+<td>The parameters are the same as <cite>requests.request</cite> (method is converted to uppercase)</td>
+</tr>
+</tbody>
+</table>
+<p>The URL is being put together with the python <a class="reference external" href="http://docs.python.org/2/library/urlparse.html">urlparse.urlunparse</a> method. For future reference, the tuple that is passed to it has these fields:</p>
+<table border="1" class="docutils" id="id2">
+<caption><span class="caption-text">ParseResult tuple</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Index</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>scheme</td>
+<td>0</td>
+<td>URL scheme specifier</td>
+<td>empty string</td>
+</tr>
+<tr class="row-odd"><td>netloc</td>
+<td>1</td>
+<td>Network location part</td>
+<td>empty string</td>
+</tr>
+<tr class="row-even"><td>path</td>
+<td>2</td>
+<td>Hierarchical path</td>
+<td>empty string</td>
+</tr>
+<tr class="row-odd"><td>params</td>
+<td>3</td>
+<td>Parameters for last path element</td>
+<td>empty string</td>
+</tr>
+<tr class="row-even"><td>query</td>
+<td>4</td>
+<td>Query component</td>
+<td>empty string</td>
+</tr>
+<tr class="row-odd"><td>fragment</td>
+<td>5</td>
+<td>Fragment identifier</td>
+<td>empty string</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-73cd54e0c294f2a87107fd3b6bdc826a0c46eca8.png" alt="HTTPConnectionError -|&gt; RuntimeError" />
+</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

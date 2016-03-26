@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Local Connection &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.connections.localconnection.LocalConnection" href="api/apcommand.connections.localconnection.LocalConnection.html" />
+    <link rel="prev" title="apcommand.commons.oatbran.TestQuantifier.test_zero_or_more" href="../commons/api/apcommand.commons.oatbran.TestQuantifier.test_zero_or_more.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Local Connection</a><ul>
+<li><a class="reference internal" href="#the-outputerror">The OutputError</a></li>
+<li><a class="reference internal" href="#the-localconnection">The LocalConnection</a></li>
+<li><a class="reference internal" href="#localnixconnection">LocalNixConnection</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../commons/api/apcommand.commons.oatbran.TestQuantifier.test_zero_or_more.html" title="Previous Chapter: apcommand.commons.oatbran.TestQuantifier.test_zero_or_more"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.com...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.connections.localconnection.LocalConnection.html" title="Next Chapter: apcommand.connections.localconnection.LocalConnection"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.con... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/connections/localconnection.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-local-connection">
+<h1>The Local Connection<a class="headerlink" href="#the-local-connection" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In practice I have found that there is almost no case where you cannot use telnet or ssh to connect to a device, and both have more robust interfaces (as well as allowing remote access), so this is pretty much never used or maintained anymore.</p>
+</div>
+<p>e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">LocalConnection</span><span class="p">()</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">output</span><span class="o">.</span><span class="n">output</span>
+</pre></div>
+</div>
+<p>This will print the output of the <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code> command line command.</p>
+<p>This is using subprocess so anything with lots of output runs the risk of causing the output to block (i.e. it is file-buffered, not line or character buffered).</p>
+<p>In most cases it is better to use the LocalNixConnection instead which uses Pexpect to avoid the block.</p>
+<div class="section" id="the-outputerror">
+<h2>The OutputError<a class="headerlink" href="#the-outputerror" title="Permalink to this headline">¶</a></h2>
+<p>This is a namedtuple to contain standard-out and standard-error.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-af22fb18d08ef83368ac7e1b1ea1daf2bdc827d4.png" alt="OutputError -|&gt; collections.namedtuple
+OutputError : output
+OutputError : error" />
+</p>
+</div>
+<div class="section" id="the-localconnection">
+<h2>The LocalConnection<a class="headerlink" href="#the-localconnection" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.localconnection.LocalConnection.html#apcommand.connections.localconnection.LocalConnection" title="apcommand.connections.localconnection.LocalConnection"><code class="xref py py-obj docutils literal"><span class="pre">LocalConnection</span></code></a>([command_prefix])</td>
+<td>A local connection talks to a local command-line shell.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.connections.localconnection.LocalConnection.html#apcommand.connections.localconnection.LocalConnection" title="apcommand.connections.localconnection.LocalConnection"><code class="xref py py-obj docutils literal"><span class="pre">LocalConnection</span></code></a>([command_prefix])</td>
+<td>A local connection talks to a local command-line shell.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="localnixconnection">
+<h2>LocalNixConnection<a class="headerlink" href="#localnixconnection" title="Permalink to this headline">¶</a></h2>
+<p>This class is like the LocalConnection but does not suffer from the problem if stdout blocking the way the LocalConnection. Because it uses <cite>Pexpect</cite> only unix-like systems can use it.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

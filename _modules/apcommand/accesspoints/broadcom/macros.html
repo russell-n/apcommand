@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.broadcom.macros &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.broadcom.macros</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">BroadcomRadioData</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commands</span> <span class="kn">import</span> <span class="n">DisableInterface</span><span class="p">,</span> <span class="n">EnableInterface</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commands</span> <span class="kn">import</span> <span class="n">SetChannel</span><span class="p">,</span> <span class="n">SetSideband</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.commons</span> <span class="kn">import</span> <span class="n">BroadcomError</span>
+
+<div class="viewcode-block" id="ChannelChanger"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.macros.ChannelChanger.html#apcommand.accesspoints.broadcom.macros.ChannelChanger">[docs]</a><span class="k">class</span> <span class="nc">ChannelChanger</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A channel changer for the broadcom </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChannelChanger.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.macros.ChannelChanger.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ChannelChanger constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: connection to the AP </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChannelChanger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_sideband_command</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enable_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An EnableInterface command (without the band set)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disable_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A DisableInterface command (without the band set)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span> <span class="o">=</span> <span class="n">DisableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_command</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">set_channel_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A SetChannel command</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="o">=</span> <span class="n">SetChannel</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">set_sideband_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A SetSideband command (defaulted &#39;lower&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_sideband_command</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_sideband_command</span> <span class="o">=</span> <span class="n">SetSideband</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_sideband_command</span>
+    
+<div class="viewcode-block" id="ChannelChanger.undo"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.macros.ChannelChanger.undo.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        right now just undoes the channel as disable/enable might be called elsewhere</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_command</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
+        <span class="k">return</span></div>
+        
+<div class="viewcode-block" id="ChannelChanger.__call__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__.html#apcommand.accesspoints.broadcom.macros.ChannelChanger.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main interface -- enables the Wireless interface and sets the channel</span>
+
+<span class="sd">        *Also disables the other wireless interface*</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: wifi channel to set on the AP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_24ghz</span><span class="p">:</span>
+                <span class="n">this_band</span><span class="p">,</span> <span class="n">other_band</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span>
+
+                <span class="c1"># disable the other interface</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">other_band</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting 2.4 Ghz Channel ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+                <span class="c1">## now set this interface settings</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">this_band</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_command</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
+                
+                <span class="c1">## aggregate the settings</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span>
+                
+            <span class="k">elif</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_5ghz</span><span class="p">:</span>
+                <span class="n">band</span><span class="p">,</span> <span class="n">other_band</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;2.4&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting 5 GHz Channel ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Disabling {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other_band</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">other_band</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Disable Data: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disable_command</span><span class="p">()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">enable_command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">band</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_command</span><span class="o">.</span><span class="n">channel</span><span class="o">=</span><span class="n">channel</span>
+                <span class="n">sideband</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">sideband_map</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_sideband_command</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">sideband</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting the sideband to &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sideband</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_command</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_command</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_sideband_command</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Valid 5 GHz Channels: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_5ghz</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Valid 2.4 GHz Channels: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_24ghz</span><span class="p">)))</span>                
+                <span class="k">raise</span> <span class="n">BroadcomError</span><span class="p">(</span><span class="s2">&quot;Unknown Channel: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_command</span><span class="p">()</span>
+            <span class="c1">#channel_prime = self.reader(band)</span>
+            <span class="c1">#if channel_prime != channel:</span>
+            <span class="c1">#    raise BroadcomError(&quot;Channel set failure (expected:{0} actual:{1})&quot;.format(channel,</span>
+            <span class="c1">#                                                                               channel_prime))</span>
+        <span class="k">return</span></div></div>
+
+<span class="c1"># end class BroadcomChannelChanger</span>
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="k">class</span> <span class="nc">TestBroadcomChannelChanger</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">ChannelChanger</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;DisableInterface&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable_patcher</span> <span class="o">=</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;apcommand.accesspoints.broadcom.commands.DisableInterface&#39;</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">disable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patchers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">disable_patcher</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_disable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_patcher</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">patcher</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patchers</span><span class="p">:</span>
+            <span class="n">patcher</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it call the right sequence?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#channel = random.choice(xrange(1,12))</span>
+        <span class="c1">#self.command(channel)</span>
+        <span class="c1">#self.disable.assert_called_with()</span>
+        <span class="k">return</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

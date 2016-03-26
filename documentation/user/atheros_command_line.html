@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Atheros Command Line &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="The Broadcom Command Line" href="broadcom_command_line.html" />
+    <link rel="prev" title="The atheros Command" href="apcommand_command_line.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Atheros Command Line</a><ul>
+<li><a class="reference internal" href="#the-telnet-connection">The Telnet Connection</a></li>
+<li><a class="reference internal" href="#the-atheros-commands">The Atheros Commands</a></li>
+<li><a class="reference internal" href="#the-cfg-command">The cfg Command</a></li>
+<li><a class="reference internal" href="#the-settings">The Settings</a><ul>
+<li><a class="reference internal" href="#the-apcfg-settings">The <cite>apcfg</cite> Settings</a><ul>
+<li><a class="reference internal" href="#set-network-configuration">Set Network configuration</a></li>
+<li><a class="reference internal" href="#ap-start-mode">AP Start Mode</a></li>
+<li><a class="reference internal" href="#channel-and-mode">Channel and Mode</a></li>
+<li><a class="reference internal" href="#channel-configuration">Channel Configuration</a></li>
+<li><a class="reference internal" href="#ap-identification-section-ssid">AP Identification Section (SSID)</a></li>
+<li><a class="reference internal" href="#security">Security</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-other-commands">The Other Commands</a><ul>
+<li><a class="reference internal" href="#activatevap">activateVAP</a><ul>
+<li><a class="reference internal" href="#killvap">killVAP</a></li>
+<li><a class="reference internal" href="#makevap">makeVAP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="apcommand_command_line.html" title="Previous Chapter: The atheros Command"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; The atheros C...</span>
+    </a>
+  </li>
+  <li>
+    <a href="broadcom_command_line.html" title="Next Chapter: The Broadcom Command Line"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">The Broadcom ... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/documentation/user/atheros_command_line.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="atheros-command-line">
+<h1>Atheros Command Line<a class="headerlink" href="#atheros-command-line" title="Permalink to this headline">¶</a></h1>
+<p>This documents some of the Atheros AP5KAP&#8217;s Command line interface. This isn&#8217;t documentation for the <a class="reference internal" href="apcommand_command_line.html#atheros-cli"><span>atheros</span></a> command that I created.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These are observations I made while trying to figure out how to set up the AP. Not everything here is necessarily correct but maybe you won&#8217;t have to struggle quite so much if you at least start with someone else&#8217;s notes.</p>
+</div>
+<div class="section" id="the-telnet-connection">
+<h2>The Telnet Connection<a class="headerlink" href="#the-telnet-connection" title="Permalink to this headline">¶</a></h2>
+<p>The Atheros AP5KAP has two command-line interface connections &#8211; a serial port and and a telnet server. Since the telnet connection behaves more-or-less like the serial port and adds remote access I&#8217;ll assume that that&#8217;s the interface being used.</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Login Information</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Default (LAN) IP</td>
+<td>10.10.10.21</td>
+</tr>
+<tr class="row-odd"><td>Username</td>
+<td>root</td>
+</tr>
+<tr class="row-even"><td>Password</td>
+<td>5up</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-atheros-commands">
+<h2>The Atheros Commands<a class="headerlink" href="#the-atheros-commands" title="Permalink to this headline">¶</a></h2>
+<p>The Atheros is running <a class="reference external" href="http://www.busybox.net/">BusyBox</a> so it has a unix-based command line. In addition the usual commands there are a set of shell scripts in <code class="docutils literal"><span class="pre">/etc/ath/</span></code>, in particular there are two files called <code class="docutils literal"><span class="pre">apup</span></code> and <code class="docutils literal"><span class="pre">apdown</span></code> that will bring up the VAPs (and take them down).</p>
+<p>The two commands (<code class="docutils literal"><span class="pre">apup</span></code> and <code class="docutils literal"><span class="pre">apdown</span></code>) along with the <code class="docutils literal"><span class="pre">cfg</span></code> command seem to be the main ones needed to configure the access point.</p>
+<p>The <cite>/etc/ath/</cite> shell scripts:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>activateVAP</cite></li>
+<li><cite>apcfg</cite></li>
+<li><cite>apdown</cite></li>
+<li><cite>apoob</cite></li>
+<li><cite>apup</cite></li>
+<li><cite>killVAP</cite></li>
+<li><cite>makeVAP</cite></li>
+</ul>
+</div></blockquote>
+<p>The <cite>/etc/ath</cite> folder also has what appear to be template configuration files for the access point:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>eap.app_bss</cite></li>
+<li><cite>psk.app_bss</cite></li>
+<li><cite>psk.sta</cite></li>
+<li><cite>radius_mac.ap_bss</cite></li>
+</ul>
+</div></blockquote>
+<p>Some of the shell-scripts are using <a class="reference external" href="http://linux.die.net/man/8/wlanconfig">wlanconfig</a> so you can use it directly if you know the syntax. If you try and follow a MadWifi tutorial you&#8217;ll find some things work (like creating and destroying <a class="reference external" href="http://linux.die.net/man/8/wlanconfig">VAPs</a>) but many things don&#8217;t. When in doubt it&#8217;s probably safest to take one of the shell scripts and if it doesn&#8217;t do exactly what you need, try and alter it yourself.</p>
+</div>
+<div class="section" id="the-cfg-command">
+<h2>The cfg Command<a class="headerlink" href="#the-cfg-command" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>cfg</cite> command is a symlink to <cite>/usr/www/cgi-bin/cgiMain</cite> and is the main way to set the access-points configurations. Judging by the file name <cite>cgiMain</cite> I&#8217;m guessing that it&#8217;s using the <a class="reference external" href="https://en.wikipedia.org/wiki/Common_Gateway_Interface">Common Gateway Interface</a>, but it&#8217;s a binary and doesn&#8217;t seem to have any help so it&#8217;s not obvious how to use it. Through trial and error (and looking at the examples) I&#8217;ve found the following flags work:</p>
+<table border="1" class="docutils" id="id2">
+<caption><span class="caption-text">cfg-options</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-a</span> <span class="pre">&lt;setting&gt;</span></code></td>
+<td>Set an AP parameter (e.g. <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-a</span> <span class="pre">AP_SSID=ummagumma</span></code>)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-c</span></code></td>
+<td>Commit the settings you changed with the -a flag</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-e</span></code></td>
+<td>Export the settings (adds the bash command &#8216;export&#8217; in front of each parameter and dumps to stdout)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-h</span> <span class="pre">${ITER_AP_WEP_RADIO_NUM1_KEY}</span> <span class="pre">1</span></code></td>
+<td>Don&#8217;t know &#8211; some WEP thing</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-s</span></code></td>
+<td>Show the settings (same as <code class="docutils literal"><span class="pre">-e</span></code> but without the word <cite>export</cite>)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-t</span> <span class="pre">${APINDEX}</span> <span class="pre">/etc/ath/${APNAME}.&lt;suffix&gt;</span> <span class="pre">&gt;</span> <span class="pre">/tmp/&lt;prefix&gt;${APNAME}</span></code></td>
+<td>Translate settings to a config file</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-x</span></code></td>
+<td>Reset the settings to the defaults</td>
+</tr>
+</tbody>
+</table>
+<p>As an example, to clear any changes you&#8217;ve made and set the SSID to AAAARGH:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>apdown
+cfg -x
+cfg -a AP_SSID=AAAARGH
+cfg -c
+apup
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-settings">
+<h2>The Settings<a class="headerlink" href="#the-settings" title="Permalink to this headline">¶</a></h2>
+<p>If you do <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-s</span></code> you&#8217;ll see something like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>AMPDUENABLE=1
+AMPDUFRAMES=32
+AMPDULIMIT=50000
+AMPDUMIN=32768
+AP_CHMODE=11NGHT20
+AP_CYPHER=TKIP
+AP_IPADDR=&quot;10.10.10.21&quot;
+AP_MODE=ap
+AP_NETMASK=&quot;255.255.255.0&quot;
+AP_PRIMARY_CH=6
+AP_PRIMARY_KEY_0=1
+AP_PSK_KEY=testlabs
+AP_RADIO_ID=0
+AP_SECFILE=PSK
+AP_SECMODE=WPA
+AP_SSID=&quot;Atheros_XSpan_2G&quot;
+AP_STARTMODE=standard
+AP_WEP_MODE_0=1
+CWMMODE=1
+LAN_IF=eth0
+MANRATE=0x8c8c8c8c
+MANRETRIES=0x04040404
+PUREG=0
+PUREN=0
+RATECTL=auto
+RX_CHAINMASK=3
+SHORTGI=1
+TXQUEUELEN=1000
+TX_CHAINMASK=3
+WAN_IF=eth1
+WAN_IPADDR=&quot;192.168.2.1&quot;
+WAN_MODE=bridged
+WAN_NETMASK=&quot;255.255.255.0&quot;
+WLAN_ON_BOOT=n
+WPS_ENABLE=0
+</pre></div>
+</div>
+<p>You won&#8217;t see this exactly, there are 16 VAPs setup on the AP and the <cite>-s</cite> option will show all their settings, even if only one is enabled (so I filtered out the other VAP parameters).</p>
+<p>To see only the current settings you can cat the <cite>/tmp/secauth0</cite> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>~ # cat /tmp/secath0
+interface=ath0
+bridge=br0
+logger_syslog=-1
+logger_syslog_level=2
+logger_stdout=-1
+logger_stdout_level=2
+ctrl_interface=/var/run/hostapd
+ctrl_interface_group=0
+ssid=Atheros_XSpan_2G
+dtim_period=2
+max_num_sta=255
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wme_enabled=0
+ieee8021x=0
+eapol_version=2
+eapol_key_index_workaround=0
+eap_server=1
+wpa=2
+wpa_passphrase=testlabs
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=CCMP
+wpa_strict_rekey=1
+~ #
+</pre></div>
+</div>
+<p>The <cite>secath0</cite> file won&#8217;t show you as much as <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-s</span></code> but most of the changes you make using <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-a</span></code> will be there.</p>
+<p>What you&#8217;ll notice is that the output of <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-s</span></code> and <code class="docutils literal"><span class="pre">secauth0</span></code> have variable names that are similar but not the same. From what I can tell the <cite>cfg</cite> command is setting the variables that <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-s</span></code> shows and then saving them in a file <cite>/tmp/secath0</cite> which is then used to configure the AP. So when you use <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-a</span></code> you should be using the variable names shown by <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-s</span></code>. To see the defaults look at the <cite>apcfg (/etc/ath/apcfg.sh)</cite> file.</p>
+<div class="section" id="the-apcfg-settings">
+<h3>The <cite>apcfg</cite> Settings<a class="headerlink" href="#the-apcfg-settings" title="Permalink to this headline">¶</a></h3>
+<p>Since there are so many I&#8217;m just going to pull out the descriptions from the file that I think are most interesting. Assume where you see a variable that there&#8217;s an implicit <code class="docutils literal"><span class="pre">cfg</span> <span class="pre">-a</span></code> in front of it.</p>
+<p>apcfg:</p>
+<blockquote>
+<div>Configuration file for Atheros AP.
+This file will &#8220;predefine&#8221; default configuration data for the AP.  This
+will first read all configuration data from flash (cfg -e), then fill in any
+defaults that are missing.  Thus the defaults will appear on the web pages
+even if the configuration store has been cleared.</div></blockquote>
+<div class="section" id="set-network-configuration">
+<h4>Set Network configuration<a class="headerlink" href="#set-network-configuration" title="Permalink to this headline">¶</a></h4>
+<p>I don&#8217;t know that anything other than the AP_IPADDR might need to be set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>AP_IPADDR  = IP address of the bridge
+WAN_IPADDR = Fixed IP address of the WAN, if it&#39;s not bridged
+WAN_MODE   = bridged for attached to bridged, Get address if dhcp, fixed address
+             if static
+</pre></div>
+</div>
+</div>
+<div class="section" id="ap-start-mode">
+<h4>AP Start Mode<a class="headerlink" href="#ap-start-mode" title="Permalink to this headline">¶</a></h4>
+<p>This can be overridden by environmental variables. For testing you will probably want <em>standard</em> &#8211; the default is <em>dual</em> which will leave two VAPs up (one 2.4 GHz and one 5 GHz).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Value</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>standard</td>
+<td>standard single AP start mode</td>
+</tr>
+<tr class="row-odd"><td>rootap</td>
+<td>WDS root AP for WDS modes</td>
+</tr>
+<tr class="row-even"><td>repeater</td>
+<td>WDS repeater station</td>
+</tr>
+<tr class="row-odd"><td>repeater-ind</td>
+<td>WDS repeater station independent mode</td>
+</tr>
+<tr class="row-even"><td>client</td>
+<td>WDS &#8220;virtual wire&#8221; client</td>
+</tr>
+<tr class="row-odd"><td>multi</td>
+<td>Multiple BSSID with all encryption types</td>
+</tr>
+<tr class="row-even"><td>dual</td>
+<td>Dual concurrent automatically configure interface</td>
+</tr>
+<tr class="row-odd"><td>stafwd</td>
+<td>Station mode with address forwarding enabled</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="channel-and-mode">
+<h4>Channel and Mode<a class="headerlink" href="#channel-and-mode" title="Permalink to this headline">¶</a></h4>
+<p>AP_PRIMARY_CH (the channel, e.g. 6 for 2.4GHz) could be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a number</li>
+<li>11na (which means auto-scan in 11na mode) or</li>
+<li>11ng (which means auto-scan in 11ng mode)</li>
+</ul>
+</div></blockquote>
+<p>AP_CHMODE (the width):</p>
+<blockquote>
+<div><ul class="simple">
+<li>11NGHT20</li>
+<li>11NAHT40MINUS</li>
+<li>11NAHT40PLUS</li>
+</ul>
+</div></blockquote>
+<p>Quote: <cite>This is for pure G or pure N operations.  Hmmmm...</cite> (I don&#8217;t know what the Hmmmm is about):</p>
+<blockquote>
+<div><ul class="simple">
+<li>PUREG= 0 or 1</li>
+<li>PUREN= 0 or 1</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="channel-configuration">
+<h4>Channel Configuration<a class="headerlink" href="#channel-configuration" title="Permalink to this headline">¶</a></h4>
+<p>I&#8217;ll just quote the file since I have know idea what the values should be:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>cfg -a TXQUEUELEN=${TXQUEUELEN:=1000}
+cfg -a SHORTGI=${SHORTGI:=1}
+cfg -a SHORTGI_2=${SHORTGI_2:=1}
+</pre></div>
+</div>
+<p>Aggregation.  First parameter enables/disables, second parameter sets the size limit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>cfg -a AMPDUENABLE=${AMPDUENABLE:=1}
+cfg -a AMPDUENABLE_2=${AMPDUENABLE_2:=1}
+cfg -a AMPDUFRAMES=${AMPDUFRAMES:=32}
+cfg -a AMPDUFRAMES_2=${AMPDUFRAMES_2:=32}
+cfg -a AMPDULIMIT=${AMPDULIMIT:=50000}
+cfg -a AMPDULIMIT_2=${AMPDULIMIT_2:=50000}
+cfg -a AMPDUMIN=${AMPDUMIN:=32768}
+cfg -a AMPDUMIN_2=${AMPDUMIN_2:=32768}
+cfg -a CWMMODE=${CWMMODE:=1}
+cfg -a CWMMODE_2=${CWMMODE_2:=1}
+cfg -a RATECTL=${RATECTL:=&quot;auto&quot;}
+cfg -a MANRATE=${MANRATE:=0x8c8c8c8c}
+cfg -a MANRETRIES=${MANRETRIES:=0x04040404}
+cfg -a RX_CHAINMASK=${RX_CHAINMASK:=3}
+cfg -a RX_CHAINMASK_2=${RX_CHAINMASK_2:=3}
+cfg -a TX_CHAINMASK=${TX_CHAINMASK:=3}
+cfg -a TX_CHAINMASK_2=${TX_CHAINMASK_2:=3}
+</pre></div>
+</div>
+</div>
+<div class="section" id="ap-identification-section-ssid">
+<h4>AP Identification Section (SSID)<a class="headerlink" href="#ap-identification-section-ssid" title="Permalink to this headline">¶</a></h4>
+<p>To set the SSID:</p>
+<blockquote>
+<div><ul class="simple">
+<li>AP_SSID=&lt;some string (no spaces please)&gt;</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="security">
+<h4>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h4>
+<p>This is a work in progress, I&#8217;m just showing the defaults since I don&#8217;t know what some things mean:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>AP_MODE = &#39;ap&#39;
+AP_SECMODE = &#39;None&#39;
+AP_SECFILE = &#39;PSK
+WPS_ENABLE = &#39;0&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-other-commands">
+<h2>The Other Commands<a class="headerlink" href="#the-other-commands" title="Permalink to this headline">¶</a></h2>
+<p>I don&#8217;t use most of the other code directly so I&#8217;m just pulling this from the files directly.</p>
+<div class="section" id="activatevap">
+<h3>activateVAP<a class="headerlink" href="#activatevap" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>This script is used to activate a VAP that was created earlier. Activation involves bringing the interface up, associating with a bridge, and configuring the security mode.  The VAP MUST EXIST prior to calling the activate script.</div></blockquote>
+<p>The form of the command is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>activateVAP &lt;vap&gt; &lt;BR&gt; &lt;Security&gt; &lt;SEC Args&gt; &lt;WSC&gt;  &lt;VAP_TIE&gt;
+</pre></div>
+</div>
+<p>Examples:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Open Access Point:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>activateVAP ath0 br0 NONE
+</pre></div>
+</div>
+</li>
+<li><p class="first">WPA Access Point:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>activateVAP ath1 br0 WPA wpa2-psk.conf
+</pre></div>
+</div>
+</li>
+<li><p class="first">WEP Station:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>activateVAP ath0 br0 WEP wep.conf
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="killvap">
+<h4>killVAP<a class="headerlink" href="#killvap" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div>This script is used to destroy a VAP, or if you want complete destruction, specify &#8216;all`.  Using the all option will also unload the wlan module.</div></blockquote>
+<p>The form of the command is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>killVAP &lt;VAP&gt;
+</pre></div>
+</div>
+<p>Where VAP is the name of the VAP (e.g. ath0).</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>killVAP ath1
+killVAP all
+</pre></div>
+</div>
+</div>
+<div class="section" id="makevap">
+<h4>makeVAP<a class="headerlink" href="#makevap" title="Permalink to this headline">¶</a></h4>
+<p>This script is used to create AP or Station instances (VAPs).  It will NOT actually join the bridge or do any RF configuration.</p>
+<p>The form of the command is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP &lt;Mode&gt; &lt;ESSID&gt; &lt;Channel_String&gt; &lt;beaconint&gt;
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>beaconint:   This is the beacon interval desired for this VAP.  Note</dt>
+<dd>that this is system wide, and will override the current
+beacon interval for ALL vaps.  You MUST also include the
+RF command for this option.</dd>
+</dl>
+<p>The Channel option given above has the form &lt;inst&gt;:&lt;RF&gt;:&lt;channel&gt;:&lt;mode&gt;. Where:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Inst = Interface instance (which radio, 0 or 1)</li>
+<li>RF   = RF indicates radio should be configured with the specified parameters</li>
+<li>channel = channel to put the AP on, use 11A or 11G to scan</li>
+<li>mode = operating mode</li>
+</ul>
+</div></blockquote>
+<p>The <em>mode</em> can be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>11AST         : 11 A Static Turbo (Legacy)</li>
+<li>AUTO          : Legacy Scan Mode</li>
+<li>11A           : Legacy 11A mode</li>
+<li>11B</li>
+<li>11G</li>
+<li>FH</li>
+<li>TA</li>
+<li>TG</li>
+<li>11NAHT20</li>
+<li>11NGHT20</li>
+<li>11NAHT40PLUS</li>
+<li>11NAHT40MINUS</li>
+<li>11NGHT40PLUS</li>
+<li>11NGHT40MINUS</li>
+<li>11NAHT40 (valid only when channel=11na)</li>
+<li>11NGHT40 (valid only when channel=11ng)</li>
+</ul>
+</div></blockquote>
+<p>Examples.</p>
+<p>Access Point with RF:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP ap OpenAP 0:RF:6:
+</pre></div>
+</div>
+<p>Access Point with RF, beacon interval of 400 ms:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP ap OpenAP RF 400
+</pre></div>
+</div>
+<p>Access Point w/o RF:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP ap NormAP
+</pre></div>
+</div>
+<p>WDS Root AP:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP ap-wds RootAP RF
+</pre></div>
+</div>
+<p>WDS Repeater (two commands):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>makeVAP sta-wds RPTR RF
+makeVAP ap-wds RPTR
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

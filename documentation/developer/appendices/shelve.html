@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Shelving Objects &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Developer Documentation" href="../index.html" />
+    <link rel="next" title="APCommand" href="../../../readme.html" />
+    <link rel="prev" title="The Command Pattern" href="command.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Shelving Objects</a><ul>
+<li><a class="reference internal" href="#creating-a-new-shelf">Creating a New Shelf</a></li>
+<li><a class="reference internal" href="#loading-a-shelf">Loading a Shelf</a></li>
+<li><a class="reference internal" href="#modifying-a-shelf">Modifying a Shelf</a></li>
+<li><a class="reference internal" href="#the-writeback">The Writeback</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="command.html" title="Previous Chapter: The Command Pattern"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; The Command P...</span>
+    </a>
+  </li>
+  <li>
+    <a href="../../../readme.html" title="Next Chapter: APCommand"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">APCommand &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../../_sources/documentation/developer/appendices/shelve.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="shelving-objects">
+<h1>Shelving Objects<a class="headerlink" href="#shelving-objects" title="Permalink to this headline">¶</a></h1>
+<p>These are notes for the python <a class="reference external" href="http://docs.python.org/2/library/shelve.html">shelve</a> module which I am using to allow <code class="docutils literal"><span class="pre">undo</span></code> and <code class="docutils literal"><span class="pre">redo</span></code> calls for the <code class="docutils literal"><span class="pre">commands</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">shelve</span></code> combines <a class="reference external" href="http://docs.python.org/2/library/pickle.html">pickle</a> and <a class="reference external" href="http://docs.python.org/2/library/anydbm.html">anydbm</a> to create a dictionary-like interface to store and retrieve objects.</p>
+<div class="section" id="creating-a-new-shelf">
+<h2>Creating a New Shelf<a class="headerlink" href="#creating-a-new-shelf" title="Permalink to this headline">¶</a></h2>
+<p>Creating a new shelf is like opening a file but instead of calling file-methods (like <code class="docutils literal"><span class="pre">read</span></code>) you treat the opened shelf like a dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shelve</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span>
+
+<span class="n">SHELF_NAME</span> <span class="o">=</span> <span class="s1">&#39;test.shelf&#39;</span>
+<span class="n">KEY_1</span> <span class="o">=</span> <span class="s1">&#39;aoeu&#39;</span>
+
+<span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+    <span class="n">s</span><span class="p">[</span><span class="n">KEY_1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;omega&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Even though it looks like you are opening a file, shelve for python 2.7 doesn&#8217;t have an <code class="docutils literal"><span class="pre">__exit__</span></code> method so you can&#8217;t use the <code class="docutils literal"><span class="pre">with</span></code> statement with it directly (thus the <code class="docutils literal"><span class="pre">closing</span></code> import).</p>
+</div>
+</div>
+<div class="section" id="loading-a-shelf">
+<h2>Loading a Shelf<a class="headerlink" href="#loading-a-shelf" title="Permalink to this headline">¶</a></h2>
+<p>It works basically like you would expect:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">KEY_1</span><span class="p">]</span>
+
+<span class="k">print</span> <span class="n">data</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;omega&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modifying-a-shelf">
+<h2>Modifying a Shelf<a class="headerlink" href="#modifying-a-shelf" title="Permalink to this headline">¶</a></h2>
+<p>This did not seem intuitive to me, but by default <code class="docutils literal"><span class="pre">shelve</span></code> does <strong>not</strong> let you make changes to loaded objects, but it <strong>does</strong> let you add new items (key:object pairs) to the database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">KEY_2</span> <span class="o">=</span> <span class="s1">&#39;snth&#39;</span>
+<span class="n">KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="n">KEY_1</span><span class="p">,</span> <span class="n">KEY_2</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+    <span class="n">s</span><span class="p">[</span><span class="n">KEY_1</span><span class="p">][</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">s</span><span class="p">[</span><span class="n">KEY_2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ummagumma&#39;</span>
+
+    <span class="k">print</span> <span class="s2">&quot;Using the still-open shelf:&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">KEYS</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;   {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using the re-opened shelf:&quot;</span>
+<span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">KEYS</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;   {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>Using the still-open shelf:
+   {&#39;alpha&#39;: 0, &#39;omega&#39;: 1}
+   ummagumma
+
+Using the re-opened shelf:
+   {&#39;alpha&#39;: 0, &#39;omega&#39;: 1}
+   ummagumma
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-writeback">
+<h2>The Writeback<a class="headerlink" href="#the-writeback" title="Permalink to this headline">¶</a></h2>
+<p>The solution to the previous problem of trying to modify an existing shelved object is to use the <code class="docutils literal"><span class="pre">writeback</span></code> option when opening the shelve (shelf?):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">,</span> <span class="n">writeback</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span> <span class="k">as</span> <span class="n">object_shelf</span><span class="p">:</span>
+    <span class="n">object_shelf</span><span class="p">[</span><span class="n">KEY_1</span><span class="p">][</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">object_shelf</span><span class="p">[</span><span class="n">KEY_2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;abbadabba&#39;</span>
+
+<span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SHELF_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">KEYS</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;   {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;omega&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">abbadabba</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

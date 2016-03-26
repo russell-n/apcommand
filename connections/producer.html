@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Producer &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.connections.producer.PopenFile" href="api/apcommand.connections.producer.PopenFile.html" />
+    <link rel="prev" title="apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes" href="api/apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Producer</a><ul>
+<li><a class="reference internal" href="#the-popenproducer">The PopenProducer</a></li>
+<li><a class="reference internal" href="#the-popenfile">The PopenFile</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes.html" title="Previous Chapter: apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.con...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.connections.producer.PopenFile.html" title="Next Chapter: apcommand.connections.producer.PopenFile"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.con... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/connections/producer.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-producer">
+<h1>The Producer<a class="headerlink" href="#the-producer" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of the Popen Producer is to provide ways to read from the standard out and standard error without allowing incomplete file outputs to block the execution of the program.</p>
+<div class="section" id="the-popenproducer">
+<h2>The PopenProducer<a class="headerlink" href="#the-popenproducer" title="Permalink to this headline">¶</a></h2>
+<p class="plantuml">
+<img src="../_images/plantuml-e640a1e40f0663261d9c6805ee127188f73d32da.png" alt="PopenProducer : stdout
+PopenProducer : stderr
+PopenProducer : lock" />
+</p>
+</div>
+<div class="section" id="the-popenfile">
+<h2>The PopenFile<a class="headerlink" href="#the-popenfile" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.producer.PopenFile.html#apcommand.connections.producer.PopenFile" title="apcommand.connections.producer.PopenFile"><code class="xref py py-obj docutils literal"><span class="pre">PopenFile</span></code></a>(file_object,&nbsp;process,&nbsp;lock[,&nbsp;...])</td>
+<td>A container for a process&#8217; readable file-outputs</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-ecbd8f5e4a1d6ac8014eaf1e291dc58e3f17e0cc.png" alt="PopenFile -|&gt; BaseThreadClass" />
+</p>
+<p>Example Use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">start_ping</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">PopenProducer</span><span class="p">(</span><span class="s2">&quot;ping localhost&quot;</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">start_ping</span><span class="p">()</span>
+
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">line</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">del</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;premature break&quot;</span>
+        <span class="k">break</span>
+
+    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="c1"># now the reason for this whole thing</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">PopenProducer</span><span class="p">(</span><span class="s2">&quot;cat&quot;</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span>
+<span class="k">print</span> <span class="s2">&quot;Trying the cat&quot;</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">line</span>
+<span class="k">del</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="c1"># now stderr</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">PopenProducer</span><span class="p">(</span><span class="s2">&quot;ping -c&quot;</span><span class="p">)</span>
+<span class="n">o</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">line</span>
+
+<span class="k">print</span> <span class="s2">&quot;checking stderr&quot;</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stderr</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">line</span>
+
+<span class="k">del</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

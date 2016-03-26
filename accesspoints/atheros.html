@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Atheros &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.baseclass.BaseClass" href="api/apcommand.baseclass.BaseClass.html" />
+    <link rel="prev" title="Developer Documentation" href="../documentation/developer/index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Atheros</a><ul>
+<li><a class="reference internal" href="#constants">Constants</a></li>
+<li><a class="reference internal" href="#imported-classes">Imported Classes</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-line-logger">The Line Logger</a></li>
+<li><a class="reference internal" href="#the-configure">The Configure</a></li>
+<li><a class="reference internal" href="#atherosar5kap">AtherosAR5KAP</a></li>
+<li><a class="reference internal" href="#atheros-security-setter">Atheros Security Setter</a></li>
+<li><a class="reference internal" href="#atherosopen-security">AtherosOpen Security</a><ul>
+<li><a class="reference internal" href="#testing-the-atheros-open">Testing the Atheros Open</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atheroschannelchanger">AtherosChannelChanger</a><ul>
+<li><a class="reference internal" href="#testing-the-atherosar5kap">Testing the AtherosAR5KAP</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../documentation/developer/index.html" title="Previous Chapter: Developer Documentation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Developer Doc...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.baseclass.BaseClass.html" title="Next Chapter: apcommand.baseclass.BaseClass"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.bas... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/accesspoints/atheros.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="atheros">
+<h1>Atheros<a class="headerlink" href="#atheros" title="Permalink to this headline">¶</a></h1>
+<p>This is a module to hold controllers for Access Points with Atheros-based chipsets. It is based on the Atheros&#8217; shell scripts found in <code class="docutils literal"><span class="pre">/etc/ath</span></code> on one Atheros device.</p>
+<div class="section" id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">EMPTY_STRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">FIVE_GHZ_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;_2&#39;</span>
+
+<span class="n">TWO_POINT_FOUR</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+<span class="n">FIVE</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span>
+<span class="n">BAND_ID</span> <span class="o">=</span> <span class="p">{</span><span class="n">TWO_POINT_FOUR</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="n">FIVE</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="n">G_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT20&#39;</span>
+<span class="n">A_LOWER_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT40PLUS&#39;</span>
+<span class="n">A_UPPER_BANDWIDTH</span> <span class="o">=</span> <span class="s1">&#39;HT40MINUS&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="imported-classes">
+<h2>Imported Classes<a class="headerlink" href="#imported-classes" title="Permalink to this headline">¶</a></h2>
+<p>The Atheros classes make use of some imported classes. Rather than re-document them here I&#8217;ll just provide the relevant autosummary documentation.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.baseclass.BaseClass.html#apcommand.baseclass.BaseClass" title="apcommand.baseclass.BaseClass"><code class="xref py py-obj docutils literal"><span class="pre">BaseClass</span></code></a>()</td>
+<td>This class holds the minimum common features.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.TelnetConnection.html#apcommand.connections.telnetconnection.TelnetConnection" title="apcommand.connections.telnetconnection.TelnetConnection"><code class="xref py py-obj docutils literal"><span class="pre">TelnetConnection</span></code></a>([port,&nbsp;prompt,&nbsp;...])</td>
+<td>A TelnetConnection executes commands over a Telnet Connection</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.errors.CommandError.html#apcommand.commons.errors.CommandError" title="apcommand.commons.errors.CommandError"><code class="xref py py-obj docutils literal"><span class="pre">CommandError</span></code></a></td>
+<td>A CommandError reflects a problem with the command on the Device-side</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.errors.ArgumentError.html#apcommand.commons.errors.ArgumentError" title="apcommand.commons.errors.ArgumentError"><code class="xref py py-obj docutils literal"><span class="pre">ArgumentError</span></code></a></td>
+<td>raised if command-line arguments don&#8217;t produce valid output</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.arbitrarycommand.ArbitraryCommand.html#apcommand.accesspoints.arbitrarycommand.ArbitraryCommand" title="apcommand.accesspoints.arbitrarycommand.ArbitraryCommand"><code class="xref py py-obj docutils literal"><span class="pre">ArbitraryCommand</span></code></a>(connection)</td>
+<td>An arbitrary command class</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commands.settingsvalidator.SettingsValidator.html#apcommand.commands.settingsvalidator.SettingsValidator" title="apcommand.commands.settingsvalidator.SettingsValidator"><code class="xref py py-obj docutils literal"><span class="pre">SettingsValidator</span></code></a>(connection,&nbsp;interface[,&nbsp;...])</td>
+<td>A validator for the settings</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-line-logger">
+<span id="line-logger"></span><h2>The Line Logger<a class="headerlink" href="#the-line-logger" title="Permalink to this headline">¶</a></h2>
+<p>Several of the classes have ended up using this same logging method so I broke it out so they could share one source instead of duplicating the code.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-0159db1e2305b57c4792e759d19efd70eed0678d.png" alt="BaseClass &lt;|-- LineLogger
+LineLogger o- CommandError
+LineLogger o- logging.Logger" />
+</p>
+<span class="target" id="module-apcommand.accesspoints.atheros"></span><table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.LineLogger.html#apcommand.accesspoints.atheros.LineLogger" title="apcommand.accesspoints.atheros.LineLogger"><code class="xref py py-obj docutils literal"><span class="pre">LineLogger</span></code></a>()</td>
+<td>Class to log lines of output</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.LineLogger.__call__.html#apcommand.accesspoints.atheros.LineLogger.__call__" title="apcommand.accesspoints.atheros.LineLogger.__call__"><code class="xref py py-obj docutils literal"><span class="pre">LineLogger.__call__</span></code></a>(output[,&nbsp;...])</td>
+<td>Send lines from output to debug log</td>
+</tr>
+</tbody>
+</table>
+<p>The <span class="xref std std-ref">BaseClass</span> provides the actual logger, this allows the log-level to be changed on the fly and strips the line-endings off to get rid of extra blank lines in the log.</p>
+</div>
+<div class="section" id="the-configure">
+<span id="id1"></span><h2>The Configure<a class="headerlink" href="#the-configure" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>Configure</cite> is a <a class="reference external" href="http://docs.python.org/release/2.5/whatsnew/pep-343.html">context manager</a> for commands. It does not actually make use of all the exception handling that is a feature of context managers. Maybe next time.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-cd1ab75a619861dc916de8c5c89c38cc865d1751.png" alt="BaseClass &lt;|-- Configure
+Configure o- LineLogger
+Configure : __init__(connection)" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.Configure.html#apcommand.accesspoints.atheros.Configure" title="apcommand.accesspoints.atheros.Configure"><code class="xref py py-obj docutils literal"><span class="pre">Configure</span></code></a>(connection[,&nbsp;radio_id])</td>
+<td>A context manager for configure commands on the Atheros</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.Configure.__enter__.html#apcommand.accesspoints.atheros.Configure.__enter__" title="apcommand.accesspoints.atheros.Configure.__enter__"><code class="xref py py-obj docutils literal"><span class="pre">Configure.__enter__</span></code></a>()</td>
+<td>Takes down the AP</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.Configure.__exit__.html#apcommand.accesspoints.atheros.Configure.__exit__" title="apcommand.accesspoints.atheros.Configure.__exit__"><code class="xref py py-obj docutils literal"><span class="pre">Configure.__exit__</span></code></a>(type,&nbsp;value,&nbsp;traceback)</td>
+<td>Commits the configuration and brings up the AP</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="atherosar5kap">
+<span id="atheros-ar5kap"></span><h2>AtherosAR5KAP<a class="headerlink" href="#atherosar5kap" title="Permalink to this headline">¶</a></h2>
+<p>This is an access-point used for WiFi Alliance testing. It is not a commercial access-point. The primary request was that I create a command-line command to change the AP-channel. As such it does not change settings en-masse, as it assumes that only incremental changes are being made.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-f75fed556d11d2b53cbb4253c8473f186228df31.png" alt="BaseClass &lt;|-- AtherosAR5KAP
+AtherosAR5KAP o- LineLogger
+AtherosAR5KAP o- AtherosChannelChanger
+AtherosAR5KAP o- ArbitraryCommand
+AtherosAR5KAP o- TelnetConnection" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.html#apcommand.accesspoints.atheros.AtherosAR5KAP" title="apcommand.accesspoints.atheros.AtherosAR5KAP"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP</span></code></a>([hostname,&nbsp;username,&nbsp;...])</td>
+<td>A controller for the Atheros AR5KAP</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.up.html#apcommand.accesspoints.atheros.AtherosAR5KAP.up" title="apcommand.accesspoints.atheros.AtherosAR5KAP.up"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.up</span></code></a>()</td>
+<td>Brings the AP up</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.down.html#apcommand.accesspoints.atheros.AtherosAR5KAP.down" title="apcommand.accesspoints.atheros.AtherosAR5KAP.down"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.down</span></code></a>()</td>
+<td>Takes the AP down</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.destroy.html#apcommand.accesspoints.atheros.AtherosAR5KAP.destroy" title="apcommand.accesspoints.atheros.AtherosAR5KAP.destroy"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.destroy</span></code></a>(interface)</td>
+<td>Takes down a VAP</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.status.html#apcommand.accesspoints.atheros.AtherosAR5KAP.status" title="apcommand.accesspoints.atheros.AtherosAR5KAP.status"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.status</span></code></a>([interface])</td>
+<td>iwconfig, ifconfig, iwlist for interface (use &#8216;all&#8217; for all interfaces)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.reset.html#apcommand.accesspoints.atheros.AtherosAR5KAP.reset" title="apcommand.accesspoints.atheros.AtherosAR5KAP.reset"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.reset</span></code></a>([band])</td>
+<td>Clears the AP configuration back to the factory defaults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_ssid.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_ssid" title="apcommand.accesspoints.atheros.AtherosAR5KAP.set_ssid"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.set_ssid</span></code></a>(ssid,&nbsp;band)</td>
+<td>Sets the SSID</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_ip.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_ip" title="apcommand.accesspoints.atheros.AtherosAR5KAP.set_ip"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.set_ip</span></code></a>([address,&nbsp;mask,&nbsp;band])</td>
+<td>Sets the AP&#8217;s IP address</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_channel.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_channel" title="apcommand.accesspoints.atheros.AtherosAR5KAP.set_channel"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.set_channel</span></code></a>(channel[,&nbsp;mode,&nbsp;...])</td>
+<td>Sets the channel on the AP</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.set_security.html#apcommand.accesspoints.atheros.AtherosAR5KAP.set_security" title="apcommand.accesspoints.atheros.AtherosAR5KAP.set_security"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.set_security</span></code></a>([security_type])</td>
+<td>Set the security on the access point</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosAR5KAP.exec_command.html#apcommand.accesspoints.atheros.AtherosAR5KAP.exec_command" title="apcommand.accesspoints.atheros.AtherosAR5KAP.exec_command"><code class="xref py py-obj docutils literal"><span class="pre">AtherosAR5KAP.exec_command</span></code></a>(command)</td>
+<td>Send command to the connection and dump output to the screen</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="atheros-security-setter">
+<span id="id2"></span><h2>Atheros Security Setter<a class="headerlink" href="#atheros-security-setter" title="Permalink to this headline">¶</a></h2>
+<p>This is a base-class for the security setters.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-b16265bfcb11d223a85bd580845e51a0fb38ea66.png" alt="BaseClass &lt;|-- AtherosSecuritySetter
+AtherosSecuritySetter o- LineLogger
+AtherosSecuritySetter : __call__(type)" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosSecuritySetter.html#apcommand.accesspoints.atheros.AtherosSecuritySetter" title="apcommand.accesspoints.atheros.AtherosSecuritySetter"><code class="xref py py-obj docutils literal"><span class="pre">AtherosSecuritySetter</span></code></a>(connection)</td>
+<td>A base-class to change the AP&#8217;s security</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosSecuritySetter.__call__.html#apcommand.accesspoints.atheros.AtherosSecuritySetter.__call__" title="apcommand.accesspoints.atheros.AtherosSecuritySetter.__call__"><code class="xref py py-obj docutils literal"><span class="pre">AtherosSecuritySetter.__call__</span></code></a>()</td>
+<td>The main interface to the changers</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="atherosopen-security">
+<span id="atheros-open-security"></span><h2>AtherosOpen Security<a class="headerlink" href="#atherosopen-security" title="Permalink to this headline">¶</a></h2>
+<p>This sets the security to open-none.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-3859e36e6da7821e418beb82ec496a3c8e626f6d.png" alt="AtherosSecuritySetter &lt;|-- AtherosOpen" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosOpen.html#apcommand.accesspoints.atheros.AtherosOpen" title="apcommand.accesspoints.atheros.AtherosOpen"><code class="xref py py-obj docutils literal"><span class="pre">AtherosOpen</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>Setter for open-security</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosOpen.__call__.html#apcommand.accesspoints.atheros.AtherosOpen.__call__" title="apcommand.accesspoints.atheros.AtherosOpen.__call__"><code class="xref py py-obj docutils literal"><span class="pre">AtherosOpen.__call__</span></code></a>()</td>
+<td>sets the security mode to open</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="testing-the-atheros-open">
+<h3>Testing the Atheros Open<a class="headerlink" href="#testing-the-atheros-open" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtherosOpen.test_call.html#apcommand.accesspoints.atheros.TestAtherosOpen.test_call" title="apcommand.accesspoints.atheros.TestAtherosOpen.test_call"><code class="xref py py-obj docutils literal"><span class="pre">TestAtherosOpen.test_call</span></code></a>()</td>
+<td>Does the __call__ issue the correct commands?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="atheroschannelchanger">
+<span id="atheros-channel-changer"></span><h2>AtherosChannelChanger<a class="headerlink" href="#atheroschannelchanger" title="Permalink to this headline">¶</a></h2>
+<p class="plantuml">
+<img src="../_images/plantuml-423863c445753be0c9a60b3377fdadc54178e455.png" alt="BaseClass &lt;|-- AtherosChannelChanger
+AtherosChannelChanger o- SettingsValidator
+AtherosChannelChanger o- LineLogger
+AtherosChannelChanger : __call__(channel, mode)" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.html#apcommand.accesspoints.atheros.AtherosChannelChanger" title="apcommand.accesspoints.atheros.AtherosChannelChanger"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger</span></code></a>(connection[,&nbsp;interface])</td>
+<td>A channel changer</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.channels.html#apcommand.accesspoints.atheros.AtherosChannelChanger.channels" title="apcommand.accesspoints.atheros.AtherosChannelChanger.channels"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.channels</span></code></a></td>
+<td>A list of the acceptable 2.4 and 5 GHz channels</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.g_channels.html#apcommand.accesspoints.atheros.AtherosChannelChanger.g_channels" title="apcommand.accesspoints.atheros.AtherosChannelChanger.g_channels"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.g_channels</span></code></a></td>
+<td>a list of valid channels</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels.html#apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels" title="apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.a_channels</span></code></a></td>
+<td>A list of the 5 GHz channels (without DFS channels)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.a_lower_channels.html#apcommand.accesspoints.atheros.AtherosChannelChanger.a_lower_channels" title="apcommand.accesspoints.atheros.AtherosChannelChanger.a_lower_channels"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.a_lower_channels</span></code></a></td>
+<td>A list of the 5 GHz channels that form a lower-bound</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.a_upper_channels.html#apcommand.accesspoints.atheros.AtherosChannelChanger.a_upper_channels" title="apcommand.accesspoints.atheros.AtherosChannelChanger.a_upper_channels"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.a_upper_channels</span></code></a></td>
+<td>A list of the 5 GHz channels that form an upper-bound</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.channel_to_bandwidth.html#apcommand.accesspoints.atheros.AtherosChannelChanger.channel_to_bandwidth" title="apcommand.accesspoints.atheros.AtherosChannelChanger.channel_to_bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.channel_to_bandwidth</span></code></a></td>
+<td>A map from a channel to the default bandwidth</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels_mode_map.html#apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels_mode_map" title="apcommand.accesspoints.atheros.AtherosChannelChanger.a_channels_mode_map"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.a_channels_mode_map</span></code></a></td>
+<td>A map from a</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.bandwidth.html#apcommand.accesspoints.atheros.AtherosChannelChanger.bandwidth" title="apcommand.accesspoints.atheros.AtherosChannelChanger.bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.bandwidth</span></code></a>(channel)</td>
+<td>Gets a mode appropriate for the channel, based on T/H&#8217;s defaults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.mode.html#apcommand.accesspoints.atheros.AtherosChannelChanger.mode" title="apcommand.accesspoints.atheros.AtherosChannelChanger.mode"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.mode</span></code></a>(channel)</td>
+<td>The mode appropriate for the channel (e.g.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.band.html#apcommand.accesspoints.atheros.AtherosChannelChanger.band" title="apcommand.accesspoints.atheros.AtherosChannelChanger.band"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.band</span></code></a>(channel)</td>
+<td>Gets the band for the channel</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.__call__.html#apcommand.accesspoints.atheros.AtherosChannelChanger.__call__" title="apcommand.accesspoints.atheros.AtherosChannelChanger.__call__"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.__call__</span></code></a>(channel[,&nbsp;...])</td>
+<td>method to set the channel on the AP</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.AtherosChannelChanger.validate_channel.html#apcommand.accesspoints.atheros.AtherosChannelChanger.validate_channel" title="apcommand.accesspoints.atheros.AtherosChannelChanger.validate_channel"><code class="xref py py-obj docutils literal"><span class="pre">AtherosChannelChanger.validate_channel</span></code></a>(channel)</td>
+<td>Check to see if the channel is acceptible</td>
+</tr>
+</tbody>
+</table>
+<p>This was originally a base class for 2.4 and 5 ghz channel changers but I realized that the settings should be discovered through the channel that is being passed in so it does not make sense to maintain separate classes.</p>
+<div class="section" id="testing-the-atherosar5kap">
+<h3>Testing the AtherosAR5KAP<a class="headerlink" href="#testing-the-atherosar5kap" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_constructor.html#apcommand.accesspoints.atheros.TestAR5KAP.test_constructor" title="apcommand.accesspoints.atheros.TestAR5KAP.test_constructor"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_constructor</span></code></a>()</td>
+<td>Does the constructor set the correct defaults?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_up.html#apcommand.accesspoints.atheros.TestAR5KAP.test_up" title="apcommand.accesspoints.atheros.TestAR5KAP.test_up"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_up</span></code></a>()</td>
+<td>Does the AP controller bring the ap up correctly?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_down.html#apcommand.accesspoints.atheros.TestAR5KAP.test_down" title="apcommand.accesspoints.atheros.TestAR5KAP.test_down"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_down</span></code></a>()</td>
+<td>Does the AP controller bring the AP down?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_destroy.html#apcommand.accesspoints.atheros.TestAR5KAP.test_destroy" title="apcommand.accesspoints.atheros.TestAR5KAP.test_destroy"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_destroy</span></code></a>()</td>
+<td>Does the controller bring the VAP down?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_status.html#apcommand.accesspoints.atheros.TestAR5KAP.test_status" title="apcommand.accesspoints.atheros.TestAR5KAP.test_status"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_status</span></code></a>()</td>
+<td>Does the controller query iwconfig and ifconfig?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_ifconfig_fail.html#apcommand.accesspoints.atheros.TestAR5KAP.test_ifconfig_fail" title="apcommand.accesspoints.atheros.TestAR5KAP.test_ifconfig_fail"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_ifconfig_fail</span></code></a>()</td>
+<td>Does a missing interface not raise an error?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_reset.html#apcommand.accesspoints.atheros.TestAR5KAP.test_reset" title="apcommand.accesspoints.atheros.TestAR5KAP.test_reset"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_reset</span></code></a>()</td>
+<td>Does the reset clear the configuration?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_ssid.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_ssid" title="apcommand.accesspoints.atheros.TestAR5KAP.test_set_ssid"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_set_ssid</span></code></a>()</td>
+<td>Does the control set the ssid correctly?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_24.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_24" title="apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_24"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_set_channel_24</span></code></a>()</td>
+<td>Does the controller get the right channel changer and call it?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_5.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_5" title="apcommand.accesspoints.atheros.TestAR5KAP.test_set_channel_5"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_set_channel_5</span></code></a>()</td>
+<td>Does the controller get the right (5GHz) channel changer and call it?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAR5KAP.test_set_security.html#apcommand.accesspoints.atheros.TestAR5KAP.test_set_security" title="apcommand.accesspoints.atheros.TestAR5KAP.test_set_security"><code class="xref py py-obj docutils literal"><span class="pre">TestAR5KAP.test_set_security</span></code></a>()</td>
+<td>Does the controller get the right setter and call it?</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros24.test_set_channel.html#apcommand.accesspoints.atheros.TestAtheros24.test_set_channel" title="apcommand.accesspoints.atheros.TestAtheros24.test_set_channel"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros24.test_set_channel</span></code></a>()</td>
+<td>Does the ap configure set the channel correctly?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros24.test_bandwidth.html#apcommand.accesspoints.atheros.TestAtheros24.test_bandwidth" title="apcommand.accesspoints.atheros.TestAtheros24.test_bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros24.test_bandwidth</span></code></a>()</td>
+<td>Does the changer get an appropriate bandwidth for the channel?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros24.test_parameter_suffix.html#apcommand.accesspoints.atheros.TestAtheros24.test_parameter_suffix" title="apcommand.accesspoints.atheros.TestAtheros24.test_parameter_suffix"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros24.test_parameter_suffix</span></code></a>()</td>
+<td>Does the changer get the appropriate parameter suffix for the channel?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros24.test_mode.html#apcommand.accesspoints.atheros.TestAtheros24.test_mode" title="apcommand.accesspoints.atheros.TestAtheros24.test_mode"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros24.test_mode</span></code></a>()</td>
+<td>Does the mode method get the right mode based on the channel?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros24.test_band.html#apcommand.accesspoints.atheros.TestAtheros24.test_band" title="apcommand.accesspoints.atheros.TestAtheros24.test_band"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros24.test_band</span></code></a>()</td>
+<td>Does the changer get the 2.4 band?</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_band.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_band" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_band"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_band</span></code></a>()</td>
+<td>Does the changer get the 5 ghz band?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_bandwidth.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_bandwidth" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_bandwidth</span></code></a>()</td>
+<td>Does the changer select the correct 5ghz bandwidth?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_parameter_suffix.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_parameter_suffix" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_parameter_suffix"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_parameter_suffix</span></code></a>()</td>
+<td>Does the changer return the cfg -a parameter suffix for 5GHZ?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_mode.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_mode" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_mode"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_mode</span></code></a>()</td>
+<td>Does the changer return the default 5GHz mode?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_set_channel.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_set_channel" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_set_channel"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_set_channel</span></code></a>()</td>
+<td>Does the ap configure set the channel correctly?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestAtheros5GHz.test_validate_channel.html#apcommand.accesspoints.atheros.TestAtheros5GHz.test_validate_channel" title="apcommand.accesspoints.atheros.TestAtheros5GHz.test_validate_channel"><code class="xref py py-obj docutils literal"><span class="pre">TestAtheros5GHz.test_validate_channel</span></code></a>()</td>
+<td>Does the changer raise an ArgumentError for an invalid channel?&#8221;</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestConfigure.test_constructor.html#apcommand.accesspoints.atheros.TestConfigure.test_constructor" title="apcommand.accesspoints.atheros.TestConfigure.test_constructor"><code class="xref py py-obj docutils literal"><span class="pre">TestConfigure.test_constructor</span></code></a>()</td>
+<td>Does the configure have the right constructor?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestConfigure.test_enter.html#apcommand.accesspoints.atheros.TestConfigure.test_enter" title="apcommand.accesspoints.atheros.TestConfigure.test_enter"><code class="xref py py-obj docutils literal"><span class="pre">TestConfigure.test_enter</span></code></a>()</td>
+<td>Does the context manager take down the ap?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.atheros.TestConfigure.test_exit.html#apcommand.accesspoints.atheros.TestConfigure.test_exit" title="apcommand.accesspoints.atheros.TestConfigure.test_exit"><code class="xref py py-obj docutils literal"><span class="pre">TestConfigure.test_exit</span></code></a>()</td>
+<td>Does the context manager commit the configuration and bring the AP up?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

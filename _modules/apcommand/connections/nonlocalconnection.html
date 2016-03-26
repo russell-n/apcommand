@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.connections.nonlocalconnection &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.connections.nonlocalconnection</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1">#python Libraries</span>
+<span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">Queue</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="c1">#third party</span>
+<span class="c1">#from yapsy.IPlugin import IPlugin</span>
+
+<span class="c1"># apcommand Libraries</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">apcommand.commons.errors</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span> <span class="nn">localconnection</span> <span class="kn">import</span> <span class="n">OutputError</span>
+<span class="kn">import</span> <span class="nn">enumerations</span>
+
+
+<span class="n">SPACER</span> <span class="o">=</span> <span class="s1">&#39;{0} {1} &#39;</span>
+<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;Unknown command: &quot;</span>
+<span class="n">EMPTY_STRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">EOF</span> <span class="o">=</span> <span class="n">EMPTY_STRING</span>
+<span class="n">DOT_JOIN</span> <span class="o">=</span> <span class="s2">&quot;{0}.{1}&quot;</span>
+<span class="n">SPACE</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+
+
+<div class="viewcode-block" id="NonLocalConnection"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.NonLocalConnection.html#apcommand.connections.nonlocalconnection.NonLocalConnection">[docs]</a><span class="k">class</span> <span class="nc">NonLocalConnection</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A non-local connection is the base for non-local connections</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+<div class="viewcode-block" id="NonLocalConnection.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.NonLocalConnection.html#apcommand.connections.nonlocalconnection.NonLocalConnection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">operating_system</span><span class="o">=</span><span class="n">enumerations</span><span class="o">.</span><span class="n">OperatingSystem</span><span class="o">.</span><span class="n">linux</span><span class="p">,</span>
+                 <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">command_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">library_path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        NonLocalConnection Constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+<span class="sd">         - `hostname`: The IP Address or hostname</span>
+<span class="sd">         - `username`: The login name</span>
+<span class="sd">         - `password` : the user-password</span>
+<span class="sd">         - `timeout`: a login-timeout</span>
+<span class="sd">         - `command_prefix`: A prefix to prepend to commands (e.g. &#39;adb shell&#39;)</span>
+<span class="sd">         - `lock` : A lock to acquire before calls</span>
+<span class="sd">         - `operating_system`: the operating system</span>
+<span class="sd">         - `path`: a path setting to add to the path (before :$PATH)</span>
+<span class="sd">         - `library_path`: a setting for LD_LIBRARY_PATH</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NonLocalConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># logger is defined in BaseClass but declared here for child-classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command_prefix</span> <span class="o">=</span> <span class="n">command_prefix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">lock</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library_path</span> <span class="o">=</span> <span class="n">library_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operating_system</span> <span class="o">=</span> <span class="n">operating_system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The client connected to the remote device&#39;s server</span>
+
+<span class="sd">        :return: Connected client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The client connected to the remote device&#39;s server</span>
+
+<span class="sd">        :return: Connected client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The port for the server (use this to set a default)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">command_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A prefix given to every command (e.g. `adb shell`)</span>
+
+<span class="sd">        :return: prefix with space as suffix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="o">=</span> <span class="n">EMPTY_STRING</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span>
+
+    <span class="nd">@command_prefix.setter</span>
+    <span class="k">def</span> <span class="nf">command_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the command_prefix, ensuring there&#39;s a space after it, resets self._prefix</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `prefix`: a string to prepend to every command</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="n">SPACE</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">library_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Additions to the LD_LIBRARY_PATH variable</span>
+
+<span class="sd">        :rtype: String</span>
+<span class="sd">        :return: the library path addition      </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="n">EMPTY_STRING</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span>
+
+    <span class="nd">@library_path.setter</span>
+    <span class="k">def</span> <span class="nf">library_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the library-path addition and resets the `prefix` attribute</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `path`: string with path to library on remote device</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#print &quot;library path: {}&quot;.format(path)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="s2">&quot;export LD_LIBRARY_PATH={0}:$LD_LIBRARY_PATH;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">return</span>        
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A path-variable addition</span>
+
+<span class="sd">        :rtype: String</span>
+<span class="sd">        :return: path-addition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">EMPTY_STRING</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+
+    <span class="nd">@path.setter</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the path-variable addition and resets the prefix attribute</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `path`: path-variable addition or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="s2">&quot;PATH={0}:$PATH;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A prefix-string to add to the commands</span>
+
+<span class="sd">        :rtype: String</span>
+<span class="sd">        :return: prefix string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library_path</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_prefix</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a lock that users of this connection should use before calling in case others are also calling</span>
+
+<span class="sd">         * this is primarily for threaded users</span>
+<span class="sd">        </span>
+<span class="sd">        :return: a re-entrant lock</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span>   
+
+    <span class="k">def</span> <span class="nf">_procedure_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        By default it acts as a decorator, adding the path to the command and returning _main</span>
+
+<span class="sd">        * but it isn&#39;t implemented as a decorator since _main is an abstract method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">command</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_main</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main execution method.</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `command`: the command string to execute</span>
+<span class="sd">         - `arguments`: The arguments for the command</span>
+<span class="sd">         - `timeout`: A timeout for the queue when doing a get</span>
+
+<span class="sd">        :return: OutputError named tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="n">StringIO</span><span class="p">(</span> <span class="s2">&quot;&#39;{0} {1}&#39; timed out&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The parameters are the same as _procedure_call()</span>
+<span class="sd">        </span>
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `command`: The command to call.</span>
+
+<span class="sd">        :return: _procedure_call method called with passed-in args and kwargs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">procedure_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procedure_call</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">procedure_call</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A pass-through to the _main method to use when the dot-notation doesn&#39;t work</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `command`: the command string to execute</span>
+<span class="sd">         - `arguments`: The arguments for the command</span>
+<span class="sd">         - `timeout`: A timeout for the queue when doing a get</span>
+
+<span class="sd">        :return: OutputError named tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procedure_call</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span> 
+                                    <span class="n">arguments</span><span class="o">=</span><span class="n">arguments</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>        
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span></div>
+<span class="c1"># end NonLocalConnection</span>
+
+
+<div class="viewcode-block" id="NonLocalConnectionBuilder"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.NonLocalConnectionBuilder.html#apcommand.connections.nonlocalconnection.NonLocalConnectionBuilder">[docs]</a><span class="k">class</span> <span class="nc">NonLocalConnectionBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A base-plugin class for non-local connections</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NonLocalConnectionBuilder.__init__"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.NonLocalConnectionBuilder.html#apcommand.connections.nonlocalconnection.NonLocalConnectionBuilder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        NonLocalConnectionBuilder Constructor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operating_system</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_library_path</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_product</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The parameters to build the connection</span>
+
+<span class="sd">        :return: the parameters given to build the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s2">&quot;{0}: self.parameters need to be set&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
+
+    <span class="nd">@parameters.setter</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the parameters</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `parameters`: a named-tuple with parameters to build the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A logger built for this class to use</span>
+
+<span class="sd">        :rtype: logging.Logger</span>
+<span class="sd">        :return: a logger registered to this class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">DOT_JOIN</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">product</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The built connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;NonLocalConnectionBuilder.product: This needs to be implemented&quot;</span><span class="p">)</span>
+        <span class="k">return</span>        </div>
+
+
+<span class="n">ConnectionParameters</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;ConnectionParameters&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;hostname&quot;</span><span class="p">,</span><span class="s2">&quot;username&quot;</span><span class="p">,</span>
+                                                           <span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="s1">&#39;operating_system&#39;</span><span class="p">,</span>
+                                                           <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s1">&#39;library_path&#39;</span><span class="p">,</span> <span class="s1">&#39;port&#39;</span><span class="p">])</span>
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="c1">#third party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span>
+<span class="kn">from</span> <span class="nn">nose.tools</span> <span class="kn">import</span> <span class="n">raises</span>
+
+
+<span class="k">class</span> <span class="nc">BadChild</span><span class="p">(</span><span class="n">NonLocalConnection</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span>
+<span class="c1"># end bad Child</span>
+
+<span class="k">class</span> <span class="nc">GoodChild</span><span class="p">(</span><span class="n">NonLocalConnection</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+<span class="n">MESSAGE</span> <span class="o">=</span> <span class="s2">&quot;Expected: {0}, Actual: {1}&quot;</span>    
+    
+<span class="k">class</span> <span class="nc">TestNonLocalConnection</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">GoodChild</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;bub&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;ummagumma&#39;</span>
+        <span class="k">return</span>
+    
+    <span class="nd">@raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
+<div class="viewcode-block" id="TestNonLocalConnection.test_main"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_main.html#apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_main">[docs]</a>    <span class="k">def</span> <span class="nf">test_main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it raise an error if the main method isn&#39;t implemented?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection</span>  <span class="o">=</span> <span class="n">BadChild</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;bob&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">prefix_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks that connection.prefix + command equals the expected</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span>
+                         <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Expected: {0}, Actual: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span>
+                                                                 <span class="n">actual</span><span class="p">))</span>
+        <span class="k">return</span>
+    
+<div class="viewcode-block" id="TestNonLocalConnection.test_add_path"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_add_path.html#apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_add_path">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the path and/or library paths are set, does it add them to the command?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;ape&quot;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;PATH=ape:$PATH;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">library_path</span> <span class="o">=</span> <span class="s1">&#39;cow&#39;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s1">&#39;PATH=ape:$PATH;export LD_LIBRARY_PATH=cow:$LD_LIBRARY_PATH;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;export LD_LIBRARY_PATH=cow:$LD_LIBRARY_PATH;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestNonLocalConnection.test_command_prefix"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_command_prefix.html#apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_command_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">test_command_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the command_prefix is set, does it add it to the command?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;adb shell&#39;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">command_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">SPACE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;ape&quot;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;PATH=ape:$PATH;&quot;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">SPACE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">library_path</span> <span class="o">=</span> <span class="s1">&#39;cow&#39;</span>
+        
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;PATH=ape:$PATH;export LD_LIBRARY_PATH=cow:$LD_LIBRARY_PATH;&#39;</span> <span class="o">+</span>
+                    <span class="n">prefix</span> <span class="o">+</span> <span class="n">SPACE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;export LD_LIBRARY_PATH=cow:$LD_LIBRARY_PATH;&quot;</span> <span class="o">+</span>
+                    <span class="n">prefix</span> <span class="o">+</span> <span class="n">SPACE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_check</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="TestNonLocalConnection.test_getattr"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_getattr.html#apcommand.connections.nonlocalconnection.TestNonLocalConnection.test_getattr">[docs]</a>    <span class="k">def</span> <span class="nf">test_getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it add the path to the command then call _procedure_call()?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">main</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">_main</span> <span class="o">=</span> <span class="n">main</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;ape&#39;</span>
+        
+        <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;cow&#39;</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="s1">&#39;-a&#39;</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cow</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="n">main</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s1">&#39;PATH=ape:$PATH;&#39;</span> <span class="o">+</span> <span class="n">command</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>        
+
+        <span class="k">return</span>        </div>
+
+
+<span class="k">class</span> <span class="nc">TestNonLocalConnectionBuilder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>       
+        <span class="bp">self</span><span class="o">.</span><span class="n">builder</span> <span class="o">=</span> <span class="n">NonLocalConnectionBuilder</span><span class="p">()</span>
+        <span class="k">return</span>
+    
+    <span class="nd">@raises</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">)</span>
+<div class="viewcode-block" id="TestNonLocalConnectionBuilder.test_product"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_product.html#apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_product">[docs]</a>    <span class="k">def</span> <span class="nf">test_product</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the product raise an error if not re-implemented?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">NonLocalConnectionBuilder</span><span class="p">()</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="n">builder</span><span class="o">.</span><span class="n">product</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TestNonLocalConnectionBuilder.test_attributes"><a class="viewcode-back" href="../../../connections/api/apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes.html#apcommand.connections.nonlocalconnection.TestNonLocalConnectionBuilder.test_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">test_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the builder have the attributes promised by the API?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">product</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">_parameters</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ConfigurationError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="k">return</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

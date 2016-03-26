@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Broadcom BCM94718NR Access Point &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="The Broadcom Modules" href="index.html" />
+    <link rel="next" title="apcommand.accesspoints.broadcom.commons.BroadcomRadioData" href="api/apcommand.accesspoints.broadcom.commons.BroadcomRadioData.html" />
+    <link rel="prev" title="The Broadcom Modules" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Broadcom BCM94718NR Access Point</a><ul>
+<li><a class="reference internal" href="#aggregates">Aggregates</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#radiopageconnection">RadioPageConnection</a></li>
+<li><a class="reference internal" href="#the-broadcombcm94718nr">The BroadcomBCM94718NR</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: The Broadcom Modules"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; The Broadcom ...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.accesspoints.broadcom.commons.BroadcomRadioData.html" title="Next Chapter: apcommand.accesspoints.broadcom.commons.BroadcomRadioData"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.acc... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/accesspoints/broadcom/broadcom.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-broadcom-bcm94718nr-access-point">
+<h1>The Broadcom BCM94718NR Access Point<a class="headerlink" href="#the-broadcom-bcm94718nr-access-point" title="Permalink to this headline">¶</a></h1>
+<p>The Broadcom advertises a telnet connection but it will not let you log in. To control it you will need to send commands to its web-page. Although something like <a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a> should work, to simplify the control for the command line, a more contained method will be used. One way to control it would be to use <a class="reference external" href="http://en.wikipedia.org/wiki/CURL">curl</a> to send commands to the Access Point.</p>
+<p>Using <cite>curl</cite> introduces two problems:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Most distributions do not come with <cite>curl</cite> installed (not a big problem for linux/unix systems)</li>
+<li>We now have indirect communication to the access point, as the python code has to talk to a machine that talks to the access point</li>
+</ul>
+</div></blockquote>
+<p class="graphviz">
+<img src="../../_images/graphviz-6c40452c0a48bae33688109447aa74a4c7b7b0dd.png" alt="digraph curl_topology {
+C -&gt; V -&gt; A
+}" />
+</p>
+<p>Where <cite>C</cite> is the <cite>Control PC</cite>, <cite>V</cite> is a <cite>Ventriloquist PC</cite> that uses <cite>curl</cite> to talk to <cite>A</cite>, the <cite>Broadcom Access Point</cite>. In the simplest case the Control PC could fork a sub-process or talk to its <cite>localhost</cite>:</p>
+<p class="graphviz">
+<img src="../../_images/graphviz-0c80add794c3c8809948df5a7fc365e76fc6de33.png" alt="digraph curl_back_topology {
+C -&gt; C
+C -&gt; A
+}" />
+</p>
+<p>Still, the use of <cite>curl</cite> seems inelegant, so I will attempt to do it with the python standard library module <cite>urllib2</cite> and related modules.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Right now I am trying out <a class="reference external" href="http://docs.python-requests.org/en/latest/">requests</a> (a replacement for <cite>urllib2</cite>) and <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> with regular expressions to read the html output.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The broadcom needs time between calls &#8211; if you try to access the web server too soon after a previous call to it might not respond or not respond correctly.</p>
+</div>
+<div class="section" id="aggregates">
+<h2>Aggregates<a class="headerlink" href="#aggregates" title="Permalink to this headline">¶</a></h2>
+<p>These are parts taken from elsewhere in the code that are used in this module.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commons.BroadcomRadioData.html#apcommand.accesspoints.broadcom.commons.BroadcomRadioData" title="apcommand.accesspoints.broadcom.commons.BroadcomRadioData"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioData</span></code></a></td>
+<td>A holder of constants for setting or checking the channel</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commons.BandEnumeration.html#apcommand.accesspoints.broadcom.commons.BandEnumeration" title="apcommand.accesspoints.broadcom.commons.BandEnumeration"><code class="xref py py-obj docutils literal"><span class="pre">BandEnumeration</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier" title="apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomRadioQuerier</span></code></a>([band])</td>
+<td>An aggregator for the two band-queriers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier" title="apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomSSIDQuerier</span></code></a>([band])</td>
+<td>A querier for the ssid.asp page</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier" title="apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomLANQuerier</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A querier for the lan.asp page</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.firmware.BroadcomFirmwareQuerier.html#apcommand.accesspoints.broadcom.firmware.BroadcomFirmwareQuerier" title="apcommand.accesspoints.broadcom.firmware.BroadcomFirmwareQuerier"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomFirmwareQuerier</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A querier for the firmware.asp page</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.macros.ChannelChanger.html#apcommand.accesspoints.broadcom.macros.ChannelChanger" title="apcommand.accesspoints.broadcom.macros.ChannelChanger"><code class="xref py py-obj docutils literal"><span class="pre">ChannelChanger</span></code></a>(connection)</td>
+<td>A channel changer for the broadcom</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.DisableInterface.html#apcommand.accesspoints.broadcom.commands.DisableInterface" title="apcommand.accesspoints.broadcom.commands.DisableInterface"><code class="xref py py-obj docutils literal"><span class="pre">DisableInterface</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>An interface enabler</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.commands.EnableInterface.html#apcommand.accesspoints.broadcom.commands.EnableInterface" title="apcommand.accesspoints.broadcom.commands.EnableInterface"><code class="xref py py-obj docutils literal"><span class="pre">EnableInterface</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>An interface enabler</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="radiopageconnection">
+<h2>RadioPageConnection<a class="headerlink" href="#radiopageconnection" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>RadioPageConnection</cite> is a context manager for the Broadcom controllers.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection" title="apcommand.accesspoints.broadcom.broadcom.RadioPageConnection"><code class="xref py py-obj docutils literal"><span class="pre">RadioPageConnection</span></code></a>(connection[,&nbsp;sleep])</td>
+<td>A context manager for connecting to the radio.asp page</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__enter__.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__enter__" title="apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__enter__"><code class="xref py py-obj docutils literal"><span class="pre">RadioPageConnection.__enter__</span></code></a>()</td>
+<td>Sets the path and returns the connection</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__exit__.html#apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__exit__" title="apcommand.accesspoints.broadcom.broadcom.RadioPageConnection.__exit__"><code class="xref py py-obj docutils literal"><span class="pre">RadioPageConnection.__exit__</span></code></a>(type,&nbsp;value,&nbsp;...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-broadcombcm94718nr">
+<h2>The BroadcomBCM94718NR<a class="headerlink" href="#the-broadcombcm94718nr" title="Permalink to this headline">¶</a></h2>
+<p class="plantuml">
+<img src="../../_images/plantuml-1fc46c708dc0b8f63e2354da621d1f1061a73c1e.png" alt="BaseClass &lt;|-- BroadcomBCM94718NR
+BroadcomBCM94718NR o- HTTPConnection
+BroadcomBCM94718NR o- BroadcomChannelChanger
+BroadcomBCM94718NR o- BroadcomFirmwareQuerier
+BroadcomBCM94718NR o- BroadcomLANQuerier
+BroadcomBCM94718NR o- BroadcomRadioQuerier
+BroadcomBCM94718NR o- BroadcomSSIDQuerier
+BroadcomBCM94718NR o- EnableInterface
+BroadcomBCM94718NR o- DisableInterface
+BroadcomBCM94718NR o- ChannelChanger" />
+</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR</span></code></a>([hostname,&nbsp;username,&nbsp;...])</td>
+<td>A class to control and query the Broadcom BCM94718NR</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_channel</span></code></a>(channel)</td>
+<td>Sets the wifi channel</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.get_channel</span></code></a>(band)</td>
+<td>Returns the channel for the given band (uses only first character)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_5_ssid</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_24_ssid</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.firmware_query.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.firmware_query" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.firmware_query"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.firmware_query</span></code></a></td>
+<td>A BroadcomFirmwareQuery</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.lan_query.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.lan_query" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.lan_query"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.lan_query</span></code></a></td>
+<td>A BroadcomLANQuery</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable_command.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable_command" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable_command"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.disable_command</span></code></a></td>
+<td>A command to disable a wireless interface</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable_command.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable_command" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable_command"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.enable_command</span></code></a></td>
+<td>a commanad to enable a wireless interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.channel_changer.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.channel_changer" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.channel_changer"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.channel_changer</span></code></a></td>
+<td>A BroadcomChannelChanger</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.query.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.query" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.query"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.query</span></code></a></td>
+<td>A Broadcom Querier band:reader dictionary</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.ssid_query.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.ssid_query" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.ssid_query"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.ssid_query</span></code></a></td>
+<td>A Broadcom SSID Querier band:reader dictionary</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.connection.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.connection" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.connection"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.connection</span></code></a></td>
+<td>A connection to the AP (right now this acts as an HTTPConnection builder)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_5_ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_5_ssid</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_24_ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_24_ssid</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_ssid.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_ssid" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_ssid"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.get_ssid</span></code></a>(band)</td>
+<td>Gets the ssid for the interface matching the band</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.set_channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.set_channel</span></code></a>(channel)</td>
+<td>Sets the wifi channel</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.get_channel</span></code></a>(band)</td>
+<td>Returns the channel for the given band (uses only first character)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.print_and_log.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.print_and_log" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.print_and_log"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.print_and_log</span></code></a>(string)</td>
+<td>Sends the string to stdout and the logger (debug)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_status.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_status" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.get_status"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.get_status</span></code></a>(band)</td>
+<td>Outputs and logs the status of the AP</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.log_status.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.log_status" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.log_status"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.log_status</span></code></a>(band)</td>
+<td>Prints and logs the status for a single band</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.unset_channel.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.unset_channel" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.unset_channel"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.unset_channel</span></code></a>()</td>
+<td>calls an undo.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.disable"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.disable</span></code></a>(band)</td>
+<td>Sets the disable command&#8217;s band and calls it.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable.html#apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable" title="apcommand.accesspoints.broadcom.broadcom.BroadcomBCM94718NR.enable"><code class="xref py py-obj docutils literal"><span class="pre">BroadcomBCM94718NR.enable</span></code></a>(band)</td>
+<td>Sets the enable command&#8217;s band and calls it</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>See the <a class="reference internal" href="../../connections/httpconnection.html#id1"><span>HTTPConnection</span></a> page for more on what it is about.</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

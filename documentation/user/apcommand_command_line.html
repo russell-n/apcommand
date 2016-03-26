@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The atheros Command &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Atheros Command Line" href="atheros_command_line.html" />
+    <link rel="prev" title="User Documentation" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The <cite>atheros</cite> Command</a><ul>
+<li><a class="reference internal" href="#the-command-line-interface">The Command-Line Interface</a><ul>
+<li><a class="reference internal" href="#the-usage-help">The Usage Help</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-sub-commands">The Sub-Commands</a><ul>
+<li><a class="reference internal" href="#up-and-down">up and down</a></li>
+<li><a class="reference internal" href="#destroy">destroy</a></li>
+<li><a class="reference internal" href="#status">status</a></li>
+<li><a class="reference internal" href="#reset">reset</a></li>
+<li><a class="reference internal" href="#channel">channel</a></li>
+<li><a class="reference internal" href="#ssid">ssid</a></li>
+<li><a class="reference internal" href="#security">security</a></li>
+<li><a class="reference internal" href="#command">command</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: User Documentation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; User Document...</span>
+    </a>
+  </li>
+  <li>
+    <a href="atheros_command_line.html" title="Next Chapter: Atheros Command Line"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Atheros Comma... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/documentation/user/apcommand_command_line.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-atheros-command">
+<h1>The <cite>atheros</cite> Command<a class="headerlink" href="#the-atheros-command" title="Permalink to this headline">¶</a></h1>
+<p>After installing this package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install
+</pre></div>
+</div>
+<p>you will end up with a command-line command called <cite>atheros</cite>. If you inspect it you&#8217;ll see that it&#8217;s just a text file that calls the entry-point to this code (defined in the <cite>setup.py</cite> file). If that doesn&#8217;t mean anything to you, don&#8217;t worry, I bring it up to point out that it&#8217;s nothing special so you can rename it if you want (or move it anywhere on your PATH).</p>
+<div class="section" id="the-command-line-interface">
+<span id="atheros-cli"></span><h2>The Command-Line Interface<a class="headerlink" href="#the-command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>The command-line interface is built using python&#8217;s <a class="reference external" href="http://docs.python.org/2/library/argparse.html">argparse</a>. To get a listing of the available options you use the <code class="docutils literal"><span class="pre">-h</span></code> or <code class="docutils literal"><span class="pre">--help</span></code> options:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">atheros</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>You should see something like:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
+               [--username USERNAME] [--password PASSWORD]
+               {up,down,destroy,status,reset,channel,ssid,ip,security,command}
+               ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pudb                Run the `pudb` debugger (default=False).
+  --pdb                 Run the `pdb` debugger (default=False).
+  -s, --silent          If True only emit error messages (default=False)
+  -d, --debug           If True emit debug messages (default=False)
+  --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+  --username USERNAME   The user-login for the AP (leave unset for default)
+  --password PASSWORD   The login password for the AP (Leave unset for
+                        default)
+
+APCommand subcommands:
+  Available Sub-Commands
+
+  {up,down,destroy,status,reset,channel,ssid,ip,security,command}
+                        APCommand sub-commands
+    up                  Bring the AP up
+    down                Take the AP down
+    destroy             Destroy a specific virtual AP
+    status              Get some information for an interface
+    reset               Reset to factory defaults
+    channel             Change the AP channel
+    ssid                Change the SSID
+    ip                  Change the IP Address
+    security            Change the security
+    command             Execute an arbitrary command.
+</pre></div>
+</div>
+<p>I&#8217;ll explain the sub-commands in the next section so for now just look at the top sections (<cite>usage</cite> and <cite>optional arguments</cite>).</p>
+<div class="section" id="the-usage-help">
+<h3>The Usage Help<a class="headerlink" href="#the-usage-help" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span>   usage: atheros [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
+                  [--username USERNAME] [--password PASSWORD]
+                  {up,down,destroy,status,reset,channel,ssid,security,command}
+                  ...
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     --pudb                Run the `pudb` debugger (default=False).
+     --pdb                 Run the `pdb` debugger (default=False).
+     -s, --silent          If True only emit error messages (default=False)
+     -d, --debug           If True emit debug messages (default=False)
+     --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+     --username USERNAME   The user-login for the AP (leave unset for default)
+     --password PASSWORD   The login password for the AP (Leave unset for
+                           default)
+</pre></div>
+</div>
+<p>The <cite>usage</cite> line is telling you what you would type at the command line to use the <cite>atheros</cite>. Anything in square brackets ([]) is optional and is given more detail under the <cite>optional arguments</cite> section. The things in curly braces ({}) are sub-commands (see below). The <cite>hostname</cite>, <cite>username</cite>, and <cite>password</cite> for the Atheros AR5KAP are set as defaults:</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Atheros Telnet Defaults</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>hostname</td>
+<td>10.10.10.21</td>
+</tr>
+<tr class="row-odd"><td>username</td>
+<td>root</td>
+</tr>
+<tr class="row-even"><td>password</td>
+<td>5up</td>
+</tr>
+</tbody>
+</table>
+<p>You shouldn&#8217;t have to change them but if you do pass them in <em>before</em> the subcommand. For example, to change the <em>hostname</em> for the AP and get its status:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros --hostname 192.168.10.65 status
+</pre></div>
+</div>
+<p>The only other option you might want to use is <code class="docutils literal"><span class="pre">--debug</span></code> (or equivalently <code class="docutils literal"><span class="pre">-d</span></code>). This will send the output from the AP&#8217;s command line to standard out &#8211; by default it is being saved to a log file but since it&#8217;s so noisy it isn&#8217;t emitted unless you ask for it. The first few times you run it you might want to use this option, as it takes a while to actually change the AP&#8217;s settings and it might feel as though it&#8217;s hung up so this will give you some feedback (alternatively, you can tail the log &#8211; <code class="docutils literal"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">atheros.log</span></code>).</p>
+</div>
+</div>
+<div class="section" id="the-sub-commands">
+<span id="atheros-subcommands"></span><h2>The Sub-Commands<a class="headerlink" href="#the-sub-commands" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned above the <cite>atheros</cite> interface is built around <cite>argparse</cite> and in particular uses the <a class="reference external" href="http://docs.python.org/2/library/argparse.html#sub-commands">sub-command</a> feature. The current sub-commands are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>APCommand subcommands:
+  Available Sub-Commands
+
+  {up,down,destroy,status,reset,channel,ssid,security,command}
+                        APCommand sub-commands
+    up                  Bring the AP up
+    down                Take the AP down
+    destroy             Destroy a specific virtual AP
+    status              Get some information for an interface
+    reset               Reset to factory defaults
+    channel             Change the AP channel
+    ssid                Change the SSID
+    security            Change the security
+    command             Execute an arbitrary command.
+</pre></div>
+</div>
+<div class="section" id="up-and-down">
+<span id="up-and-down-subcommand"></span><h3>up and down<a class="headerlink" href="#up-and-down" title="Permalink to this headline">¶</a></h3>
+<p>The <cite>up</cite> and <cite>down</cite> subcommands execute the <cite>apup</cite> and <cite>apdown</cite> commands on the AP.</p>
+<p>So:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros up
+</pre></div>
+</div>
+<p>Is the equivalent of logging on to the AP and typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">apup</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroy">
+<span id="destroy-subcommand"></span><h3>destroy<a class="headerlink" href="#destroy" title="Permalink to this headline">¶</a></h3>
+<p>The <cite>destroy</cite> subcommand takes down a VAP that you pass it. It uses <cite>wlanconfig</cite> so it only works on Virtual AP&#8217;s. I added it because I accidentally turned on both the 5 GHz and 2.4 GHz bands at the same time and needed to destroy the extra VAP (<em>ath1</em>) that was created.</p>
+<p>Doing this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros destroy ath1
+</pre></div>
+</div>
+<p>Is the equivalent of logging on to the AP and typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>wlanconfig ath1 destroy
+</pre></div>
+</div>
+<p>This is help output for the <cite>destroy</cite> sub-command:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros destroy [-h] interface
+
+positional arguments:
+  interface   The VAP name (e.g. ath0)
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+</div>
+<div class="section" id="status">
+<span id="status-subcommand"></span><h3>status<a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h3>
+<p>This subcommand just dumps the <cite>iwconfig</cite>, <cite>ifconfig</cite> IP address, and the <cite>iwlist</cite> channel settings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros status
+</pre></div>
+</div>
+<p>Is the equivalent of logging on to the AP and typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>iwconfig ath0
+ifconfig ath0 | grep &quot;inet addr&quot;
+iwlist ath0 channel | grep Current
+</pre></div>
+</div>
+<p>The <cite>status -h</cite> output:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros status [-h] [interface]
+
+positional arguments:
+  interface   the name of the interface to query (default=ath0) (use &#39;all&#39; for
+              all interfaces)
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+</div>
+<div class="section" id="reset">
+<span id="reset-subcommand"></span><h3>reset<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h3>
+<p>This tells the AP to erase any configurations that have been made and set it back to the defaults:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros reset
+</pre></div>
+</div>
+<p>is the equivalent of logging on to the AP and entering:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">apdown</span>
+<span class="n">cfg</span> <span class="o">-</span><span class="n">x</span>
+</pre></div>
+</div>
+<p>The <cite>reset -h</cite> output:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros reset [-h] [band]
+
+positional arguments:
+  band        2.4 or 5 (default=2.4)
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <cite>band</cite> argument might be misleading &#8211; you are resetting both bands, but this option specifies which band to bring back up after resetting the AP.</p>
+</div>
+<p>If you want to see the defaults you can inspect the <cite>/etc/ath/apcfg</cite> file.</p>
+</div>
+<div class="section" id="channel">
+<span id="channel-subcommand"></span><h3>channel<a class="headerlink" href="#channel" title="Permalink to this headline">¶</a></h3>
+<p>This changes the channel using the default bandwidths chosen:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros channel 1
+</pre></div>
+</div>
+<p>sets the channel to 1 and the bandwidth to HT20, whereas:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros channel 36
+</pre></div>
+</div>
+<p>sets the channel to 36 and the bandwidth to HT40+ and:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros channel 40
+</pre></div>
+</div>
+<p>sets the channel to 40 and the bandwidth to HT40-, and so on.</p>
+<p>The <cite>channel -h</cite> output:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros channel [-h] [--mode MODE] [--bandwidth BANDWIDTH] channel
+
+positional arguments:
+  channel               Channel to set
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --mode MODE           Mode (e.g. 11NG)
+  --bandwidth BANDWIDTH
+                        Bandwidth (e.g. HT40PLUS)
+</pre></div>
+</div>
+</div>
+<div class="section" id="ssid">
+<span id="ssid-subcommand"></span><h3>ssid<a class="headerlink" href="#ssid" title="Permalink to this headline">¶</a></h3>
+<p>This sets the broadcast SSID for the AP:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros ssid amanaplanacanalpanama
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">ssid</span> <span class="pre">-h</span></code> output:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros ssid [-h] ssid [band]
+
+positional arguments:
+  ssid        The SSID to use
+  band        2.4 or 5 (default=2.4)
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
+</div>
+<div class="section" id="security">
+<span id="security-subcommand"></span><h3>security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h3>
+<p>This sets the security for the AP, but hasn&#8217;t been implemented yet.</p>
+</div>
+<div class="section" id="command">
+<span id="command-subcommand"></span><h3>command<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
+<p>This executes an arbitrary command on the AP and sends its output to standard out. This was implemented so that if I forgot anything you can always type it in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros command dmesg
+</pre></div>
+</div>
+<p>will dump the current /proc/kmsg file to standard output while:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros command &#39;ping -c 1 www.google.com&#39;
+</pre></div>
+</div>
+<p>will send one ping from the AP to google. Note two things:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The command string is put in quotes (<code class="docutils literal"><span class="pre">'ping</span> <span class="pre">-c'</span></code> is seen as one word while <code class="docutils literal"><span class="pre">ping</span> <span class="pre">-c</span></code> would be seen as two)</li>
+<li>The <code class="docutils literal"><span class="pre">ping</span></code> is given the <code class="docutils literal"><span class="pre">-c</span> <span class="pre">1</span></code> &#8211; I didn&#8217;t implement anything to handle calls that don&#8217;t end &#8211; this includes <code class="docutils literal"><span class="pre">cat</span> <span class="pre">/proc/kmsg</span></code> or similar calls that require <code class="docutils literal"><span class="pre">ctrl-c</span></code> to terminate them. I think that for ping it will run forever while the <code class="docutils literal"><span class="pre">cat</span> <span class="pre">/proc/kmsg</span></code> will eventually quit with a socket timeout.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

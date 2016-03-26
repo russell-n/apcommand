@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.commands.settingsvalidator &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.commands.settingsvalidator</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">iwlist</span> <span class="kn">import</span> <span class="n">IwlistCommand</span>
+<span class="kn">from</span> <span class="nn">iwconfig</span> <span class="kn">import</span> <span class="n">IwconfigCommand</span>
+
+
+<div class="viewcode-block" id="SettingsValidator"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.commands.settingsvalidator.SettingsValidator.html#apcommand.commands.settingsvalidator.SettingsValidator">[docs]</a><span class="k">class</span> <span class="nc">SettingsValidator</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A validator for the settings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SettingsValidator.__init__"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.commands.settingsvalidator.SettingsValidator.html#apcommand.commands.settingsvalidator.SettingsValidator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">antennae</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SettingsValidator constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: connection to the device to validate</span>
+<span class="sd">         - `interface`: network interface to check (e.g. wlan0)</span>
+<span class="sd">         - `antennae`: number of antennae (spatial streams)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SettingsValidator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iwlist</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iwconfig</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bitrates</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bitrates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a map of channel to bitrate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitrates</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">g_channels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">)]</span>
+            <span class="n">a_lower_channels</span> <span class="o">=</span> <span class="s1">&#39;36 44 149 157&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">a_upper_channels</span> <span class="o">=</span> <span class="s2">&quot;40 48 153 161&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">a_channels</span> <span class="o">=</span> <span class="n">a_lower_channels</span> <span class="o">+</span> <span class="n">a_upper_channels</span>
+            <span class="n">g_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;120 Mb/s&#39;</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g_channels</span><span class="p">]</span>
+            <span class="n">a_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;300 Mb/s&#39;</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">a_channels</span><span class="p">]</span>
+            <span class="n">channel_rate</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">g_channels</span> <span class="o">+</span> <span class="n">a_channel</span><span class="p">,</span>
+                                    <span class="n">g_rates</span> <span class="o">+</span> <span class="n">a_rates</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bitrates</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span><span class="n">channel_rate</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitrates</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iwlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IwlistCommand        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iwlist</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iwlist</span> <span class="o">=</span> <span class="n">IwlistCommand</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                         <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iwlist</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iwconfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IwconfigCommand</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iwconfig</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iwconfig</span> <span class="o">=</span> <span class="n">IwconfigCommand</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                             <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iwconfig</span>
+
+<div class="viewcode-block" id="SettingsValidator.channel"><a class="viewcode-back" href="../../../accesspoints/api/apcommand.commands.settingsvalidator.SettingsValidator.html#apcommand.commands.settingsvalidator.SettingsValidator.channel">[docs]</a>    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks iwlist for the channel</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `channel`: wifi channel (e.g. &#39;6&#39;)</span>
+
+<span class="sd">        :raises: RuntimeError if channel settings are wrong</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actual_channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">channel</span>
+        <span class="k">if</span> <span class="n">actual_channel</span> <span class="o">!=</span> <span class="n">channel</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Expected channel: {0}, Actual: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span>
+                                                                           <span class="n">actual_channel</span><span class="p">))</span>
+        <span class="n">actual_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">bitrate</span>
+        <span class="k">return</span> </div></div>
+
+
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="c1">#third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">iwconfig</span> <span class="kn">import</span> <span class="n">sample_output</span> <span class="k">as</span> <span class="n">iwconfig_sample</span>
+<span class="kn">from</span> <span class="nn">iwlist</span> <span class="kn">import</span> <span class="n">sample_output</span> <span class="k">as</span> <span class="n">iwlist_sample</span>
+<span class="kn">from</span> <span class="nn">iwlist</span> <span class="kn">import</span> <span class="n">SAMPLE_CHANNEL</span> <span class="k">as</span> <span class="n">IWLIST_CHANNEL</span>
+<span class="kn">from</span> <span class="nn">apcommand.connections.nonlocalconnection</span> <span class="kn">import</span> <span class="n">OutputError</span>
+
+
+<span class="n">FIVE_GHZ_CHANNEL</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">iwlist ath0 channel</span>
+<span class="s2">ath0      70 channels in total; available frequencies :</span>
+<span class="s2">          Channel 36 : 5.18 GHz</span>
+<span class="s2">          Channel 40 : 5.2 GHz</span>
+<span class="s2">          Channel 44 : 5.22 GHz</span>
+<span class="s2">          Channel 48 : 5.24 GHz</span>
+<span class="s2">          Channel 52 : 5.26 GHz</span>
+<span class="s2">          Channel 56 : 5.28 GHz</span>
+<span class="s2">          Channel 60 : 5.3 GHz</span>
+<span class="s2">          Channel 64 : 5.32 GHz</span>
+<span class="s2">          Channel 100 : 5.5 GHz</span>
+<span class="s2">          Channel 104 : 5.52 GHz</span>
+<span class="s2">          Channel 108 : 5.54 GHz</span>
+<span class="s2">          Channel 112 : 5.56 GHz</span>
+<span class="s2">          Channel 116 : 5.58 GHz</span>
+<span class="s2">          Channel 120 : 5.6 GHz</span>
+<span class="s2">          Channel 124 : 5.62 GHz</span>
+<span class="s2">          Channel 128 : 5.64 GHz</span>
+<span class="s2">          Channel 132 : 5.66 GHz</span>
+<span class="s2">          Channel 136 : 5.68 GHz</span>
+<span class="s2">          Channel 140 : 5.7 GHz</span>
+<span class="s2">          Channel 149 : 5.745 GHz</span>
+<span class="s2">          Channel 153 : 5.765 GHz</span>
+<span class="s2">          Channel 157 : 5.785 GHz</span>
+<span class="s2">          Channel 161 : 5.805 GHz</span>
+<span class="s2">          Channel 165 : 5.825 GHz</span>
+<span class="s2">          Current Frequency:5.18 GHz (Channel 36)</span>
+
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TestChannel</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;ath0&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span> <span class="o">=</span> <span class="n">SettingsValidator</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                           <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">setup_sample_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">iwconfig_sample</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">o_e</span> <span class="o">=</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwconfig</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">o_e</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">iwlist_sample</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">o_e_2</span> <span class="o">=</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">o_e_2</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample_output</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">IWLIST_CHANNEL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;99&#39;</span><span class="p">])</span>
+
+        <span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">FIVE_GHZ_CHANNEL</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">o_e</span> <span class="o">=</span> <span class="n">OutputError</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">iwlist</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">o_e</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">IWLIST_CHANNEL</span><span class="p">)</span>
+        <span class="k">return</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

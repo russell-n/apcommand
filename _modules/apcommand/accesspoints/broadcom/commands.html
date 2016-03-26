@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.broadcom.commands &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.broadcom.commands</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractproperty</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span>
+<span class="kn">import</span> <span class="nn">shelve</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">action_dict</span><span class="p">,</span> <span class="n">radio_page</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomWirelessData</span><span class="p">,</span> <span class="n">BroadcomRadioData</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomPages</span><span class="p">,</span> <span class="n">set_page</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BandEnumeration</span>
+<span class="kn">from</span> <span class="nn">querier</span> <span class="kn">import</span> <span class="n">BroadcomRadioQuerier</span><span class="p">,</span> <span class="n">BroadcomSSIDQuerier</span>
+
+<div class="viewcode-block" id="BroadcomBaseData"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData">[docs]</a><span class="k">class</span> <span class="nc">BroadcomBaseData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The base-data to hold the data-dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomBaseData.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base Data constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomBaseData</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BroadcomBaseData.base_data"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_data">[docs]</a>    <span class="k">def</span> <span class="nf">base_data</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns data dictionary that only has action:Apply </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">action_dict</span><span class="p">()</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BroadcomBaseData.base_24_ghz_data"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_24_ghz_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_24_ghz_data">[docs]</a>    <span class="k">def</span> <span class="nf">base_24_ghz_data</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        data-dictionary to choose the 2.4 GHz interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bwd</span> <span class="o">=</span> <span class="n">BroadcomWirelessData</span>
+        <span class="n">base_24_ghz_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">bwd</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">:</span> <span class="n">bwd</span><span class="o">.</span><span class="n">interface_24_ghz</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">base_24_ghz_data</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BroadcomBaseData.base_5_ghz_data"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_5_ghz_data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.base_5_ghz_data">[docs]</a>    <span class="k">def</span> <span class="nf">base_5_ghz_data</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        data-dictionary to chose the 5 Ghz interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bwd</span> <span class="o">=</span> <span class="n">BroadcomWirelessData</span>
+        <span class="n">base_5_ghz_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">bwd</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">:</span><span class="n">bwd</span><span class="o">.</span><span class="n">interface_5_ghz</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">base_5_ghz_data</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BroadcomBaseData.data"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.data.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a data-dict based on action and band</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `action`: if True, add action:Apply to the dict</span>
+<span class="sd">         - `band`: if 2.4 or 5 add the interface selection data</span>
+
+<span class="sd">        :return: base data-dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
+            <span class="n">base_data</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">base_data</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">base_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">):</span>
+            <span class="n">base_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">base_24_ghz_data</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">):</span>
+            <span class="n">base_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">base_5_ghz_data</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">base_data</span></div>
+
+<div class="viewcode-block" id="BroadcomBaseData.__repr__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__repr__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseData.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a representation of the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;{0}: Base: {1} 5GHz: {1} 2.4GHz: {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">base_data</span><span class="p">(),</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">base_5_ghz_data</span><span class="p">(),</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">base_24_ghz_data</span><span class="p">())</span></div></div>
+
+<div class="viewcode-block" id="BroadcomBaseCommand"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand">[docs]</a><span class="k">class</span> <span class="nc">BroadcomBaseCommand</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A base-class for the commands that change settings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+<div class="viewcode-block" id="BroadcomBaseCommand.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomBaseCommand constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: A connection to the AP (HTTPConnection)</span>
+<span class="sd">         - `band`: 2.4, 5, or None (chooses the data-dictionary)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_added_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_state</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_name</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_objects</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_key</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The page for the decorators to use (e.g. &#39;radio.asp&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a key to use for the cases where there&#39;s only one object to shelve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_key</span> <span class="o">=</span> <span class="s2">&quot;{0}_{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The key:object dictionary to save (defaults to current singular-data)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">singular_data</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A name to use for any shelves created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_name</span> <span class="o">=</span> <span class="s2">&quot;{0}.shelve&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__package__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shelf_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">querier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A querier to get the previous state for the undo.</span>
+
+<span class="sd">        This assumes radio.asp right now</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="n">BroadcomRadioQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                                 <span class="n">refresh</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                                 <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the band (2.4, 5, or None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_band</span>
+
+    <span class="nd">@band.setter</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sets the band and sets base_data, non_base_data to None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting to band: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_band</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_band</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A data-dictionary to add commands to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;setting the base-data using band {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span> <span class="o">=</span> <span class="n">BroadcomBaseData</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;base-data: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A data dictionary with the command-specific data (or empty if querying)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">added_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maintains data added from other commands</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_added_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_added_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_added_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">non_base_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The singular data updated with any added data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">singular_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">added_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data dictionary to send to the server</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">non_base_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.__iadd__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__iadd__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__iadd__">[docs]</a>    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the other&#39;s non_base_data to this added_data</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">non_base_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_base_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.__add__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__add__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__add__">[docs]</a>    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the other&#39;s non_base_data to this added_data</span>
+
+<span class="sd">        **For this to work the sub-classes can&#39;t change the constructor interface**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                    <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="n">new_object</span><span class="o">.</span><span class="n">added_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">non_base_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_object</span></div>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.__sub__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__sub__.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.__sub__">[docs]</a>    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes the other&#39;s non-base data from added_data in new object</span>
+
+<span class="sd">        :return: object with this data minus other&#39;s non_base_data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                    <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="n">new_object</span><span class="o">.</span><span class="n">_added_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">added_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">non_base_data</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_object</span><span class="o">.</span><span class="n">added_data</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">new_object</span><span class="o">.</span><span class="n">added_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">new_object</span></div>
+
+    <span class="nd">@set_page</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main method to change settings </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.undo"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.undo.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is an attempt to start bringing this into line with the Command Pattern</span>
+
+<span class="sd">        But it isn&#39;t clear that it will be easy (or possible) in every case -</span>
+<span class="sd">        so it isn&#39;t made a requirement        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s2">&quot;undo not supported for this command&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.store"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.store.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        shelve data from this class (use in __call__, not meant for public)</span>
+
+<span class="sd">        :precondition: self.shelf_objects is a dictionary of things to shelve</span>
+<span class="sd">        :postocondition: objects is shelf_objects is shelved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_name</span><span class="p">,</span> <span class="n">writeback</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span> <span class="k">as</span> <span class="n">open_shelf</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_objects</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">open_shelf</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BroadcomBaseCommand.load"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.load.html#apcommand.accesspoints.broadcom.commands.BroadcomBaseCommand.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Loads the shelved data for the undo method</span>
+<span class="sd">        (to prevent circular calls using shelf_objects&#39; keys, just uses shelf_key)</span>
+
+<span class="sd">        :return: dictionary of objects using shelf_objects&#39; keys</span>
+<span class="sd">        :raise: KeyError if an item in shelf_objects isn&#39;t on the shelf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_name</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">open_shelf</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">open_shelf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+
+<span class="c1"># end class BroadcomBaseCommand</span>
+
+<span class="k">class</span> <span class="nc">StateData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;state&#39;</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;band&#39;</span>
+
+<div class="viewcode-block" id="EnableInterface"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.EnableInterface.html#apcommand.accesspoints.broadcom.commands.EnableInterface">[docs]</a><span class="k">class</span> <span class="nc">EnableInterface</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An interface enabler</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EnableInterface.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.EnableInterface.html#apcommand.accesspoints.broadcom.commands.EnableInterface.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EnableInterface</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_24_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_5_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        radio.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An interface disabler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable</span> <span class="o">=</span> <span class="n">DisableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                             <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A dictionary of shelf_key: band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">previous_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">state</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">}</span>
+
+<div class="viewcode-block" id="EnableInterface.undo"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.EnableInterface.undo.html#apcommand.accesspoints.broadcom.commands.EnableInterface.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable the interface </span>
+
+<span class="sd">        This is actually just a call to DisableInterface...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No entry on the shelf for {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to enable the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_24_data</span>
+        <span class="k">elif</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_5_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enable_5_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to send to the connection to enable 5 GHz</span>
+
+<span class="sd">        :return: dict of data-values for the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_5_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">radio_data</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable_5_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">radio_data</span><span class="o">.</span><span class="n">interface</span> <span class="p">:</span><span class="n">radio_data</span><span class="o">.</span><span class="n">radio_on</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_5_data</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enable_24_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to send to the connection to enable 2.4 GHz</span>
+
+<span class="sd">        :return: dict of data-values for the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_24_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">radio_data</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable_24_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">radio_data</span><span class="o">.</span><span class="n">interface</span><span class="p">:</span><span class="n">radio_data</span><span class="o">.</span><span class="n">radio_on</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_24_data</span></div>
+
+<div class="viewcode-block" id="DisableInterface"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.DisableInterface.html#apcommand.accesspoints.broadcom.commands.DisableInterface">[docs]</a><span class="k">class</span> <span class="nc">DisableInterface</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An interface enabler</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DisableInterface.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.DisableInterface.html#apcommand.accesspoints.broadcom.commands.DisableInterface.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DisableInterface</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_24_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_5_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        radio.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An interface enabler for the undo</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                           <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable</span>                                           
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">querier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A querier to get the previous state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="n">BroadcomQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                            <span class="n">refresh</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                            <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_querier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dictionary of shelf_key: band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">}</span>
+        
+<div class="viewcode-block" id="DisableInterface.undo"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.DisableInterface.html#apcommand.accesspoints.broadcom.commands.DisableInterface.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        enables the interface </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No entry on the shelf for {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">))</span>    
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to enable the interface</span>
+
+<span class="sd">        This isn&#39;t persistent, as changing the band changes the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_24_data</span>
+        <span class="k">elif</span> <span class="n">band</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_5_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disable_5_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to send to the connection to disable 5 GHz</span>
+
+<span class="sd">        :return: dict of data-values for the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_5_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">radio_data</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable_5_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">radio_data</span><span class="o">.</span><span class="n">interface</span><span class="p">:</span> <span class="n">radio_data</span><span class="o">.</span><span class="n">radio_off</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_5_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disable_24_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data to send to the connection to enable 2.4 GHz</span>
+
+<span class="sd">        :return: dict of data-values for the connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_24_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">radio_data</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable_24_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">radio_data</span><span class="o">.</span><span class="n">interface</span><span class="p">:</span> <span class="n">radio_data</span><span class="o">.</span><span class="n">radio_off</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_24_data</span></div>
+
+<div class="viewcode-block" id="SetChannel"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.SetChannel.html#apcommand.accesspoints.broadcom.commands.SetChannel">[docs]</a><span class="k">class</span> <span class="nc">SetChannel</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A channel setter for the AP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SetChannel.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.SetChannel.html#apcommand.accesspoints.broadcom.commands.SetChannel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SetChannel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel_map</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="bp">None</span>       
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        radio.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shelf_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A dictionary of shelf_key: channel for current band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">channel</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">:</span> <span class="n">channel</span><span class="p">}</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span>
+
+    <span class="nd">@channel.setter</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the channel, the band, and singular_data based on the channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_channel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_map</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">control_channel</span><span class="p">:</span><span class="n">channel</span><span class="p">}</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Map of channel to data-dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_map</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">channel_24</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">)]</span>
+            <span class="n">channel_24_data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;2.4&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_24</span><span class="p">)</span>
+            <span class="c1"># these are the only channels that match the Atheros channels we chose</span>
+            <span class="n">channel_5</span> <span class="o">=</span> <span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_5ghz</span>
+            <span class="n">channel_5_data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;5&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_5</span><span class="p">)</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="n">channel_24</span> <span class="o">+</span> <span class="n">channel_5</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">channel_24_data</span> <span class="o">+</span> <span class="n">channel_5_data</span>         
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_map</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a pass-through (it has to be set when given a channel)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>
+
+<div class="viewcode-block" id="SetChannel.undo"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.SetChannel.html#apcommand.accesspoints.broadcom.commands.SetChannel.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the channels found on the shelve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="bp">self</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No entry on shelf for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">))</span>
+        <span class="k">return</span></div></div>
+
+<div class="viewcode-block" id="SetSideband"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.SetSideband.html#apcommand.accesspoints.broadcom.commands.SetSideband">[docs]</a><span class="k">class</span> <span class="nc">SetSideband</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A side-band (&#39;upper&#39; or &#39;lower&#39;) setter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SetSideband.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.commands.SetSideband.html#apcommand.accesspoints.broadcom.commands.SetSideband.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SetSideband</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        radio.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This has to be set in the call when you know what the direction is</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        upper or lower</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span>
+
+    <span class="nd">@direction.setter</span>
+    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sets the direction, band, and singular_data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">new_direction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">direction</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;l&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="s1">&#39;lower&#39;</span>
+        <span class="k">elif</span> <span class="n">direction</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="s1">&#39;upper&#39;</span>
+        <span class="c1">#else raise some kind of error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">sideband</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_direction</span><span class="p">}</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the sideband (&#39;upper&#39; or &#39;lower&#39;) for 5GHz</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span></div>
+<span class="c1"># end SetSideband</span>
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">call</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="n">random_letters</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))))</span>
+
+<span class="k">class</span> <span class="nc">BadChild</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">BadChild2</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">base_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">EvilChild</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+        
+    <span class="k">def</span> <span class="nf">base_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+<span class="c1"># this can&#39;t be random in the class for testing to work</span>
+<span class="c1"># Because __add__  creates a new object</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">random_letters</span><span class="p">():</span> <span class="n">random_letters</span><span class="p">()}</span>
+<span class="n">test_data_2</span> <span class="o">=</span> <span class="p">{</span><span class="n">random_letters</span><span class="p">():</span> <span class="n">random_letters</span><span class="p">()}</span>
+<span class="n">test_data_3</span> <span class="o">=</span> <span class="p">{</span><span class="n">random_letters</span><span class="p">():</span> <span class="n">random_letters</span><span class="p">()}</span>    
+<span class="k">class</span> <span class="nc">TestChild</span><span class="p">(</span><span class="n">BroadcomBaseCommand</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestChild</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="n">test_data</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">TestChild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">added_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">non_base_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestChild2</span><span class="p">(</span><span class="n">TestChild</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestChild2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="n">test_data_2</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>
+
+<span class="k">class</span> <span class="nc">TestChild3</span><span class="p">(</span><span class="n">TestChild</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestChild3</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">singular_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span> <span class="o">=</span> <span class="n">test_data_3</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_data</span>
+    
+<span class="k">class</span> <span class="nc">TestBroadcomCommands</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_abstract_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does a class without the properties defined crash on creation?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">BroadcomBaseCommand</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">BadChild</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">BadChild2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,))</span>
+        <span class="n">EvilChild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Can you add two commands?        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command_1</span> <span class="o">=</span> <span class="n">TestChild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">command_2</span> <span class="o">=</span> <span class="n">TestChild2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        
+        <span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span> <span class="o">=</span> <span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">command_2</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">data_changed</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data_changed</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_2</span><span class="p">)</span>
+
+        <span class="c1"># first __add__</span>
+        <span class="n">command_3</span> <span class="o">=</span> <span class="n">command_1</span> <span class="o">+</span> <span class="n">command_2</span>
+
+        <span class="c1"># creates a new object with the combined data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data_changed</span><span class="p">,</span> <span class="n">command_3</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">command_3</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="c1"># leaves the originals alone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+
+        <span class="c1"># now __iadd__</span>
+        <span class="n">command_1</span> <span class="o">+=</span> <span class="n">command_2</span>
+        <span class="c1"># changes LHS in place</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Can you subtract two commands?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command_1</span> <span class="o">=</span> <span class="n">TestChild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">command_2</span> <span class="o">=</span> <span class="n">TestChild2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">command_3</span> <span class="o">=</span> <span class="n">TestChild3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+
+        <span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">data_3</span> <span class="o">=</span> <span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">command_2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">command_3</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">data_changed</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data_changed</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_2</span><span class="p">)</span>
+        <span class="n">data_changed</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_3</span><span class="p">)</span>
+
+        <span class="c1"># first add so the commands are different</span>
+        <span class="n">command_1</span> <span class="o">+=</span> <span class="n">command_2</span>
+        <span class="n">command_1</span> <span class="o">+=</span> <span class="n">command_3</span>
+        
+        <span class="c1"># First __sub__</span>
+        <span class="n">command_4</span> <span class="o">=</span> <span class="n">command_1</span> <span class="o">-</span> <span class="n">command_2</span>
+
+        <span class="n">data_1_3</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data_1_3</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_3</span><span class="p">)</span>
+        <span class="c1"># new cleaned object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_4</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1_3</span><span class="p">)</span>
+
+        <span class="n">command_4</span> <span class="o">=</span> <span class="n">command_1</span> <span class="o">-</span> <span class="n">command_2</span> <span class="o">-</span> <span class="n">command_3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_4</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1</span><span class="p">)</span>
+
+        <span class="c1"># old objects unchanged</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+
+        <span class="c1"># now __isub__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1</span><span class="p">)</span>
+        <span class="n">command_1</span> <span class="o">-=</span> <span class="n">command_2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1_3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+
+        <span class="n">command_1</span> <span class="o">-=</span> <span class="n">command_3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command_1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_1</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestEnableInterface</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;connection&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>        
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_previous_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the previous state correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                  <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+        <span class="n">command</span><span class="p">()</span>
+
+        <span class="n">command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span>
+        <span class="n">command</span><span class="p">()</span>    
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_24ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it construct the right set of data to Enable the interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                  <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">)</span>
+        <span class="n">expected_data</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_data</span><span class="p">)</span>
+        <span class="n">command</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;radio.asp&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expected_data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it send the 5 GHz data to the connection?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                  <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+        <span class="n">expected_data</span> <span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_data</span><span class="p">)</span>
+
+        <span class="c1"># what happens if you change it to 2.4?</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+        <span class="n">expected_data</span> <span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the undo disable the interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;connection&#39;</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">html</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">EnableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">)</span>        
+
+        <span class="n">command</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">command</span><span class="p">()</span>
+
+        <span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_5_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">command</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
+        <span class="n">query_call</span> <span class="o">=</span> <span class="n">call</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">})</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">query_call</span><span class="p">,</span>
+                 <span class="n">call</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">}),</span>
+                            <span class="n">call</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span><span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">})]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">mock_calls</span><span class="p">,</span> <span class="n">calls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">previous_state</span> <span class="o">=</span> <span class="s1">&#39;Enabled&#39;</span>
+
+        <span class="c1"># the disable checks the state so we need to change the html so it is Disabled</span>
+        <span class="c1">#self.html.text = open(&#39;radio_5_asp.html&#39;).read()</span>
+        <span class="c1">#self.command.undo()</span>
+        <span class="c1">#self.assertEqual(self.connection.mock_calls, calls)</span>
+        <span class="k">return</span>
+
+<span class="k">class</span> <span class="nc">TestDisableInterface</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;connection&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_5_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_24_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it setup the right data dictionary and make the right call?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">DisableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                   <span class="n">band</span><span class="o">=</span><span class="s1">&#39;2.4&#39;</span><span class="p">)</span>
+        <span class="n">expected_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_data</span><span class="p">)</span>
+        <span class="n">command</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expected_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;radio.asp&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it set up the right data dictionary to disable the 5 Ghz interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">DisableInterface</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                   <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+        <span class="n">expected_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_radio&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_data</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">TestSetChannel</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fake_channel</span> <span class="o">=</span> <span class="n">random_letters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fake_channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">SetChannel</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_24_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it pass in the correct data to set the (2.4 GHz) channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_24ghz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
+        <span class="n">expected_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_channel&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)}</span>
+        <span class="c1"># setup the shelving</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span>
+        <span class="n">mock_shelf</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec_set</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="n">mock_closing</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_closing</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_shelf</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;contextlib.closing&#39;</span><span class="p">,</span> <span class="n">mock_closing</span><span class="p">):</span>
+            <span class="c1">#with patch(&#39;shelve&#39;, mock_shelf):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expected_data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it pass in the correct data to set the (5GHz) channel?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">BroadcomRadioData</span><span class="o">.</span><span class="n">channels_5ghz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
+        <span class="n">expected_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_channel&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)}</span>
+        <span class="c1"># setup the shelving</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span>
+        <span class="n">mock_shelf</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec_set</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="n">mock_closing</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;contextlib.closing&#39;</span><span class="p">,</span> <span class="n">mock_closing</span><span class="p">):</span>
+            <span class="c1">#with patch(&#39;shelve&#39;, mock_shelf):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expected_data</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_shelf_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Is shelf_objects a dict of shelf_key:previous-channels dict?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">querier</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">SetChannel</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">_querier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span>
+        <span class="n">shelf_objects</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">shelf_objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">,</span> <span class="n">shelf_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_channel</span><span class="p">,</span>
+                          <span class="n">shelf_objects</span><span class="p">[</span><span class="n">command</span><span class="o">.</span><span class="n">shelf_key</span><span class="p">])</span>
+        <span class="k">return</span>
+<span class="c1"># end class TestSetChannel</span>
+
+<span class="k">class</span> <span class="nc">TestSetSideband</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_set_sideband</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it set the sideband correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">SetSideband</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;lower&#39;</span>
+        <span class="n">expected_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span><span class="s1">&#39;Apply&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;wl_nctrlsb&#39;</span><span class="p">:</span><span class="s1">&#39;lower&#39;</span><span class="p">}</span>
+        <span class="n">command</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expected_data</span><span class="p">)</span>
+        <span class="k">return</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

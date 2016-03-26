@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The OatBran &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.commons.oatbran.FormalDefinition.empty_string" href="api/apcommand.commons.oatbran.FormalDefinition.empty_string.html" />
+    <link rel="prev" title="apcommand.commons.randomizer.Randomizer.alphanum" href="api/apcommand.commons.randomizer.Randomizer.alphanum.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The OatBran</a><ul>
+<li><a class="reference internal" href="#formal-definition">Formal Definition</a></li>
+<li><a class="reference internal" href="#groups">Groups</a></li>
+<li><a class="reference internal" href="#quantifiers">Quantifiers</a></li>
+<li><a class="reference internal" href="#character-classes">Character Classes</a></li>
+<li><a class="reference internal" href="#boundaries">Boundaries</a></li>
+<li><a class="reference internal" href="#common-patterns">Common Patterns</a></li>
+<li><a class="reference internal" href="#numbers">Numbers</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.commons.randomizer.Randomizer.alphanum.html" title="Previous Chapter: apcommand.commons.randomizer.Randomizer.alphanum"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.com...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.commons.oatbran.FormalDefinition.empty_string.html" title="Next Chapter: apcommand.commons.oatbran.FormalDefinition.empty_string"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.com... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/commons/oatbran.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-oatbran">
+<h1>The OatBran<a class="headerlink" href="#the-oatbran" title="Permalink to this headline">¶</a></h1>
+<p>Oat Bran helps with regular expressions. Names are uppercased to avoid keyword clashes</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="c1"># the class-based expressions are mostly for organization</span>
+<span class="c1"># but sometimes they&#39;re just too clunky</span>
+<span class="n">LEFT_BRACKET</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span>
+<span class="n">RIGHT_BRACKET</span> <span class="o">=</span> <span class="s1">&#39;]&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="formal-definition">
+<h2>Formal Definition<a class="headerlink" href="#formal-definition" title="Permalink to this headline">¶</a></h2>
+<p>These are the basic building blocks of regular expressions.</p>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Formal Definition</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Symbol</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>empty_string</td>
+<td><img class="math" src="../_images/math/f348c73e654151e416e3c525b2ff7803590754ce.png" alt="\varepsilon"/></td>
+</tr>
+<tr class="row-odd"><td>alternative (OR)</td>
+<td><img class="math" src="../_images/math/5e3ef4453df42b6f064b6e54ba6914ecaca6a4e9.png" alt="|"/></td>
+</tr>
+<tr class="row-even"><td>kleene_star</td>
+<td><img class="math" src="../_images/math/0b8f66a848c851c882bd816037c9c5859ca75570.png" alt="*"/></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.FormalDefinition.empty_string.html#apcommand.commons.oatbran.FormalDefinition.empty_string" title="apcommand.commons.oatbran.FormalDefinition.empty_string"><code class="xref py py-obj docutils literal"><span class="pre">FormalDefinition.empty_string</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.FormalDefinition.alternative.html#apcommand.commons.oatbran.FormalDefinition.alternative" title="apcommand.commons.oatbran.FormalDefinition.alternative"><code class="xref py py-obj docutils literal"><span class="pre">FormalDefinition.alternative</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.FormalDefinition.OR.html#apcommand.commons.oatbran.FormalDefinition.OR" title="apcommand.commons.oatbran.FormalDefinition.OR"><code class="xref py py-obj docutils literal"><span class="pre">FormalDefinition.OR</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.FormalDefinition.kleene_star.html#apcommand.commons.oatbran.FormalDefinition.kleene_star" title="apcommand.commons.oatbran.FormalDefinition.kleene_star"><code class="xref py py-obj docutils literal"><span class="pre">FormalDefinition.kleene_star</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="groups">
+<h2>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h2>
+<p>Besides the basic use of grouping with parentheses (to explicitly apply operations to multiple characters, for example), the Group hold perl (<cite>(?&lt;expression&gt;)</cite>) and python (<cite>(?P&lt;expression&gt;)</cite>) group-extensions. Since parentheses have to be symmetric these are applied as methods rather than strings that are added to other strings.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.html#apcommand.commons.oatbran.Group" title="apcommand.commons.oatbran.Group"><code class="xref py py-obj docutils literal"><span class="pre">Group</span></code></a></td>
+<td>The Group helps with regular expression groups</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.group.html#apcommand.commons.oatbran.Group.group" title="apcommand.commons.oatbran.Group.group"><code class="xref py py-obj docutils literal"><span class="pre">Group.group</span></code></a>(expression)</td>
+<td>Create a grouped expression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.named.html#apcommand.commons.oatbran.Group.named" title="apcommand.commons.oatbran.Group.named"><code class="xref py py-obj docutils literal"><span class="pre">Group.named</span></code></a>(name,&nbsp;expression)</td>
+<td>Creates a named group</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.not_followed_by.html#apcommand.commons.oatbran.Group.not_followed_by" title="apcommand.commons.oatbran.Group.not_followed_by"><code class="xref py py-obj docutils literal"><span class="pre">Group.not_followed_by</span></code></a>(suffix)</td>
+<td>Creates a (perl) negative lookahead expression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.not_preceded_by.html#apcommand.commons.oatbran.Group.not_preceded_by" title="apcommand.commons.oatbran.Group.not_preceded_by"><code class="xref py py-obj docutils literal"><span class="pre">Group.not_preceded_by</span></code></a>(prefix)</td>
+<td>Creates a (perl) negative look behind expression</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.preceded_by.html#apcommand.commons.oatbran.Group.preceded_by" title="apcommand.commons.oatbran.Group.preceded_by"><code class="xref py py-obj docutils literal"><span class="pre">Group.preceded_by</span></code></a>(prefix)</td>
+<td>Creates a look-behind expression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Group.followed_by.html#apcommand.commons.oatbran.Group.followed_by" title="apcommand.commons.oatbran.Group.followed_by"><code class="xref py py-obj docutils literal"><span class="pre">Group.followed_by</span></code></a>(suffix)</td>
+<td>Creates the expression to match if followed by the suffix</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="quantifiers">
+<h2>Quantifiers<a class="headerlink" href="#quantifiers" title="Permalink to this headline">¶</a></h2>
+<p>Quantifiers are used to describe repetitions of patterns. The <cite>zero_or_more</cite> quantifier is an alias for the <cite>FormalDefinition.kleene_star</cite>. Although I usually think of these as suffixes, the exact and m-to-n versions need braces so the quantifiers are applied as methods to make their use uniform. I use the string <cite>format</cite> method so they will not raise errors if passed non-strings as patterns.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.html#apcommand.commons.oatbran.Quantifier" title="apcommand.commons.oatbran.Quantifier"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier</span></code></a></td>
+<td>A class to hold cardinality helpers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.one_or_more.html#apcommand.commons.oatbran.Quantifier.one_or_more" title="apcommand.commons.oatbran.Quantifier.one_or_more"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier.one_or_more</span></code></a>(pattern)</td>
+<td>Adds the one-or-more quantifier to the end of the pattern.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.zero_or_more.html#apcommand.commons.oatbran.Quantifier.zero_or_more" title="apcommand.commons.oatbran.Quantifier.zero_or_more"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier.zero_or_more</span></code></a>(pattern)</td>
+<td>Adds the kleene star to the pattern</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.zero_or_one.html#apcommand.commons.oatbran.Quantifier.zero_or_one" title="apcommand.commons.oatbran.Quantifier.zero_or_one"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier.zero_or_one</span></code></a>(pattern)</td>
+<td>Adds the zero-or-one quantifier to the pattern</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.exactly.html#apcommand.commons.oatbran.Quantifier.exactly" title="apcommand.commons.oatbran.Quantifier.exactly"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier.exactly</span></code></a>(repetitions)</td>
+<td>Creates suffix to match source repeated exactly n times</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Quantifier.m_to_n.html#apcommand.commons.oatbran.Quantifier.m_to_n" title="apcommand.commons.oatbran.Quantifier.m_to_n"><code class="xref py py-obj docutils literal"><span class="pre">Quantifier.m_to_n</span></code></a>(m,&nbsp;n)</td>
+<td>Creates a repetition ranges suffix {m,n}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="character-classes">
+<h2>Character Classes<a class="headerlink" href="#character-classes" title="Permalink to this headline">¶</a></h2>
+<p>A helper with character classes (stuff put in square-brackets (&#8216;[]&#8217;)). There are some similar patterns in other classes. I tried to put single characters in this class (e.g. digit) and multiple characters or those with quantifiers in other classes (e.g. digits or optional_digits).</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.html#apcommand.commons.oatbran.CharacterClass" title="apcommand.commons.oatbran.CharacterClass"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass</span></code></a></td>
+<td>A class to help with character classes</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.character_class.html#apcommand.commons.oatbran.CharacterClass.character_class" title="apcommand.commons.oatbran.CharacterClass.character_class"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.character_class</span></code></a>(characters)</td>
+<td>Creates a character class from the expression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.alpha_num.html#apcommand.commons.oatbran.CharacterClass.alpha_num" title="apcommand.commons.oatbran.CharacterClass.alpha_num"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.alpha_num</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.alpha_nums.html#apcommand.commons.oatbran.CharacterClass.alpha_nums" title="apcommand.commons.oatbran.CharacterClass.alpha_nums"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.alpha_nums</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.digit.html#apcommand.commons.oatbran.CharacterClass.digit" title="apcommand.commons.oatbran.CharacterClass.digit"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.digit</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.non_digit.html#apcommand.commons.oatbran.CharacterClass.non_digit" title="apcommand.commons.oatbran.CharacterClass.non_digit"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.non_digit</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.non_zero_digit.html#apcommand.commons.oatbran.CharacterClass.non_zero_digit" title="apcommand.commons.oatbran.CharacterClass.non_zero_digit"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.non_zero_digit</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.character_class.html#apcommand.commons.oatbran.CharacterClass.character_class" title="apcommand.commons.oatbran.CharacterClass.character_class"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.character_class</span></code></a>(characters)</td>
+<td>Creates a character class from the expression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CharacterClass.not_in.html#apcommand.commons.oatbran.CharacterClass.not_in" title="apcommand.commons.oatbran.CharacterClass.not_in"><code class="xref py py-obj docutils literal"><span class="pre">CharacterClass.not_in</span></code></a>(characters)</td>
+<td>Creates a complement character class</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="boundaries">
+<h2>Boundaries<a class="headerlink" href="#boundaries" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Boundaries.html#apcommand.commons.oatbran.Boundaries" title="apcommand.commons.oatbran.Boundaries"><code class="xref py py-obj docutils literal"><span class="pre">Boundaries</span></code></a></td>
+<td>A class to hold boundaries for expressions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Boundaries.string_start.html#apcommand.commons.oatbran.Boundaries.string_start" title="apcommand.commons.oatbran.Boundaries.string_start"><code class="xref py py-obj docutils literal"><span class="pre">Boundaries.string_start</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Boundaries.string_end.html#apcommand.commons.oatbran.Boundaries.string_end" title="apcommand.commons.oatbran.Boundaries.string_end"><code class="xref py py-obj docutils literal"><span class="pre">Boundaries.string_end</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Boundaries.word.html#apcommand.commons.oatbran.Boundaries.word" title="apcommand.commons.oatbran.Boundaries.word"><code class="xref py py-obj docutils literal"><span class="pre">Boundaries.word</span></code></a>(word)</td>
+<td>Adds word boundaries to the word</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Boundaries.string.html#apcommand.commons.oatbran.Boundaries.string" title="apcommand.commons.oatbran.Boundaries.string"><code class="xref py py-obj docutils literal"><span class="pre">Boundaries.string</span></code></a>(string)</td>
+<td>Adds boundaries to only match an entire string</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="common-patterns">
+<h2>Common Patterns<a class="headerlink" href="#common-patterns" title="Permalink to this headline">¶</a></h2>
+<p>These are pattens that I use a lot but I could not think of where to put them.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.anything.html#apcommand.commons.oatbran.CommonPatterns.anything" title="apcommand.commons.oatbran.CommonPatterns.anything"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.anything</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.everything.html#apcommand.commons.oatbran.CommonPatterns.everything" title="apcommand.commons.oatbran.CommonPatterns.everything"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.everything</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.letter.html#apcommand.commons.oatbran.CommonPatterns.letter" title="apcommand.commons.oatbran.CommonPatterns.letter"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.letter</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.letters.html#apcommand.commons.oatbran.CommonPatterns.letters" title="apcommand.commons.oatbran.CommonPatterns.letters"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.letters</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.optional_letters.html#apcommand.commons.oatbran.CommonPatterns.optional_letters" title="apcommand.commons.oatbran.CommonPatterns.optional_letters"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.optional_letters</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.space.html#apcommand.commons.oatbran.CommonPatterns.space" title="apcommand.commons.oatbran.CommonPatterns.space"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.space</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.spaces.html#apcommand.commons.oatbran.CommonPatterns.spaces" title="apcommand.commons.oatbran.CommonPatterns.spaces"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.spaces</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.optional_spaces.html#apcommand.commons.oatbran.CommonPatterns.optional_spaces" title="apcommand.commons.oatbran.CommonPatterns.optional_spaces"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.optional_spaces</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.not_space.html#apcommand.commons.oatbran.CommonPatterns.not_space" title="apcommand.commons.oatbran.CommonPatterns.not_space"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.not_space</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.CommonPatterns.not_spaces.html#apcommand.commons.oatbran.CommonPatterns.not_spaces" title="apcommand.commons.oatbran.CommonPatterns.not_spaces"><code class="xref py py-obj docutils literal"><span class="pre">CommonPatterns.not_spaces</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="numbers">
+<h2>Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h2>
+<p>The numbers are broken up into types based on those listed <a class="reference external" href="http://mathworld.wolfram.com/CountingNumber.html">here</a>. I was originally using the more <a class="reference external" href="http://en.wikipedia.org/wiki/List_of_types_of_numbers">traditional number types</a> but I keep forgetting which ones have zero in them so I will work with just positive/negative, non-positive/non-negative, and integer/real.</p>
+<table border="1" class="docutils" id="id2">
+<caption><span class="caption-text">Numbers</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Symbol</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>positive_integer</td>
+<td><img class="math" src="../_images/math/949c706c3f35474927311ab580e7106647408db0.png" alt="1,2,\ldots"/></td>
+<td><img class="math" src="../_images/math/6fc40882d011289bd4ddf77d890ae4f5d2878fee.png" alt="\mathbb{Z}^+"/></td>
+</tr>
+<tr class="row-odd"><td>non_negative_integer</td>
+<td>:math:0,1,ldots`</td>
+<td><img class="math" src="../_images/math/8c7a73446b40923c3b937a9770b450ea6bd4d8ac.png" alt="\mathbb{Z}^*"/></td>
+</tr>
+<tr class="row-even"><td>non_positive_integer</td>
+<td>:math:0, -1, -2,ldots`</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>integer</td>
+<td>positive, negative, 0</td>
+<td><img class="math" src="../_images/math/5fdff137bc42a8949aa1b49bbb9418c4bd6f4230.png" alt="\mathbb{Z}"/></td>
+</tr>
+<tr class="row-even"><td>real_number</td>
+<td>Positive,negative, 0</td>
+<td><img class="math" src="../_images/math/858dca350c68cd6e22d70cf4324efbc875002ef2.png" alt="\mathbb{R}"/></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The integers are allowed to match even when surrounded by punctuation. This makes it okay for sentences and csvs, etc. but means that if given a floating point number it will match the substring to the left of the decimal point (e.g. 10.00213 will match 10).</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Along with the previous warning it should be noted that <cite>nonnegative_integer</cite> extracts the non-negative portion, it does not ignore negative integers. So if you have -300, the match will be 300. This may change once I start using this, but for now that is the behavior (useful for extracting ranges, maybe &#8211; nonnegative_integer + &#8216;-&#8216; + nonnegative_integer):</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>real</cite> is treated as a super-set that matches floats or integers.</p>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.html#apcommand.commons.oatbran.Numbers" title="apcommand.commons.oatbran.Numbers"><code class="xref py py-obj docutils literal"><span class="pre">Numbers</span></code></a></td>
+<td>A class to hold number-related expressions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.decimal_point.html#apcommand.commons.oatbran.Numbers.decimal_point" title="apcommand.commons.oatbran.Numbers.decimal_point"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.decimal_point</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.digits.html#apcommand.commons.oatbran.Numbers.digits" title="apcommand.commons.oatbran.Numbers.digits"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.digits</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.two_digits.html#apcommand.commons.oatbran.Numbers.two_digits" title="apcommand.commons.oatbran.Numbers.two_digits"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.two_digits</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.one_hundreds.html#apcommand.commons.oatbran.Numbers.one_hundreds" title="apcommand.commons.oatbran.Numbers.one_hundreds"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.one_hundreds</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.positive_integer.html#apcommand.commons.oatbran.Numbers.positive_integer" title="apcommand.commons.oatbran.Numbers.positive_integer"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.positive_integer</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.nonnegative_integer.html#apcommand.commons.oatbran.Numbers.nonnegative_integer" title="apcommand.commons.oatbran.Numbers.nonnegative_integer"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.nonnegative_integer</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.integer.html#apcommand.commons.oatbran.Numbers.integer" title="apcommand.commons.oatbran.Numbers.integer"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.integer</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.real.html#apcommand.commons.oatbran.Numbers.real" title="apcommand.commons.oatbran.Numbers.real"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.real</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Numbers.hexadecimal.html#apcommand.commons.oatbran.Numbers.hexadecimal" title="apcommand.commons.oatbran.Numbers.hexadecimal"><code class="xref py py-obj docutils literal"><span class="pre">Numbers.hexadecimal</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.Networking.octet.html#apcommand.commons.oatbran.Networking.octet" title="apcommand.commons.oatbran.Networking.octet"><code class="xref py py-obj docutils literal"><span class="pre">Networking.octet</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.commons.oatbran.TestQuantifier.test_one_or_more.html#apcommand.commons.oatbran.TestQuantifier.test_one_or_more" title="apcommand.commons.oatbran.TestQuantifier.test_one_or_more"><code class="xref py py-obj docutils literal"><span class="pre">TestQuantifier.test_one_or_more</span></code></a>()</td>
+<td>Does it return the one-or-more metacharachter?</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="api/apcommand.commons.oatbran.TestQuantifier.test_zero_or_more.html#apcommand.commons.oatbran.TestQuantifier.test_zero_or_more" title="apcommand.commons.oatbran.TestQuantifier.test_zero_or_more"><code class="xref py py-obj docutils literal"><span class="pre">TestQuantifier.test_zero_or_more</span></code></a>()</td>
+<td>Does it return the kleene star?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

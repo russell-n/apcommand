@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>APCommand &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="index.html" />
+    <link rel="prev" title="Shelving Objects" href="documentation/developer/appendices/shelve.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">APCommand</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#the-interface">The Interface</a><ul>
+<li><a class="reference internal" href="#atheros">Atheros</a></li>
+<li><a class="reference internal" href="#broadcom">Broadcom</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-requirements">The Requirements</a></li>
+<li><a class="reference internal" href="#the-documentation">The Documentation</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="documentation/developer/appendices/shelve.html" title="Previous Chapter: Shelving Objects"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Shelving Objects</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/readme.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="apcommand">
+<h1>APCommand<a class="headerlink" href="#apcommand" title="Permalink to this headline">¶</a></h1>
+<p>This is a command-line controller for an access point (only the Atheros AR5KAP and Broadcom BCM94718NR right now). It was built specifically to allow H. Wong to write some <a class="reference external" href="http://www.perl.org/">perl</a> code to control the APs. The documentation is online <a class="reference external" href="https://bitbucket.org/rallion/apcontrol">here</a>.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install the code change into the top folder and enter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install
+</pre></div>
+</div>
+<p>You may need to run this as root if you are installing it system-wide.</p>
+</div>
+<div class="section" id="the-interface">
+<h2>The Interface<a class="headerlink" href="#the-interface" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="atheros">
+<h3>Atheros<a class="headerlink" href="#atheros" title="Permalink to this headline">¶</a></h3>
+<p>You will end up with a command line command called <cite>atheros</cite> (you can rename it to whatever you find easier to remember). To see the options:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">atheros</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: atheros [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
+               [--username USERNAME] [--password PASSWORD]
+               {up,down,destroy,status,reset,channel,ssid,ip,security,command}
+               ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pudb                Run the `pudb` debugger (default=False).
+  --pdb                 Run the `pdb` debugger (default=False).
+  -s, --silent          If True only emit error messages (default=False)
+  -d, --debug           If True emit debug messages (default=False)
+  --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+  --username USERNAME   The user-login for the AP (leave unset for default)
+  --password PASSWORD   The login password for the AP (Leave unset for
+                        default)
+
+APCommand subcommands:
+  Available Sub-Commands
+
+  {up,down,destroy,status,reset,channel,ssid,ip,security,command}
+                        APCommand sub-commands
+    up                  Bring the AP up
+    down                Take the AP down
+    destroy             Destroy a specific virtual AP
+    status              Get some information for an interface
+    reset               Reset to factory defaults
+    channel             Change the AP channel
+    ssid                Change the SSID
+    ip                  Change the IP Address
+    security            Change the security
+    command             Execute an arbitrary command.
+</pre></div>
+</div>
+<p>The <cite>atheros</cite> interface is built around sub-commands (which are listed by the <cite>-h</cite> option). Each sub-command has its own set of options separate from the <cite>atheros</cite>. To see them pass the <cite>-h</cite> option to the sub-command. e.g. to see the <cite>channel</cite> sub-command options:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros channel -h
+</pre></div>
+</div>
+<p>To actually change the channel to, say 36:</p>
+<blockquote>
+<div>atheros channel 36</div></blockquote>
+<p>If you aren&#8217;t familiar with python&#8217;s sub-command interface note that the options have to go with their sub-command. The <cite>atheros</cite> has a <cite>-d</cite> flag that will output the access points output to the screen (<cite>d</cite> is for <cite>debug</cite>), but the <cite>channel</cite> subcommand doesn&#8217;t. This is valid:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros -d channel 36
+</pre></div>
+</div>
+<p>This is not:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>atheros channel 36 -d
+</pre></div>
+</div>
+</div>
+<div class="section" id="broadcom">
+<h3>Broadcom<a class="headerlink" href="#broadcom" title="Permalink to this headline">¶</a></h3>
+<p>There is also a separate command for the <cite>Broadcom</cite> AP. The interface is similar to the <cite>atheros</cite> command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Broadcom</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>usage: broadcom [-h] [--pudb] [--pdb] [-s] [-d] [--hostname HOSTNAME]
+                [--username USERNAME] [--password PASSWORD] [--sleep SLEEP]
+                {status,channel,disable,enable,ssid} ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pudb                Run the `pudb` debugger (default=False).
+  --pdb                 Run the `pdb` debugger (default=False).
+  -s, --silent          If True only emit error messages (default=False)
+  -d, --debug           If True emit debug messages (default=False)
+  --hostname HOSTNAME   The hostname for the AP (leave unset for default).
+  --username USERNAME   The user-login for the AP (leave unset for default)
+  --password PASSWORD   The login password for the AP (Leave unset for
+                        default)
+  --sleep SLEEP         Seconds to sleep after web server call (default=0.5)
+
+Broadcom subcommands:
+  Available Sub-Commands
+
+  {status,channel,disable,enable,ssid}
+                        Broadcom sub-commands
+    status              Get some information for an interface
+    channel             Change the AP channel
+    disable             Disable a wireless interface.
+    enable              Enable an interface.
+    ssid                Change the SSID
+</pre></div>
+</div>
+<p>The code was written using <a class="reference external" href="http://mpastell.com/pweave/">pweave</a> so for each <code class="docutils literal"><span class="pre">.py</span></code> file there are accompanying <code class="docutils literal"><span class="pre">.rst</span></code> and <code class="docutils literal"><span class="pre">.pnw</span></code> files.</p>
+</div>
+</div>
+<div class="section" id="the-requirements">
+<h2>The Requirements<a class="headerlink" href="#the-requirements" title="Permalink to this headline">¶</a></h2>
+<p>When you run the <code class="docutils literal"><span class="pre">install</span></code> command, it will attempt to download <a class="reference external" href="https://pypi.python.org/pypi/pudb">pudb</a>, <a class="reference external" href="https://pypi.python.org/pypi/requests">requests</a> and <a class="reference external" href="https://pypi.python.org/pypi/beautifulsoup4">beautifulsoup4</a>. You can get away with removing the <cite>pudb</cite> requirement from the <code class="docutils literal"><span class="pre">conf.py</span></code> file if you don&#8217;t want to debug the code but <cite>requests</cite> and <cite>beatifulsoup4</cite> are required for it to work.</p>
+</div>
+<div class="section" id="the-documentation">
+<h2>The Documentation<a class="headerlink" href="#the-documentation" title="Permalink to this headline">¶</a></h2>
+<p>Since the code was written with <cite>pweave</cite>, the repository is really a sphinx-repository as well as a code repository. To build it you need to have <cite>sphinx</cite> and <cite>sphinxcontrib-plantuml</cite> installed (as well as the code itself). If you don&#8217;t already have <a class="reference external" href="http://plantuml.sourceforge.net/">plantuml</a> and you are using a debian-based system you can install it with apt-get:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>apt-get install plantuml
+</pre></div>
+</div>
+<p>If you don&#8217;t want to install it, edit the <cite>conf.py</cite> file so it isn&#8217;t one of the listed extensions and you can still build the documentation, it just won&#8217;t have any UML diagrams. If you have everything installed and you are in the same folder as the <code class="docutils literal"><span class="pre">Makefile</span></code> and <code class="docutils literal"><span class="pre">setup.py</span></code> files then you can type the following to install the requirements and build the documentation (either with admin privileges (i.e. sudo) or in a virtual environment):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install
+pip install sphinx
+pip install sphinxcontrib-plantuml
+make html
+</pre></div>
+</div>
+<p>The documentation will be in a folder called <cite>build/html/</cite> in the same directory. You can also create a pdf with <cite>make latexpdf</cite> but the code hasn&#8217;t been groomed for it so it might not look quite right.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apcommand.accesspoints.broadcom.querier &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for apcommand.accesspoints.broadcom.querier</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># python standard library</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractproperty</span>
+
+<span class="c1"># this package</span>
+<span class="kn">from</span> <span class="nn">apcommand.baseclass</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomWirelessData</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomPages</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomRadioData</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BroadcomLANData</span>
+<span class="kn">from</span> <span class="nn">commons</span> <span class="kn">import</span> <span class="n">BAND_INTERFACE_MAP</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.parser</span> <span class="kn">import</span> <span class="n">BroadcomRadioSoup</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.parser</span> <span class="kn">import</span> <span class="n">BroadcomSSIDSoup</span>
+<span class="kn">from</span> <span class="nn">apcommand.accesspoints.broadcom.parser</span> <span class="kn">import</span> <span class="n">BroadcomLANSoup</span>
+
+<span class="c1"># a decorator to set the page </span>
+<span class="k">def</span> <span class="nf">set_page</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator: sets connection.path to self.asp_page before, sleeps after </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">asp_page</span><span class="p">:</span>
+            <span class="n">debug_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Skipping this method (refresh={0},&#39;</span>
+                             <span class="s1">&#39;current_page={1})&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">debug_message</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_method</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting current_page to {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asp_page</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asp_page</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting connection.path to &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asp_page</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asp_page</span>
+        <span class="n">outcome</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outcome</span>
+    <span class="k">return</span> <span class="n">_method</span>
+
+<div class="viewcode-block" id="BroadcomBaseQuerier"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier">[docs]</a><span class="k">class</span> <span class="nc">BroadcomBaseQuerier</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A querier for the Broadcom</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+<div class="viewcode-block" id="BroadcomBaseQuerier.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomBaseQuerier Constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: Connection to the Broadcom AP</span>
+<span class="sd">         - `refresh`: if True, call the page even if already loaded</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomBaseQuerier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span> <span class="o">=</span> <span class="n">refresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Data to give the connection (used to specify an interface if needed)</span>
+
+<span class="sd">        :default: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A Broadcom Soup to parse the html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>
+        
+    <span class="nd">@set_page</span>
+<div class="viewcode-block" id="BroadcomBaseQuerier.set_soup"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier.set_soup.html#apcommand.accesspoints.broadcom.querier.BroadcomBaseQuerier.set_soup">[docs]</a>    <span class="k">def</span> <span class="nf">set_soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the soup.html to the page specified by self.page</span>
+
+<span class="sd">        :precondition:</span>
+
+<span class="sd">         - `self.soup` set to correct asp page</span>
+<span class="sd">         - `self.data` set to dict if needed</span>
+
+<span class="sd">        :postcondition: self.soup&#39;s html set to text from connection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">text</span>        
+        <span class="k">return</span></div></div>
+<span class="c1"># end class BroadcomBaseQuerier</span>
+
+<div class="viewcode-block" id="BroadcomRadioQuerier"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier">[docs]</a><span class="k">class</span> <span class="nc">BroadcomRadioQuerier</span><span class="p">(</span><span class="n">BroadcomBaseQuerier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An aggregator for the two band-queriers    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomRadioQuerier.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomRadioQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        BroadcomQuerier constructor</span>
+
+<span class="sd">        :param:</span>
+
+<span class="sd">         - `connection`: HTTPConnection to the AP</span>
+<span class="sd">         - `refresh`: if True, load the html on each call</span>
+<span class="sd">         - `band`: 2.4 or 5 (this has to be set before using or it will crash)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomRadioQuerier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mac_address</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A BroadcomRadioSoup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="n">BroadcomRadioSoup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the data to tell the connection to choose an interface</span>
+
+<span class="sd">        :precondition: self.band is set to valid wireless_interface setting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">BroadcomWirelessData</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        radio.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">radio</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The band for the chosen interface (2.4 or 5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_band</span>
+
+    <span class="nd">@band.setter</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the band (using BAND_INTERFAC_MAP), resets the data (which uses the band)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="n">BAND_INTERFACE_MAP</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">new_band</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sideband</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The sideband setting (Upper or Lower), empty for 2.4 GHz</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">sideband</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current channel for the band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">channel</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the interface state</span>
+
+<span class="sd">        :return: ``Disabled`` or ``Enabled``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">interface_state</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the mac-address for this band</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="n">BroadcomWirelessData</span><span class="o">.</span><span class="n">interface_24_ghz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">mac_24_ghz</span>        
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">==</span> <span class="n">BroadcomWirelessData</span><span class="o">.</span><span class="n">interface_5_ghz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">mac_5_ghz</span></div>
+<span class="c1"># end class BroadcomRadioQuerier</span>
+
+<div class="viewcode-block" id="BroadcomSSIDQuerier"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier">[docs]</a><span class="k">class</span> <span class="nc">BroadcomSSIDQuerier</span><span class="p">(</span><span class="n">BroadcomBaseQuerier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A querier for the ssid.asp page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomSSIDQuerier.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomSSIDQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomSSIDQuerier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A BroadcomSSIDSoup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="n">BroadcomSSIDSoup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the data to tell the connection to choose an interface</span>
+
+<span class="sd">        :precondition: self.band is set to valid wireless_interface setting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">BroadcomWirelessData</span><span class="o">.</span><span class="n">wireless_interface</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ssid.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">ssid</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The band for the chosen interface (2.4 or 5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_band</span>
+
+    <span class="nd">@band.setter</span>
+    <span class="k">def</span> <span class="nf">band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_band</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the band (using BAND_INTERFAC_MAP), resets the data (which uses the band)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_band</span> <span class="o">=</span> <span class="n">BAND_INTERFACE_MAP</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">new_band</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the interface SSID</span>
+
+<span class="sd">        :return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">ssid</span></div>
+<span class="c1"># class BroadcomSSIDQuerier</span>
+
+<div class="viewcode-block" id="BroadcomLANQuerier"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier">[docs]</a><span class="k">class</span> <span class="nc">BroadcomLANQuerier</span><span class="p">(</span><span class="n">BroadcomBaseQuerier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A querier for the lan.asp page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BroadcomLANQuerier.__init__"><a class="viewcode-back" href="../../../../accesspoints/broadcom/api/apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier.html#apcommand.accesspoints.broadcom.querier.BroadcomLANQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BroadcomLANQuerier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dhcp_state</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">asp_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        lan.asp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span> <span class="o">=</span> <span class="n">BroadcomPages</span><span class="o">.</span><span class="n">lan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asp_page</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">soup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The BroadcomLANSoup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="n">BroadcomLANSoup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soup</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dhcp_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        gets the dhcp_state from the soup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_soup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">dhcp_state</span></div>
+
+<span class="c1"># python standard library</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="c1"># third-party</span>
+<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">call</span>
+
+<span class="n">TEST_SSID</span> <span class="o">=</span> <span class="s1">&#39;hownowbrowndog&#39;</span>
+<span class="n">SSID_ASP</span> <span class="o">=</span> <span class="s1">&#39;ssid_asp.html&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">TestBroadcomQueriers</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;radio_5_asp.html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span> <span class="o">=</span> <span class="n">BroadcomRadioQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+
+        <span class="c1"># without the patch the calls will sleep and this will take longer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patcher</span> <span class="o">=</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;time.sleep&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_sleep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patcher</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patcher</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Is the band set-up correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_24_ghz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it set the band correctly?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_sideband</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the 5ghz querier get the sideband for you?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sideband</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">sideband</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span> <span class="n">sideband</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="k">def</span> <span class="nf">test_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the channel correctily?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channel</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="s1">&#39;44&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the interface state?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Enabled&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_24_mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the MAC address for the 2.4 GHz interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;2.4&#39;</span>
+        <span class="n">mac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">mac_address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;(00:90:4C:09:11:03)&#39;</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_mac_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the MAC address for the 5 GHz interface?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">mac_address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;(00:90:4C:13:11:03)&#39;</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_5_ssid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does it get the right SSID?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">SSID_ASP</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">querier</span> <span class="o">=</span> <span class="n">BroadcomSSIDQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+                                      <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+        <span class="n">ssid</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">ssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TEST_SSID</span><span class="p">,</span> <span class="n">ssid</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">test_no_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If `refresh` is False, does it not call the radio page twice?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">SSID_ASP</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">querier</span> <span class="o">=</span> <span class="n">BroadcomSSIDQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+        <span class="n">ssid_1</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">ssid</span>
+        <span class="n">ssid_2</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">ssid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="n">TEST_SSID</span><span class="p">,</span> <span class="n">TEST_SSID</span><span class="p">],</span> <span class="p">[</span><span class="n">ssid_1</span><span class="p">,</span> <span class="n">ssid_2</span><span class="p">])</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wl_unit&#39;</span><span class="p">:</span><span class="s1">&#39;1&#39;</span><span class="p">})]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">calls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">mock_calls</span><span class="p">)</span>
+        <span class="k">return</span>
+            
+<span class="c1"># end class TestBroadcomBaseQuerier</span>
+
+<span class="k">class</span> <span class="nc">TestBroadcomLanQuerier</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span> <span class="o">=</span> <span class="n">BroadcomLANQuerier</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">BroadcomLANSoup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">_soup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span>
+        <span class="k">return</span>
+
+
+    <span class="k">def</span> <span class="nf">test_dhcp_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the querier get the DHCP state from the soup?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">dhcp_state</span> <span class="o">=</span> <span class="s2">&quot;Disabled&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">dhcp_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;Disabled&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span>
+<span class="c1"># class TestBroadcomLanQuerier</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

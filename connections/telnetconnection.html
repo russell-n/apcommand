@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Telnet Connection &mdash; AP Command 2013.08.15 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.3.4/spacelab/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2013.08.15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="AP Command 2013.08.15 documentation" href="../index.html" />
+    <link rel="up" title="Developer Documentation" href="../documentation/developer/index.html" />
+    <link rel="next" title="apcommand.connections.telnetconnection.OutputFile" href="api/apcommand.connections.telnetconnection.OutputFile.html" />
+    <link rel="prev" title="apcommand.connections.producer.PopenFile" href="api/apcommand.connections.producer.PopenFile.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          AP Command</a>
+        <span class="navbar-text navbar-version pull-left"><b>2013.08.15</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation/user/index.html">User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation/developer/index.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Readme</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">The Telnet Connection</a><ul>
+<li><a class="reference internal" href="#outputfile">OutputFile</a></li>
+<li><a class="reference internal" href="#the-telnet-adapter">The Telnet Adapter</a></li>
+<li><a class="reference internal" href="#telnetoutput">TelnetOutput</a></li>
+<li><a class="reference internal" href="#the-telnetconnection-class">The TelnetConnection Class</a></li>
+<li><a class="reference internal" href="#the-telnetconnectionbuilder">The TelnetConnectionBuilder</a></li>
+<li><a class="reference internal" href="#testing-the-telnetconnectionbuilder">Testing the TelnetConnectionBuilder</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api/apcommand.connections.producer.PopenFile.html" title="Previous Chapter: apcommand.connections.producer.PopenFile"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; apcommand.con...</span>
+    </a>
+  </li>
+  <li>
+    <a href="api/apcommand.connections.telnetconnection.OutputFile.html" title="Next Chapter: apcommand.connections.telnetconnection.OutputFile"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">apcommand.con... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/connections/telnetconnection.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="the-telnet-connection">
+<h1>The Telnet Connection<a class="headerlink" href="#the-telnet-connection" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>TelnetConnection</cite> takes the command-line command as a property and the arguments to the command as parameters.</p>
+<p>For Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">sc</span> <span class="o">=</span> <span class="n">TelnetConnection</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;192.168.10.1&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;bob&#39;</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">line</span>
+</pre></div>
+</div>
+<p>Prints the output of the <cite>ls -l</cite> command line command.</p>
+<div class="section" id="outputfile">
+<h2>OutputFile<a class="headerlink" href="#outputfile" title="Permalink to this headline">¶</a></h2>
+<p>This acts as a file-like object that traps socket timeouts so that users do not have to know that it contains a networked connection. To prevent blocking the socket-timeout causes it to return a SPACE.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is also defined in the sshconnection module, but since I wanted to allow for the case where SSH is not used it is re-defined here (otherwise you have to install paramiko)</p>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.OutputFile.html#apcommand.connections.telnetconnection.OutputFile" title="apcommand.connections.telnetconnection.OutputFile"><code class="xref py py-obj docutils literal"><span class="pre">OutputFile</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>A class to handle the ssh output files</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-1baf773d62feeab0552372f35b2277cd40eeb659.png" alt="OutputFile -|&gt; ValidatingOutput
+OutputFile : readline(timeout)" />
+</p>
+</div>
+<div class="section" id="the-telnet-adapter">
+<span id="telnet-adapter"></span><h2>The Telnet Adapter<a class="headerlink" href="#the-telnet-adapter" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>TelnetAdapter</cite> adapts the built-in python <a class="reference external" href="http://docs.python.org/2/library/telnetlib.html">telnetlib</a> to make it easier for the <a class="reference internal" href="#telnet-connection"><span>TelnetConnection</span></a> to used</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.TelnetAdapter.html#apcommand.connections.telnetconnection.TelnetAdapter" title="apcommand.connections.telnetconnection.TelnetAdapter"><code class="xref py py-obj docutils literal"><span class="pre">TelnetAdapter</span></code></a>(host[,&nbsp;prompt,&nbsp;login,&nbsp;...])</td>
+<td>A TelnetAdapter Adapts the telnetlib.Telnet to this libraries interfaces.</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-017430c1a412066a0ec0ee7197dd662946c361b0.png" alt="TelnetAdapter -|&gt; BaseClass
+TelnetAdapter o-- telnetlib.Telnet
+TelnetAdapter : client
+TelnetAdapter : exec_command(command, timeout)
+TelnetAdapter : writeline(message)" />
+</p>
+</div>
+<div class="section" id="telnetoutput">
+<span id="telnet-output"></span><h2>TelnetOutput<a class="headerlink" href="#telnetoutput" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>TelnetOutput</cite> adapts the <a class="reference internal" href="#telnet-adapter"><span>TelnetAdapter</span></a> output to appear more file-like.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.TelnetOutput.html#apcommand.connections.telnetconnection.TelnetOutput" title="apcommand.connections.telnetconnection.TelnetOutput"><code class="xref py py-obj docutils literal"><span class="pre">TelnetOutput</span></code></a>(client[,&nbsp;prompt,&nbsp;end_of_line,&nbsp;...])</td>
+<td>The TelnetOutput converts the telnet output to a file-like object</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-4f93a392f086295fba037e51c259b7755d739448.png" alt="TelnetOutput -|&gt; BaseClass
+TelnetOutput : readline(timeout)
+TelnetOutput : readlines()
+TelnetOutput : read()
+TelnetOutput : __iter__()" />
+</p>
+</div>
+<div class="section" id="the-telnetconnection-class">
+<span id="telnet-connection"></span><h2>The TelnetConnection Class<a class="headerlink" href="#the-telnetconnection-class" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../accesspoints/api/apcommand.connections.telnetconnection.TelnetConnection.html#apcommand.connections.telnetconnection.TelnetConnection" title="apcommand.connections.telnetconnection.TelnetConnection"><code class="xref py py-obj docutils literal"><span class="pre">TelnetConnection</span></code></a>([port,&nbsp;prompt,&nbsp;...])</td>
+<td>A TelnetConnection executes commands over a Telnet Connection</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-cf76f81e7f24bd80b85a1a641d6e2067edad46e6.png" alt="TelnetConnection -|&gt; NonLocalConnection
+NonLocalConnection -|&gt; BaseClass
+BaseClass : logger
+NonLocalConnection : hostname
+NonLocalConnection : username
+NonLocalConnection : password
+NonLocalConnection : command_prefix
+NonLocalConnection : operating_system
+NonLocalConnection: path
+NonLocalConnection : library_path
+NonLocalConnection : lock
+NonLocalConnection o-- threading.RLock
+NonLocalConnection : __getattr__(command)
+NonLocalConnection : __call__(command, arguments)" />
+</p>
+<ul class="simple">
+<li>The TelnetConnection subclasses <a class="reference internal" href="nonlocalconnection.html#non-local-connection"><span>NonLocalConnection</span></a> to be compatible with the <span class="xref std std-ref">SSHConnection</span>.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The TelnetConnection should be the main interface for both Telnet Servers and Serial-connections. To convert a serial connection to a Telnet connection see  the <a class="reference external" href="http://pyserial.sourceforge.net/examples.html#multi-port-tcp-ip-serial-bridge-rfc-2217">pyserial</a> tcp-ip serial bridge.</p>
+</div>
+</div>
+<div class="section" id="the-telnetconnectionbuilder">
+<span id="telnet-connection-builder"></span><h2>The TelnetConnectionBuilder<a class="headerlink" href="#the-telnetconnectionbuilder" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.TelnetConnectionBuilder.html#apcommand.connections.telnetconnection.TelnetConnectionBuilder" title="apcommand.connections.telnetconnection.TelnetConnectionBuilder"><code class="xref py py-obj docutils literal"><span class="pre">TelnetConnectionBuilder</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>Implements a builder for the TelnetConnection</td>
+</tr>
+</tbody>
+</table>
+<p class="plantuml">
+<img src="../_images/plantuml-341de7bedfbf8c3f94b1c2c0e956686507eb0e75.png" alt="TelnetConnectionBuilder -|&gt; NonLocalConnectionBuilder" />
+</p>
+<ul class="simple">
+<li>The TelnetConnectionBuilder is a plugin and so sub-classes the <span class="xref std std-ref">NonLocalConnectionBuilder</span>.</li>
+</ul>
+</div>
+<div class="section" id="testing-the-telnetconnectionbuilder">
+<h2>Testing the TelnetConnectionBuilder<a class="headerlink" href="#testing-the-telnetconnectionbuilder" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="api/apcommand.connections.telnetconnection.TestTelnetConnectionBuilder.html#apcommand.connections.telnetconnection.TestTelnetConnectionBuilder" title="apcommand.connections.telnetconnection.TestTelnetConnectionBuilder"><code class="xref py py-obj docutils literal"><span class="pre">TestTelnetConnectionBuilder</span></code></a>([methodName])</td>
+<td>Create an instance of the class that will use the named test method when executed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, russelln.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
